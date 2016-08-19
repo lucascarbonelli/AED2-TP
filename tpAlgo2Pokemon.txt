@@ -1,0 +1,39 @@
+TADs
+
+Mapa
+
+mapa predefinido al iniciar el juego
+Coordenas: Tupla(x,y)?
+Conexiones sin dirección
+distancia euclidiana
+
+Jugadores
+
+Estado conectado/desconectado -> desconectado: no puede hacer nada, cuando se vuelve a conectar: mantiene su estado anterior, pero su posición actual cambia a la que tenga en ese momento
+tienen posición
+se pueden mover
+atrapar pokemones
+conjunto de pokemones
+sanciones (cuando llega a 5 sanciones lo echan, y eliminan a todos sus pokemones)
+
+Sancion
+
+Una por cada movimiento invalido
+
+Movimiento valido
+
+que la coordenada de partida y de llegada estén conectadas, y su distancia (euclidana) sean menor a 10
+
+Partida
+
+conjunto de jugadores
+no me puede haber dos pokemones a distancia menor a 5
+para capturar se necesitan 10 movimientos fuera del rango de otros jugadores (distancia 2 del pokemon), luego se decide el captor de forma deterministica entre los jugadores en rango.
+cuando otro jugador entra en el rango, se resetean los movimientos necesarios
+los pokemones eatán fijos en el mapa
+
+Pokemon
+
+nombre
+índice de rareza -> se determina por formula
+posición
