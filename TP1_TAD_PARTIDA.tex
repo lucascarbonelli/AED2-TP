@@ -1,0 +1,79 @@
+\documentclass[10pt, a4paper]{article}
+% especifico márgenes manualmente
+\usepackage[paper=a4paper, left=1.5cm, right=1.5cm, bottom=1.5cm, top=3.5cm]{geometry}
+% codificación ISO-8859-1
+\usepackage[latin1]{inputenc}
+% separación silábica en castellano
+\usepackage[spanish]{babel}
+% paquetes y caratula de algo2
+\usepackage{aed2-symb,aed2-itef,aed2-tad,caratula}
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%% Renombres
+\section{Renombres de TADs}
+
+\tadNombre{TAD Coordenada} es \tadNombre{Tupla(Nat,Nat)}
+
+\tadNombre{TAD Jugador} es \tadNombre{String}
+
+\tadNombre{TAD Pokemon} es \tadNombre{String}
+
+
+%%%%%%%%%%%%%%%%%%%% Promesa
+\section{TAD \tadNombre{Partida}}
+
+\begin{tad}{\tadNombre{Partida}}
+\tadIgualdadObservacional{p}{p'}{partida}{}
+
+\tadGeneros{partida}
+\tadExporta{partida, generadores, observadores, otras operaciones}
+\tadUsa{\tadNombre{Coordenada}, \tadNombre{Jugador}, \tadNombre{Pokemon}, \tadNombre{Nat}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\tadObservadores
+\tadAlinearFunciones{movimientosParaCapturar~}{partida/p, coordenada/c}
+
+\tadOperacion{mapa}{partida}{mapa}{}
+\tadOperacion{jugadores}{partida}{conj(jugador)}{}
+\tadOperacion{pokemonsSalvajes}{partida}{conj(pokemon)}{}
+\tadOperacion{posicionesPokemon}{partida/p, pokemon/a}{conj(coordenada)}{a $\in$ pokemonsSalvajes(p)}
+\tadOperacion{pokemonsDeJugador}{partida/p, jugador/j}{multiconj(pokemon)}{j $\in$ jugadores(p) $\yluego$ $\neg$ eliminado(p, j)}
+\tadOperacion{posicionJugador}{partida/p, jugador/j}{coordenada}{j $\in$ jugadores(p) $\yluego$ conectado?(p, j) $\land$ $\neg$ eliminado(p, j)}
+\tadOperacion{conectado?}{partida/p, jugador/j}{bool}{j $\in$ jugadores(p) $\yluego$ $\neg$ eliminado(p, j)}
+\tadOperacion{sanciones}{partida/p, jugador/j}{nat}{j $\in$ jugadores(p)}
+\tadOperacion{movimientosParaCapturar}{partida/p, coordenada/c}{nat}{c $\in$ posiciones(mapa(p)) $\yluego$ ($\exists$ a $\in$ pokemonsSalvajes(p)) (($\exists$ c' $\in$ posicionesPokemon(p, a)) c = c')}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\tadGeneradores
+\tadAlinearFunciones{nuevaPartida~}{partida/p, jugador/j, coordenada/c}
+
+\tadOperacion{nuevaPartida}{mapa}{partida}{}
+\tadOperacion{AgPokemon}{partida/p, pokemon, coordenada/c}{partida}{c $\in$ posiciones(mapa(p) $\yluego$ ($\forall$ a' $\in$ pokemonsSalvajes(p)) (($\forall$ c' $\in$ posicionesPokemon(p)) $\neg$enRango(mapa(p), c, c', 5)}
+\tadOperacion{AgJugador}{partida/p, jugador/j}{partida}{j $\notin$ jugadores(p)}
+\tadOperacion{conectar}{partida/p, jugador/j, coordenada}{partida}{j $\in$ jugadores(p) $\land$ $\neg$ eliminado(p, j) $\land$ $\neg$ conectado?(p, j)}
+\tadOperacion{desconectar}{partida/p, jugador/j}{partida}{j $\in$ jugadores(p) $\land$ $\neg$ eliminado(p, j) $\land$ conectado?(p, j)}
+\tadOperacion{mover}{partida/p, jugador/j, coordenada/c}{partida}{j $\in$ jugadores(p) $\land$ c $\in$ posiciones(mapa(p) $\yluego$ $\neg$ eliminado(p, j)}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\tadOtrasOperaciones
+\tadAlinearFunciones{eliminado}{partida, pokemon}
+
+\tadOperacion{rareza}{partida, pokemon}{nat}{}
+\tadOperacion{eliminado}{partida, jugador}{bool}{}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\tadAxiomas[\paratodo{mapa}{m} \paratodo{partida}{p} \paratodo{pokemon}{a} \paratodo{jugador}{j} \paratodo{coordenada}{c}]
+\tadAlinearAxiomas{mapa(AgPokemon(p, a, c))}
+
+\tadAxioma{mapa(nuevaPartida(m))}{m}
+\tadAxioma{mapa(AgPokemon(p, a, c))}{mapa(p)}
+\tadAxioma{mapa(AgJugador(p, j))}{mapa(p)}
+\tadAxioma{mapa(conectar(p, j, c))}{mapa(p)}
+\tadAxioma{mapa(desconectar(p, j))}{mapa(p)}
+\tadAxioma{mapa(mover(p, j, c))}{mapa(p)}
+
+
+\end{tad}
+
+\end{document}
