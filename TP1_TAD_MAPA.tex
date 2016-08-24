@@ -1,0 +1,80 @@
+\documentclass[10pt, a4paper]{article}
+% especifico márgenes manualmente
+\usepackage[paper=a4paper, left=1.5cm, right=1.5cm, bottom=1.5cm, top=3.5cm]{geometry}
+% codificación ISO-8859-1
+\usepackage[latin1]{inputenc}
+% separación silábica en castellano
+\usepackage[spanish]{babel}
+% paquetes y caratula de algo2
+\usepackage{aed2-symb,aed2-itef,aed2-tad,caratula}
+
+\begin{document}
+\section{TAD \tadNombre{Mapa}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{tad}{\tadNombre{Mapa}}
+\tadIgualdadObservacional{m}{m'}{mapa}{posiciones(m) $=$ posiciones(m') $\yluego$ (\paratodo{posiciones(m)}{c}) opciones(m,c) $=$ opciones(m,c') }
+
+\tadGeneros{mapa}
+\tadExporta{mapa, generadores, observadores, otras operaciones}
+\tadUsa{\tadNombre{Coordenada}, \tadNombre{Nat}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  Observadores Basicos %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\tadObservadores
+\tadOperacion{posiciones}{mapa}{conj(Coordenada)}{}
+\tadOperacion{opciones}{Mapa/m , Coordenada/c}{conj(Coordenada)}{c $\in$ posiciones(m) }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Generadores  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\tadGeneradores 
+\tadOperacion{InitMapa}{}{Mapa}{}
+\tadOperacion{AgCoordenada}{Mapa/m , Coordenada/c}{Mapa}{}
+\tadOperacion{Relacionar}{Mapa/m , Coordenada/ c ,Coordenada/c' }{Mapa}{ c $\neq $ c' $\land$ c,c' $\in$ posiciones(m) }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%Otras Operaciones %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\tadOtrasOperaciones
+
+\tadAlinearFunciones{opcionesTotalesAux}{Mapa/m , conj(Coordenada)/C, conj(Coordenada)/C'}
+
+\tadOperacion{enRango}{Mapa/m , Coordenada/c , Coordenada/c' , Nat/n}{Bool}{}
+\tadOperacion{opcionesTotales}{Mapa/m, Coordenada c}{conj(Coordenada)}{c $\in$ posiciones(m)}
+\tadOperacion{opcionesTotalesAux}{Mapa/m , conj(Coordenada)/C, conj(Coordenada)/C'}{conj(Coordenada)}{C, C' $\subseteq$ posiciones(m)}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Axiomas %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\tadAxiomas[\paratodo{mapa}{m} \paratodo{Coordenada}{c,c',c''} \paratodo{conj(Coordenada)}{C,C'} \paratodo{Nat}{n} ]
+
+\tadAxioma{posiciones(InitMapa)}{$\emptyset$}
+\tadAxioma{posiciones(AgCoordenada(m,c))}{Ag(c,posiciones(m))}
+\tadAxioma{posiciones(Relacionar(m,c,c')}{Posiciones(m)}
+
+\tadAxioma{opciones(InitMapa,c)}{$\emptyset$}
+\tadAxioma{opciones(AgCoordenada(m,c),c')}{\IF $c=c'$ THEN $\emptyset$ ELSE opciones(m,C') FI}
+\tadAxioma{opciones(Relacionear(m,c,c'),c'')}{\IF c''$\neq$ c $\land$ c'' $\neq$ c' THEN opciones(m,c'') ELSE (\IF c''$=$ c THEN Ag(c',opciones(m,c)) ELSE Ag(c,opciones(m,c')) FI) FI}
+
+\tadAxioma{enRango(m,c,c',n)}{((max($\Pi$_1(c),$\Pi$_1(c')) - min($\Pi$_1(c),$\Pi$_1(c'))) *((max($\Pi$_1(c),$\Pi$_1(c')) - min($\Pi$_1(c),$\Pi$_1(c'))) + ((max($\Pi$_2(c),$\Pi$_2(c')) - min($\Pi$_2(c),$\Pi$_2(c'))) *((max($\Pi$_2(c),$\Pi$_2(c')) - min($\Pi$_2(c),$\Pi$_2(c')))   }
+
+\tadAxioma{opcionesTotales(m,c)}{opciones(c) $\cup$ opcionesTotalesAux(m,opciones(c),Ag(c,$\emptyset$))}
+
+\tadAxioma{opcionesTotalesAux(m,C,C')}{opciones(dameUno(C)) $\cup$ opcionesTotalesAux(m,Opciones(dameUno(c)) $\cup$ C - (Ag(dameUno(C),C')) , Ag(dameUno(C),C') ) }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{tad}
+\end{document}
