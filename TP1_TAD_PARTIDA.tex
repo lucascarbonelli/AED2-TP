@@ -63,27 +63,27 @@
 
 
 \tadOtrasOperaciones
-\tadAlinearFunciones{coordenadasTotalesPoke}{conj(Pokemon)/c, jugador/j, coordenada/c, partida/P}
+\tadAlinearFunciones{coordenadasTotalesPoke}{conj(Pokemon), jugador, coordenada, partida}
 
-\tadOperacion{capturados}{jugador/j, partida/P , coordenada/c}{conj(pokemon)}{}
-\tadOperacion{capturadosTotales}{conj(coordenada)/C, conj(pokemon)/C'}{conj(pokemon)}{}
-\tadOperacion{pokeCapturar}{conj(pokemon)/c, jugador/j, coordenada/c, partida/P}{conj(coordenada)}{}
-\tadOperacion{coordenadasTotalesPoke}{conj(pokemon)/C, partida/P}{conj(coordenada)}{}
-\tadOperacion{hayAlgunPoke}{jugador/j, conj(coordenada)}{bool}{}
-\tadOperacion{movOK}{jugador/j, jugador/j', partida/p}{bool}{}
-\tadOperacion{coordPoke}{jugador/j, conj(coordenada)}{coordenada}{}
-\tadOperacion{esElElegido}{jugador/j, partida/P}{bool}{}
-\tadOperacion{jugadoresEnRangoPoke}{coordenada/c, conj(jugador)/C, partida/P}{conj(jugador)}{}
-\tadOperacion{esePokemon}{jugador/j, partida/P}{pokemon}{}
-\tadOperacion{cualEsEsePokemon?}{coordenada/c, conj(pokemon)/C, partida/P}{pokemon}{}
+\tadOperacion{capturados}{jugador, partida, coordenada}{conj(pokemon)}{}
+\tadOperacion{capturadosTotales}{partida, conj(coordenada), conj(pokemon)}{conj(pokemon)}{}
+\tadOperacion{pokeCapturar}{conj(pokemon), jugador, coordenada, partida}{conj(coordenada)}{}
+\tadOperacion{coordenadasTotalesPoke}{conj(pokemon), partida}{conj(coordenada)}{}
+\tadOperacion{hayAlgunPoke}{jugador, conj(coordenada)}{bool}{}
+\tadOperacion{movOK}{jugador, jugador, partida}{bool}{}
+\tadOperacion{coordPoke}{jugador, conj(coordenada)}{coordenada}{}
+\tadOperacion{esElElegido}{jugador, partida}{bool}{}
+\tadOperacion{jugadoresEnRangoPoke}{coordenada, conj(jugador), partida}{conj(jugador)}{}
+\tadOperacion{esePokemon}{jugador, partida}{pokemon}{}
+\tadOperacion{cualEsEsePokemon?}{coordenada, conj(pokemon), partida}{pokemon}{}
 
-\tadOperacion{pokeParaCapturar}{jugador/j, partida/P}{bool}{}
-\tadOperacion{NoEliminados}{partida/P}{conj(jugador)}{}
-\tadOperacion{FiltrarEliminados}{conj(jugador)/C, partida/P}{conj(jugador)}{}
-\tadOperacion{pokesCapturados}{conj(jugador)/C, pokemon/p, partida/P}{nat}{}
-\tadOperacion{pokesTotalesDeTipo}{pokemon/p , partida/P}{nat}{}
-\tadOperacion{pokesTotalesJugadores}{conj(jugador)/C, partida/P}{nat}{}
-\tadOperacion{pokesTotales}{partida/p}{nat}{}
+\tadOperacion{pokeParaCapturar}{jugador/j, partida}{bool}{}
+\tadOperacion{NoEliminados}{partida}{conj(jugador)}{}
+\tadOperacion{FiltrarEliminados}{conj(jugador), partida}{conj(jugador)}{}
+\tadOperacion{pokesCapturados}{conj(jugador), pokemon, partida}{nat}{}
+\tadOperacion{pokesTotalesDeTipo}{pokemon, partida}{nat}{}
+\tadOperacion{pokesTotalesJugadores}{conj(jugador), partida}{nat}{}
+\tadOperacion{pokesTotales}{partida}{nat}{}
 
 \tadOperacion{rareza}{partida, pokemon}{nat}{}
 \tadOperacion{eliminado}{partida, jugador}{bool}{}
@@ -132,8 +132,8 @@
 \tadAxioma{pokemonesDeJugador(desconectar(p, j),j)}{pokemonesDeJugador(p,j)}
 %\tadAlinearAxiomas{pokemonesDeJugador(mover(p, j', c),j)}
 
-%% pokeJugador no existe!
-\tadAxioma{pokemonesDeJugador(mover(p, j', c),j)}{\IF j$\neq$j' $\land$ hayAlgunPoke(j, coordenadasTotalesPoke(pokemonesSalvajes(P), P)) $\yluego$ movOK(j, j', P) $\yluego$ pokeParaCapturar(j, P) $\yluego$ esElElegido(j, P) THEN Ag(esePokemon(c, C, p), pokeJugador) ELSE PokeJugador(j, P) FI }
+
+\tadAxioma{pokemonesDeJugador(mover(P, j', c),j)}{\IF j$\neq$j' $\land$ hayAlgunPoke(j, coordenadasTotalesPoke(pokemonesSalvajes(P), P)) $\yluego$ movOK(j, j', P) $\yluego$ pokeParaCapturar(j, P) $\yluego$ esElElegido(j, P) THEN Ag(esePokemon(j, P), pokemonesDeJugador) ELSE pokemonesDeJugador(j, P) FI }
 
 %\tadAlinearAxiomas{posicionJugador(AgPokemon(p, a, c),j')}
 \tadAxioma{posicionJugador(AgPokemon(p, a, c),j')}{posicionJugador(p,j')}
@@ -172,16 +172,16 @@
 %%%%%%%%%%%%%%%%%%%%%%%%  Otras Operaciones  %%%%%%%%%%%%%%%%%%%%%%
 
 %\tadAlinearAxiomas{capturados(j,P,c)}
-\tadAxioma{capturados(j,P,c)}{capturadosTotales(pokeCapturar(coordenadasTotalesPoke\\(pokemonesSalvajes(P), P), j, c, P), \\pokemonesSalvajes(P))}
+\tadAxioma{capturados(j,p,c)}{capturadosTotales(pokeCapturar(coordenadasTotalesPoke\\(pokemonesSalvajes(p), p), j, c, p), \\pokemonesSalvajes(p))}
 
 %\tadAlinearAxiomas{capturadosTotales(C, C')}
-\tadAxioma{capturadosTotales(C, C')}{\IF $\emptyset$?(C') THEN $\emptyset$ ELSE {\IF $\emptyset$?(posicionesPokemon(dameUno(C'), P) - C) THEN Ag(dameUno(C'),\\ capturadosTotales(C, sinUno(C'))) ELSE capturadosTotales(C, sinUno(C')) FI} FI}
+\tadAxioma{capturadosTotales(p, C, C')}{\IF $\emptyset$?(C') THEN $\emptyset$ ELSE {\IF $\emptyset$?(posicionesPokemon(dameUno(C'), p) - C) THEN Ag(dameUno(C'),\\ capturadosTotales(C, sinUno(C'))) ELSE capturadosTotales(C, sinUno(C')) FI} FI}
 
 %\tadAlinearAxiomas{pokeCapturar(C, j, c, P)}
 
-\tadAxioma{pokeCapturar(C, j, c, P)}{\IF $\emptyset$?(C) THEN $\emptyset$  ELSE {\IF $\lnot$ enRango(dameUno(C), c, 2) $\land$ \\$\lnot$enRango(dameUno(C), posicionJugador(j, P), 2) $\land$ movimientosParaCapturar(dameUno(C)) == 9 THEN Ag(dameUno(C), pokeCapturar(sinUno(C), j, c, P)) ELSE pokeCapturar(sinUno(C), j, c, P)FI} FI}
+\tadAxioma{pokeCapturar(C, j, c, p)}{\IF $\emptyset$?(C) THEN $\emptyset$  ELSE {\IF $\lnot$ enRango(dameUno(C), c, 2) $\land$ \\$\lnot$enRango(dameUno(C), posicionJugador(j, p), 2) $\land$ movimientosParaCapturar(dameUno(C)) == 9 THEN Ag(dameUno(C), pokeCapturar(sinUno(C), j, c, p)) ELSE pokeCapturar(sinUno(C), j, c, p)FI} FI}
 
-\tadAxioma{coordenadasTotalesPoke(C, P)}{\IF $\emptyset$?(C) THEN $\emptyset$ ELSE posicionesPokemon(P, dameUno(C)) $\land$ \\coordenadasTotalesPoke(sinUno(C), P) FI}
+\tadAxioma{coordenadasTotalesPoke(C, p)}{\IF $\emptyset$?(C) THEN $\emptyset$ ELSE posicionesPokemon(p, dameUno(C)) $\land$ \\coordenadasTotalesPoke(sinUno(C), p) FI}
 
 %\tadAlinearAxiomas{hayAlgunPoke(j, C)}
 
@@ -189,53 +189,43 @@
 
 %\tadAlinearAxiomas{movOK(j,j',p)}
 
-\tadAxioma{movOK(j,j',p)}{(enRango(posicionJugador(j'), coordPoke(j, coordenadasTotalesPoke(pokemonesSalvajes(P), P)), 2) $\land$  enRango(c, coordenadasTotalesPoke(pokemonesSalvajes(P), P), 2)) $\lor$ ($\lnot$ enRango(posicionJugador(j'), coordPoke(j, coordenadasTotalesPoke(pokemonesSalvajes(P), P)), 2) $\land$ $\lnot$ enRango(c, coordenadasTotalesPoke(pokemonesSalvajes(P), P), 2)))}
+\tadAxioma{movOK(j,j',p)}{(enRango(posicionJugador(j'), coordPoke(j, \\ coordenadasTotalesPoke(pokemonesSalvajes(p), p)), 2) $\land$  enRango(c, coordenadasTotalesPoke(pokemonesSalvajes(p), p), 2)) $\lor$ ($\lnot$ enRango(posicionJugador(j'), coordPoke(j, coordenadasTotalesPoke(pokemonesSalvajes(p), p)), 2) $\land$ $\lnot$ enRango(c, coordenadasTotalesPoke(pokemonesSalvajes(p), p), 2)))}
 
 \tadAxioma{coordPoke(j, C)}{\IF enRango(j, dameUno(C), 2) THEN dameUno(C) ELSE coordPoke(j, sinUno(C))FI}
 
 %\tadAlinearAxiomas{esElElegido(j,P)}
-\tadAxioma{esElElegido(j,P)}{dameUno(jugadoresEnRangoPoke(coordPoke(j, coordenadasTotalesPoke(pokemonesSalvajes(P), P)))) == j }
+\tadAxioma{esElElegido(j,p)}{dameUno(jugadoresEnRangoPoke(coordPoke(j, coordenadasTotalesPoke(pokemonesSalvajes(p), p)))) == j }
 
 %\tadAlinearAxiomas{jugadoresEnRangoPoke(c, C, P)}
-\tadAxioma{jugadoresEnRangoPoke(c, C, P)}{\IF $\emptyset$?(C) THEN $\emptyset$ ELSE {\IF enRango(posJugador(P,dameUno(C)), c, 2) THEN Ag(dameUno(C), jugadoresEnRangoPoke(c, sinUno(C),P)) ELSE jugadoresEnRangoPoke(c, sinUno(C))FI} FI}
+\tadAxioma{jugadoresEnRangoPoke(c, C, p)}{\IF $\emptyset$?(C) THEN $\emptyset$ ELSE {\IF enRango(posJugador(p,dameUno(C)), c, 2) THEN Ag(dameUno(C), jugadoresEnRangoPoke(c, sinUno(C), p)) ELSE jugadoresEnRangoPoke(c, sinUno(C))FI} FI}
 
-\tadAxioma{esePokemon(j,p)}{cualEsEsePokemon?(coordPoke(j, coordenadasTotalesPoke(pokemonesSalvajes(P), P)), pokemonesSalvajes(P))}
+\tadAxioma{esePokemon(j,p)}{cualEsEsePokemon?(coordPoke(j, coordenadasTotalesPoke(pokemonesSalvajes(p), p)), pokemonesSalvajes(p))}
 
-\tadAxioma{cualEsEsePokemon?(c, C, P)}{\IF c $\in$ posicionesPokemon(P,dameUno(C)) THEN dameUno(C) ELSE cualEsEsePokemon?(c, sinUno(C), P) FI }
-
-
-
-
+\tadAxioma{cualEsEsePokemon?(c, C, p)}{\IF c $\in$ posicionesPokemon(p,dameUno(C)) THEN dameUno(C) ELSE cualEsEsePokemon?(c, sinUno(C), p) FI }
 
 %\tadAlinearAxiomas{pokeParaCapturar(j,P)}
-\tadAxioma{pokeParaCapturar(j,P)}{movimientosParaCapturar(coordPoke(j, coordenadasTotalesPoke(pokemonesSalvajes(P), P)), P) $==$ 9}
-
-
-
-
-
-
+\tadAxioma{pokeParaCapturar(j, p)}{movimientosParaCapturar(coordPoke(j, coordenadasTotalesPoke(pokemonesSalvajes(p), p)), p) $==$ 9}
 
 %\tadAlinearAxiomas{FiltrarEliminados(C,P)}
 
-\tadAxioma{NoEliminados(P)}{FiltrarEliminados(Jugadores(P),P)}
-\tadAxioma{FiltrarEliminados(C,P)}{\IF $\emptyset$?(C) THEN $\emptyset$? ELSE {\IF $\lnot$ eliminado(P,DameUno(C)) THEN Ag(DameUno(C),FiltrarEliminados(SinUno(C),P)) ELSE FiltrarEliminados(SinUno(C),P) FI} FI}
+\tadAxioma{NoEliminados(p)}{FiltrarEliminados(Jugadores(p), p)}
+\tadAxioma{FiltrarEliminados(C, p)}{\IF $\emptyset$?(C) THEN $\emptyset$? ELSE {\IF $\lnot$ eliminado(p, DameUno(C)) THEN Ag(DameUno(C),FiltrarEliminados(SinUno(C), p)) ELSE FiltrarEliminados(SinUno(C), p) FI} FI}
 
-\tadAxioma{pokeCapturados(C,p,P)}{$\#$(p,pokemonsDeJugador(P, DameUno(C))) + pokeCapturados(SinUno(C), p, P) }
+\tadAxioma{pokeCapturados(C, a, p)}{$\#$(a, pokemonsDeJugador(p, DameUno(C))) + pokeCapturados(SinUno(C), a, p) }
 
 %\tadAlinearAxiomas{pokesTotalesDeTipo(p,P)}
-\tadAxioma{pokesTotalesDeTipo(p,P)}{PokeCapturados(NoEliminados(P), P) + $\#$posicionesPokemon(P, p) }
+\tadAxioma{pokesTotalesDeTipo(a, p)}{PokeCapturados(NoEliminados(p), p) +\\ $\#$posicionesPokemon(p, a) }
 
 %\tadAlinearAxiomas{pokesTotalesJugadores(C,P)}
-\tadAxioma{pokesTotalesJugadores(C,P)}{\IF $\emptyset$?(C) THEN O ELSE $\#$pokemonsDeJugador(P, DameUno(C)) + pokesTotalesJugadores(SinUno(C), P) FI}
+\tadAxioma{pokesTotalesJugadores(C, p)}{\IF $\emptyset$?(C) THEN O ELSE $\#$pokemonsDeJugador(p, DameUno(C)) + pokesTotalesJugadores(SinUno(C), p) FI}
 
-\tadAxioma{pokesTotales(P)}{pokesTotalesJugadores(NoEliminados(P), P) + $\#$coordenadasTotalesPoke(pokemonesSalvajes(P), P)}
+\tadAxioma{pokesTotales(p)}{pokesTotalesJugadores(NoEliminados(p), p) + $\#$coordenadasTotalesPoke(pokemonesSalvajes(p), p)}
 
 %%%
 
-\tadAxioma{rareza(P,p)}{100 - div(pokesTotalesDeTipo(p,P) * 100 , pokesTotales(P)) - mod(pokesTotalesDeTipo(p,P) * 100 , pokesTotales(P))  }
+\tadAxioma{rareza(p, a)}{100 - div(pokesTotalesDeTipo(a, p) * 100 , pokesTotales(p)) - mod(pokesTotalesDeTipo(a, p) * 100 , pokesTotales(p))  }
 
-\tadAxioma{eliminado(P,j)}{\IF sanciones(p,j) $\geq$ 5 THEN True ELSE False FI  }
+\tadAxioma{eliminado(p, j)}{\IF sanciones(p, j) $\geq$ 5 THEN True ELSE False FI  }
 
 \end{tad}
 
