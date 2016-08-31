@@ -70,7 +70,7 @@
 \tadOperacion{pokeCapturar}{conj(pokemon), jugador, coordenada, partida}{conj(coordenada)}{}
 \tadOperacion{coordenadasTotalesPoke}{conj(pokemon), partida}{conj(coordenada)}{}
 \tadOperacion{hayAlgunPoke}{jugador, conj(coordenada)}{bool}{}
-\tadOperacion{movOK}{jugador, jugador, partida}{bool}{}
+\tadOperacion{movOK}{jugador, jugador, partida, coordenada}{bool}{}
 \tadOperacion{coordPoke}{jugador, conj(coordenada)}{coordenada}{}
 \tadOperacion{esElElegido}{jugador, partida}{bool}{}
 \tadOperacion{jugadoresEnRangoPoke}{coordenada, conj(jugador), partida}{conj(jugador)}{}
@@ -133,7 +133,7 @@
 %\tadAlinearAxiomas{pokemonesDeJugador(mover(p, j', c),j)}
 
 
-\tadAxioma{pokemonesDeJugador(mover(P, j', c),j)}{\IF j$\neq$j' $\land$ hayAlgunPoke(j, coordenadasTotalesPoke(pokemonesSalvajes(P), P)) $\yluego$ movOK(j, j', P) $\yluego$ pokeParaCapturar(j, P) $\yluego$ esElElegido(j, P) THEN Ag(esePokemon(j, P), pokemonesDeJugador) ELSE pokemonesDeJugador(j, P) FI }
+\tadAxioma{pokemonesDeJugador(mover(p, j', c),j)}{\IF j$\neq$j' $\land$ hayAlgunPoke(j, coordenadasTotalesPoke(pokemonesSalvajes(p), p)) $\yluego$ movOK(j, j', p, c) $\yluego$ pokeParaCapturar(j, p) $\yluego$ esElElegido(j, p) THEN Ag(esePokemon(j, p), pokemonesDeJugador) ELSE pokemonesDeJugador(j, p) FI }
 
 %\tadAlinearAxiomas{posicionJugador(AgPokemon(p, a, c),j')}
 \tadAxioma{posicionJugador(AgPokemon(p, a, c),j')}{posicionJugador(p,j')}
@@ -189,7 +189,7 @@
 
 %\tadAlinearAxiomas{movOK(j,j',p)}
 
-\tadAxioma{movOK(j,j',p)}{(enRango(posicionJugador(j'), coordPoke(j, \\ coordenadasTotalesPoke(pokemonesSalvajes(p), p)), 2) $\land$  enRango(c, coordenadasTotalesPoke(pokemonesSalvajes(p), p), 2)) $\lor$ ($\lnot$ enRango(posicionJugador(j'), coordPoke(j, coordenadasTotalesPoke(pokemonesSalvajes(p), p)), 2) $\land$ $\lnot$ enRango(c, coordenadasTotalesPoke(pokemonesSalvajes(p), p), 2)))}
+\tadAxioma{movOK(j, j', p, c)}{$\lnot$ enRango(posicionJugador(j'), coordPoke(j,\\ coordenadasTotalesPoke(pokemonesSalvajes(p), p)), 2) $\land$ $\lnot$ enRango(c, coordenadasTotalesPoke(pokemonesSalvajes(p), p), 2))}
 
 \tadAxioma{coordPoke(j, C)}{\IF enRango(j, dameUno(C), 2) THEN dameUno(C) ELSE coordPoke(j, sinUno(C))FI}
 
