@@ -24,7 +24,7 @@
 \section{TAD \tadNombre{Partida}}
 
 \begin{tad}{\tadNombre{Partida}}
-\tadIgualdadObservacional{p}{p'}{partida}{}
+\tadIgualdadObservacional{p}{p'}{partida}{mapa(p)=mapa(p') $\land$ jugadores(p)=jugadores(p') $\land$ pokemonesSalvajes(p)=salvajesSalvajes(p') \yluego ($\forall$ a $\in$ pokemonesSalvajes(p)) posicionesPokemon(p,a)=posicionesPokemons(p',a) $\land$ ($\forall$ j $\in$ jugadores(p))(pokemonesDeJugador(p,j)=pokemonesDeJugador(p',j) $\land$ posicionJugador(p,j)=posicionJugador(p',j) $\land$ conectado?(p,j)=conectado(p',j) $\land$ sanciones(p,j)=sanciones(p',j)) $\land$ ($\forall$ c $\in$ coordenadasTotalesPoke(p))movimientosParaCapturar(p,c) = movimientosParaCapturar(p',c)}
 
 \tadGeneros{partida}
 \tadExporta{partida, generadores, observadores, otras operaciones}
@@ -65,11 +65,11 @@
 \tadOtrasOperaciones
 \tadAlinearFunciones{coordenadasTotalesPoke}{conj(Pokemon), jugador, coordenada, partida}
 
-\tadOperacion{capturados}{jugador, partida, coordenada}{conj(pokemon)}{}
-\tadOperacion{capturadosTotales}{partida, conj(coordenada), conj(pokemon)}{conj(pokemon)}{}
+\tadOperacion{capturados}{jugador/j, partida/p, coordenada}{conj(pokemon)}{j $\in$ jugadores(p) $\land$ $\neg$ eliminado(p,j)}
+\tadOperacion{capturadosTotales}{partida/p, conj(coordenada)/C, conj(pokemon)/CP}{conj(pokemon)}{$(\forall c \in C) c \in$ coordenadas(mapa(p))}
 \tadOperacion{pokemonesCapturables}{conj(pokemon), jugador, coordenada, partida}{conj(coordenada)}{}
 \tadOperacion{coordenadasTotalesPoke}{conj(pokemon), partida}{conj(coordenada)}{}
-\tadOperacion{hayPokeEnRango}{jugador, conj(coordenada)}{bool}{}
+\tadOperacion{hayPokeEnRango}{jugador, conj(coordenada), partida}{bool}{}
 \tadOperacion{movFueraDelPoke}{jugador, jugador, partida, coordenada}{bool}{}
 \tadOperacion{coordPoke}{jugador, conj(coordenada)}{coordenada}{}
 \tadOperacion{esElElegido}{jugador, partida}{bool}{}
@@ -88,8 +88,8 @@
 \tadOperacion{rareza}{partida, pokemon}{nat}{}
 \tadOperacion{eliminado}{partida, jugador}{bool}{}
 
-\tadAxioma{div}{nat, nat}{nat}
-\tadAxioma{mod}{nat, nat}{nat}
+\tadOperacion{div}{nat, nat}{nat}{}
+\tadOperacion{mod}{nat, nat}{nat}{}
 
 
 
@@ -158,7 +158,7 @@
 
 %\tadAlinearAxiomas{movimientosParaCapturar(AgPokemon($p$, $a$, $c'$),c)}
 \tadAxioma{movimientosParaCapturar(AgPokemon($p$, $a$, $c'$),c)}{movimientosParaCapturar(p,c)}
-\tadAxioma{movimientosParaCapturar(AgJugador(p, j),c)}{Ag(j,jugadores(p))}
+\tadAxioma{movimientosParaCapturar(AgJugador(p, j),c)}{movimientosParaCapturar(p,c)}
 \tadAxioma{movimientosParaCapturar(conectar(p, j, c'),c)}{\IF enRango(c, c', 2) THEN 0 ELSE moverParaCapturar(p,c) FI }
 \tadAxioma{movimientosParaCapturar(desconectar(p, j),c)}{\IF enRango(c, posicionJugador(p,j), 2) THEN 0 ELSE moverParaCapturar(p,c) FI} 
 \tadAxioma{movimientosParaCapturar(mover(p, j, c)),c')}{\IF enRango(c, c', 2) $\land$ \\enRango(c, posicionJugador(j, p), 2) THEN moverParaCapturar(c, p) ELSE {\IF $\lnot$ enRango(c, c', 2) $\land$ \\$\lnot$ enRango(c, posicionJugador(j, p), 2) THEN moverParaCapturar(c, p) + 1 ELSE 0 FI} FI  }
@@ -184,7 +184,7 @@
 
 %\tadAlinearAxiomas{hayPokeEnRango(j, C)}
 
-\tadAxioma{hayPokeEnRango(j, C)}{\IF $\emptyset$?(C) THEN False ELSE {\IF enRango(posicionJugador(j), dameUno(C), 2) THEN True ELSE hayPokeEnRango(j,sinUno(C))FI} FI}
+\tadAxioma{hayPokeEnRango(j, C, p)}{\IF $\emptyset$?(C) THEN False ELSE {\IF enRango(posicionJugador(j), dameUno(C), 2) THEN True ELSE hayPokeEnRango(j,sinUno(C),p)FI} FI}
 
 %\tadAlinearAxiomas{movFueraDelPoke(j,j',p)}
 
@@ -193,7 +193,7 @@
 \tadAxioma{coordPoke(j, C)}{\IF enRango(j, dameUno(C), 2) THEN dameUno(C) ELSE coordPoke(j, sinUno(C))FI}
 
 %\tadAlinearAxiomas{esElElegido(j,P)}
-\tadAxioma{esElElegido(j,p)}{dameUno(jugadoresEnRangoPoke(coordPoke(j, coordenadasTotalesPoke(pokemonesSalvajes(p), p)))) == j }
+\tadAxioma{esElElegido(j,p)}{dameUno(jugadoresEnRangoPoke(coordPoke(j, coordenadasTotalesPoke(pokemonesSalvajes(p),noEliminados(p), p)))) == j }
 
 %\tadAlinearAxiomas{jugadoresEnRangoPoke(c, C, P)}
 \tadAxioma{jugadoresEnRangoPoke(c, C, p)}{\IF $\emptyset$?(C) THEN $\emptyset$ ELSE {\IF enRango(posicionJugador(p,dameUno(C)), c, 2) THEN Ag(dameUno(C), jugadoresEnRangoPoke(c, sinUno(C), p)) ELSE jugadoresEnRangoPoke(c, sinUno(C))FI} FI}
