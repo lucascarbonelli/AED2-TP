@@ -65,31 +65,31 @@
 \tadOtrasOperaciones
 \tadAlinearFunciones{coordenadasTotalesPoke}{conj(Pokemon), jugador, coordenada, partida}
 
-\tadOperacion{capturados}{jugador/j, partida/p, coordenada}{conj(pokemon)}{j $\in$ jugadores(p) $\land$ $\neg$ eliminado(p,j)}
+\tadOperacion{capturados}{jugador/j, partida/p, coordenada}{conj(pokemon)}{j $\in$ noEliminados(p)}
 \tadOperacion{capturadosTotales}{partida/p, conj(coordenada)/C, conj(pokemon)/CP}{conj(pokemon)}{$(\forall c \in C) c \in$ coordenadas(mapa(p))}
-\tadOperacion{pokemonesCapturables}{conj(pokemon), jugador, coordenada, partida}{conj(coordenada)}{}
+\tadOperacion{pokemonesCapturables}{conj(pokemon), jugador, coordenada, partida}{conj(coordenada)}{j $\in$ noEliminados(p) $\land c \in$ coordenadas(mapa(p)) }
 \tadOperacion{coordenadasTotalesPoke}{conj(pokemon), partida}{conj(coordenada)}{}
-\tadOperacion{hayPokeEnRango}{jugador, conj(coordenada), partida}{bool}{}
-\tadOperacion{movFueraDelPoke}{jugador, jugador, partida, coordenada}{bool}{}
-\tadOperacion{coordPoke}{jugador, conj(coordenada)}{coordenada}{}
-\tadOperacion{esElElegido}{jugador, partida}{bool}{}
-\tadOperacion{jugadoresEnRangoPoke}{coordenada, conj(jugador), partida}{conj(jugador)}{}
-\tadOperacion{esePokemon}{jugador, partida}{pokemon}{}
-\tadOperacion{cualEsEsePokemon?}{coordenada, conj(pokemon), partida}{pokemon}{}
+\tadOperacion{hayPokeEnRango}{jugador/j, conj(coordenada)/C, partida/p}{bool}{$(\forall c \in C) c \in$ coordenadas(mapa(p)) $\land$ j $\in$ noEliminados(p) }
+\tadOperacion{movFueraDelPoke}{jugador/j, jugador/j', partida/p, coordenada/c}{bool}{j,j' $\in$ noEliminados(p) $\land c \in$ coordenadas(mapa(p))}
+\tadOperacion{coordPoke}{jugador/j, conj(coordenada)/C}{coordenada}{$(\forall c \in C) c \in$ coordenadas(mapa(p)) $\land$ j $\in$ noEliminados(p)}
+\tadOperacion{esElElegido}{jugador/j, partida/p}{bool}{j $\in$ noEliminados(p)}
+\tadOperacion{jugadoresEnRangoPoke}{coordenada/c, conj(jugador)/C, partida/p}{conj(jugador)}{$c \in$ coordenadas(mapa(p)) $\land$ ($\forall$ j $\in$ C) noEliminados(p)}
+\tadOperacion{esePokemon}{jugador/j, partida/p}{pokemon}{j $\in$ noEliminados(p)}
+\tadOperacion{cualEsEsePokemon?}{coordenada/c, conj(pokemon)/C, partida/p}{pokemon}{$c \in$ coordenadas(mapa(p)) $\land$ ($\forall$ j $\in$ C) j $\in$ noEliminados(p)}
 
-\tadOperacion{pokeParaCapturar}{jugador/j, partida}{bool}{}
+\tadOperacion{pokeParaCapturar}{jugador/j, partida/p}{bool}{j $\in$ noEliminados(p)}
 \tadOperacion{NoEliminados}{partida}{conj(jugador)}{}
-\tadOperacion{FiltrarEliminados}{conj(jugador), partida}{conj(jugador)}{}
-\tadOperacion{pokesCapturados}{conj(jugador), pokemon, partida}{nat}{}
+\tadOperacion{FiltrarEliminados}{conj(jugador)/C, partida}{conj(jugador)}{($\forall$ j $\in$ C)j $\in$ jugadores(p)}
+\tadOperacion{pokesCapturados}{conj(jugador)/C, pokemon /a, partida/p}{nat}{($\forall$ j $\in$ C) j $\in$ noEliminados(p)}
 \tadOperacion{pokesTotalesDeTipo}{pokemon, partida}{nat}{}
-\tadOperacion{pokesTotalesJugadores}{conj(jugador), partida}{nat}{}
+\tadOperacion{pokesTotalesJugadores}{conj(jugador)/C, partida/p}{nat}{($\forall$ j $\in$ C) j $\in$ noEliminados(p)}
 \tadOperacion{pokesTotales}{partida}{nat}{}
 
 \tadOperacion{rareza}{partida, pokemon}{nat}{}
-\tadOperacion{eliminado}{partida, jugador}{bool}{}
+\tadOperacion{eliminado}{partida, jugador/j}{bool}{(j $\in$ jugadores(p)}
 
-\tadOperacion{div}{nat, nat}{nat}{}
-\tadOperacion{mod}{nat, nat}{nat}{}
+\tadOperacion{div}{nat, nat}{nat}{q $\neq$ 0}
+\tadOperacion{mod}{nat, nat}{nat}{q $\neq$ 0}
 
 
 
