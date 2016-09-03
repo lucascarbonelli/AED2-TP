@@ -1,9 +1,9 @@
 \documentclass[10pt, a4paper]{article}
-% especifico m�rgenes manualmente
+% especifico márgenes manualmente
 \usepackage[paper=a4paper, left=1.5cm, right=1.5cm, bottom=1.5cm, top=3.5cm]{geometry}
-% codificaci�n ISO-8859-1
-\usepackage[latin1]{inputenc}
-% separaci�n sil�bica en castellano
+% codificación ISO-8859-1
+\usepackage[utf8]{inputenc} %% cambié latin1 por utf8, sigue tirando error cuando compila pero imprime bien los acentos en la carátula
+% separación silábica en castellano
 \usepackage[spanish]{babel}
 % paquetes y caratula de algo2
 \usepackage{aed2-symb,aed2-itef,aed2-tad,caratula}
@@ -23,7 +23,7 @@
 \integrante{Integrante 3}{Nro/YY}{mail@dc.uba.ar} % obligatorio 
 \integrante{Integrante 4}{Nro/YY}{mail@dc.uba.ar} % obligatorio 
 
-%\maketitle
+\maketitle
 
 % compilar 2 veces para actualizar las referencias
 \tableofcontents
@@ -48,37 +48,37 @@
 
 \tadGeneros{mapa}
 \tadExporta{mapa, generadores, observadores, otras operaciones}
-\tadUsa{\tadNombre{Coordenada}, \tadNombre{Nat}}
+\tadUsa{\tadNombre{Bool}, \tadNombre{Nat}, \tadNombre{Coordenada}, \tadNombre{Conjunto(Coordenada)}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  Observadores Basicos %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \tadObservadores
-\tadAlinearFunciones{posiciones~}{Mapa/m , Coordenada/c}
-\tadOperacion{posiciones}{mapa}{conj(Coordenada)}{}
-\tadOperacion{opciones}{Mapa/m , Coordenada/c}{conj(Coordenada)}{c $\in$ posiciones(m) }
+\tadAlinearFunciones{posiciones~}{mapa/m , coordenada/c}
+\tadOperacion{posiciones}{mapa}{conj(coordenada)}{}
+\tadOperacion{opciones}{mapa/m, coordenada/c}{conj(coordenada)}{c $\in$ posiciones(m)}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Generadores  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \tadGeneradores
-\tadAlinearFunciones{AgCoordenada~}{Mapa/m , Coordenada/ c ,Coordenada/c'}
-\tadOperacion{InitMapa}{}{Mapa}{}
-\tadOperacion{AgCoordenada}{Mapa/m , Coordenada/c}{Mapa}{}
-\tadOperacion{Relacionar}{Mapa/m , Coordenada/c ,Coordenada/c' }{Mapa}{ c $\neq $ c' $\land$ c,c' $\in$ posiciones(m) }
+\tadAlinearFunciones{AgCoordenada~}{mapa/m, coordenada/c, coordenada/c'}
+\tadOperacion{InitMapa}{}{mapa}{}
+\tadOperacion{AgCoordenada}{mapa/m, coordenada/c}{mapa}{}
+\tadOperacion{Relacionar}{mapa/m, coordenada/c, coordenada/c'}{mapa}{c $\neq $ c' $\land$ c,c' $\in$ posiciones(m)}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%Otras Operaciones %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \tadOtrasOperaciones
 
-\tadAlinearFunciones{opcionesTotalesAux}{Mapa/m, conj(Coordenada)/C, conj(Coordenada)/C'}
+\tadAlinearFunciones{opcionesTotalesAux}{mapa/m, conj(coordenada)/C, conj(coordenada)/C'}
 
-\tadOperacion{enRango}{Mapa/m , Coordenada/c , Coordenada/c' , Nat/n}{Bool}{}
-\tadOperacion{opcionesTotales}{Mapa/m, Coordenada/c}{conj(Coordenada)}{c $\in$ posiciones(m)}
-\tadOperacion{opcionesTotalesAux}{Mapa/m , conj(Coordenada)/C, conj(Coordenada)/C'}{conj(Coordenada)}{C, C' $\subseteq$ posiciones(m)}
+\tadOperacion{enRango}{coordenada/c, coordenada/c', nat/n}{bool}{}
+\tadOperacion{opcionesTotales}{mapa/m, coordenada/c}{conj(coordenada)}{c $\in$ posiciones(m)}
+\tadOperacion{opcionesTotalesAux}{mapa/m, conj(coordenada)/C, conj(coordenada)/C'}{conj(coordenada)}{C, C' $\subseteq$ posiciones(m)}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Axiomas %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\tadAxiomas[\paratodo{mapa}{m} \paratodo{Coordenada}{c,c',c''} \paratodo{conj(Coordenada)}{C,C'} \paratodo{Nat}{n} ]
+\tadAxiomas[\paratodo{mapa}{m} \paratodo{coordenada}{c,c',c''} \paratodo{conj(coordenada)}{C,C'} \paratodo{nat}{n} ]
 
 \tadAlinearAxiomas{opciones(AgCoordenada(m,c),c')}
 
@@ -91,7 +91,7 @@
 \tadAxioma{opciones(AgCoordenada(m,c),c')}{\IF $c=c'$ THEN $\emptyset$ ELSE opciones(m,C') FI}
 \tadAxioma{opciones(Relacionear(m,c,c'),c'')}{\IF c''$\neq$ c $\land$ c'' $\neq$ c' THEN opciones(m,c'') ELSE {\IF c''$=$ c THEN Ag(c',opciones(m,c)) ELSE Ag(c,opciones(m,c')) FI} FI}
 
-\tadAxioma{enRango(m,c,c',n)}{((max($\Pi_{1}$(c),$\Pi_{1}$(c')) - min($\Pi_{1}$(c),$\Pi_{1}$(c'))) *((max($\Pi_{1}$(c),$\Pi_{1}$(c')) - min($\Pi_{1}$(c),$\Pi_{1}$(c'))) + ((max($\Pi_{2}$(c),$\Pi_{2}$(c')) - min($\Pi_{2}$(c),$\Pi_{2}$(c'))) *((max($\Pi_{2}$(c),$\Pi_{2}$(c')) - min($\Pi_{2}$(c),$\Pi_{2}$(c')))   }
+\tadAxioma{enRango(c,c',n)}{((max($\Pi_{1}$(c),$\Pi_{1}$(c')) - min($\Pi_{1}$(c),$\Pi_{1}$(c'))) * \\((max($\Pi_{1}$(c),$\Pi_{1}$(c')) - min($\Pi_{1}$(c),$\Pi_{1}$(c'))) + \\((max($\Pi_{2}$(c),$\Pi_{2}$(c')) - min($\Pi_{2}$(c),$\Pi_{2}$(c'))) * \\((max($\Pi_{2}$(c),$\Pi_{2}$(c')) - min($\Pi_{2}$(c),$\Pi_{2}$(c'))) $\leq$ n * n}
 
 \tadAxioma{opcionesTotales(m,c)}{opciones(c) $\cup$ opcionesTotalesAux(m,opciones(c),Ag(c,$\emptyset$))}
 
@@ -108,7 +108,7 @@
 
 \tadGeneros{partida}
 \tadExporta{partida, generadores, observadores, otras operaciones}
-\tadUsa{\tadNombre{Bool}, \tadNombre{Nat}, \tadNombre{Coordenada}, \tadNombre{Jugador}, \tadNombre{Pokemon}, \tadNombre{Conjunto(Coordenada)}, \\\tadNombre{Conjunto(Jugador)}, \tadNombre{Conjunto(Pokemon)}}
+\tadUsa{\tadNombre{Bool}, \tadNombre{Nat}, \tadNombre{Coordenada}, \tadNombre{Jugador}, \tadNombre{Pokemon}, \tadNombre{Conjunto(Coordenada)}, \\\tadNombre{Conjunto(Jugador)}, \tadNombre{Conjunto(Pokemon)}, \tadNombre{Mapa}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \tadObservadores
@@ -143,7 +143,7 @@
 
 
 \tadOtrasOperaciones
-\tadAlinearFunciones{coordenadasTotalesPoke}{partida/p, conj(coordenada), conj(pokemon)}
+\tadAlinearFunciones{coordenadasTotalesPoke}{partida/p, conj(coordenada)/C, conj(pokemon)/C'}
 
 \tadOperacion{capturados}{jugador/j, partida/p, coordenada}{conj(pokemon)}{j $\in$ noEliminados(p)}
 \tadOperacion{capturadosTotales}{partida/p, conj(coordenada)/C, conj(pokemon)/C'}{conj(pokemon)}{$(\forall c \in C) c \in$ coordenadas(mapa(p)) $\land$ ($\forall$ a $\in$ C') a $\in$ pokemonesSalvajes(p)}
@@ -159,14 +159,14 @@
 
 \tadOperacion{pokeParaCapturar}{jugador/j, partida/p}{bool}{j $\in$ noEliminados(p)}
 \tadOperacion{NoEliminados}{partida}{conj(jugador)}{}
-\tadOperacion{FiltrarEliminados}{conj(jugador)/C, partida}{conj(jugador)}{($\forall$ j $\in$ C)j $\in$ jugadores(p)}
+\tadOperacion{FiltrarEliminados}{conj(jugador)/C, partida/p}{conj(jugador)}{($\forall$ j $\in$ C) j $\in$ jugadores(p)}
 \tadOperacion{pokesCapturados}{conj(jugador)/C, pokemon /a, partida/p}{nat}{($\forall$ j $\in$ C) j $\in$ noEliminados(p)}
 \tadOperacion{pokesTotalesDeTipo}{pokemon, partida}{nat}{}
 \tadOperacion{pokesTotalesJugadores}{conj(jugador)/C, partida/p}{nat}{($\forall$ j $\in$ C) j $\in$ noEliminados(p)}
 \tadOperacion{pokesTotales}{partida}{nat}{}
 
-\tadOperacion{rareza}{partida, pokemon}{nat}{pokesTotales(p) $>$ 0}
-\tadOperacion{eliminado}{partida, jugador/j}{bool}{(j $\in$ jugadores(p)}
+\tadOperacion{rareza}{partida/p, pokemon}{nat}{pokesTotales(p) $>$ 0}
+\tadOperacion{eliminado}{partida/p, jugador/j}{bool}{(j $\in$ jugadores(p)}
 
 \tadOperacion{div}{nat, nat/q}{nat}{q $\neq$ 0}
 \tadOperacion{mod}{nat, nat/q}{nat}{q $\neq$ 0}
@@ -195,15 +195,15 @@
 
 
 \tadAxioma{pokemonesSalvajes(NuevaPartida(m))}{$ \emptyset $}
-\tadAxioma{pokemonesSalvajes(AgPokemon(p, a, c))}{Ag(a , pokemonesSalvajes(p))}
+\tadAxioma{pokemonesSalvajes(AgPokemon(p, a, c))}{Ag(a, pokemonesSalvajes(p))}
 \tadAxioma{pokemonesSalvajes(AgJugador(p, j))}{pokemonesSalvajes(p)}
 \tadAxioma{pokemonesSalvajes(conectar(p, j, c))}{pokemonesSalvajes(p)}
 \tadAxioma{pokemonesSalvajes(desconectar(p, j))}{pokemonesSalvajes(p)}
-\tadAxioma{pokemonesSalvajes(mover(P, j, c))}{pokemonesSalvajes(P) - capturados(j, P, c)}
+\tadAxioma{pokemonesSalvajes(mover(p, j, c))}{pokemonesSalvajes(p) - capturados(j, p, c)}
 
 
 \tadAxioma{posicionesPokemon(NuevaPartida(m), a)}{$ \emptyset $}
-\tadAxioma{posicionesPokemon(AgPokemon(p, a, c), a)}{Ag(c, posicionesPokemon(P, a))}
+\tadAxioma{posicionesPokemon(AgPokemon(p, a, c), a)}{Ag(c, posicionesPokemon(p, a))}
 \tadAxioma{posicionesPokemon(AgJugador(p, j), a)}{posicionesPokemon(p, a)}
 \tadAxioma{posicionesPokemon(conectar(p, j, c), a)}{posicionesPokemon(p, a)}
 \tadAxioma{posicionesPokemon(desconectar(p, j), a)}{posicionesPokemon(p, a)}
@@ -211,7 +211,7 @@
 
 
 \tadAxioma{pokemonesDeJugador(NuevaPartida(m), j)}{$ \emptyset $}
-\tadAxioma{pokemonesDeJugador(AgPokemon(p, a, c), j)}{pokemonesDeJugador(P,j)}
+\tadAxioma{pokemonesDeJugador(AgPokemon(p, a, c), j)}{pokemonesDeJugador(p,j)}
 \tadAxioma{pokemonesDeJugador(AgJugador(p, j), j)}{pokemonesDeJugador(p,j)}
 \tadAxioma{pokemonesDeJugador(conectar(p, j, c), j)}{pokemonesDeJugador(p,j)}
 \tadAxioma{pokemonesDeJugador(desconectar(p, j), j)}{pokemonesDeJugador(p,j)}
@@ -225,11 +225,11 @@
 \tadAxioma{posicionJugador(mover(p, j, c), j')}{\IF j $=$ j' THEN c ELSE posicionJugador(p, j') FI}
 
 
-\tadAxioma{conectado?(AgPokemon(p, a, c),j')}{conectado(p, j')}
-\tadAxioma{conectado?(AgJugador(p, j), j')}{\IF j $=$ j' THEN False ELSE conectado(p, j') FI}
-\tadAxioma{conectado?(conectar(p, j, c), j')}{\IF j $=$ j' THEN True ELSE conectado(p,j') FI }
-\tadAxioma{conectado?(desconectar(p, j), j')}{\IF j $=$ j' THEN False ELSE conectado(p,j') FI} 
-\tadAxioma{conectado?(mover(p, j, c), j')}{conectado(p, j')} 
+\tadAxioma{conectado?(AgPokemon(p, a, c),j')}{conectado?(p, j')}
+\tadAxioma{conectado?(AgJugador(p, j), j')}{\IF j $=$ j' THEN False ELSE conectado?(p, j') FI}
+\tadAxioma{conectado?(conectar(p, j, c), j')}{\IF j $=$ j' THEN True ELSE conectado?(p, j') FI }
+\tadAxioma{conectado?(desconectar(p, j), j')}{\IF j $=$ j' THEN False ELSE conectado?(p, j') FI} 
+\tadAxioma{conectado?(mover(p, j, c), j')}{conectado?(p, j')} 
 
 
 \tadAxioma{sanciones(AgPokemon(p, a, c), j')}{sanciones(p, j')}
@@ -240,9 +240,9 @@
 
 \tadAxioma{movimientosParaCapturar(AgPokemon(p, a, c'),c)}{movimientosParaCapturar(p,c)}
 \tadAxioma{movimientosParaCapturar(AgJugador(p, j), c)}{movimientosParaCapturar(p,c)}
-\tadAxioma{movimientosParaCapturar(conectar(p, j, c'), c)}{\IF enRango(c, c', 2) THEN 0 ELSE moverParaCapturar(p,c) FI }
-\tadAxioma{movimientosParaCapturar(desconectar(p, j), c)}{\IF enRango(c, posicionJugador(p,j), 2) THEN 0 ELSE moverParaCapturar(p,c) FI} 
-\tadAxioma{movimientosParaCapturar(mover(p, j, c)), c')}{\IF enRango(c, c', 2) $\land$ \\enRango(c, posicionJugador(j, p), 2) THEN moverParaCapturar(c, p) ELSE {\IF $\lnot$ enRango(c, c', 2) $\land$ \\$\lnot$ enRango(c, posicionJugador(j, p), 2) THEN moverParaCapturar(c, p) + 1 ELSE 0 FI} FI  }
+\tadAxioma{movimientosParaCapturar(conectar(p, j, c'), c)}{\IF enRango(c, c', 2) THEN 0 ELSE movimientosParaCapturar(p,c) FI }
+\tadAxioma{movimientosParaCapturar(desconectar(p, j), c)}{\IF enRango(c, posicionJugador(p,j), 2) THEN 0 ELSE movimientosParaCapturar(p,c) FI} 
+\tadAxioma{movimientosParaCapturar(mover(p, j, c)), c')}{\IF enRango(c, c', 2) $\land$ \\enRango(c, posicionJugador(j, p), 2) THEN movimientosParaCapturar(c, p) ELSE {\IF $\lnot$ enRango(c, c', 2) $\land$ \\$\lnot$ enRango(c, posicionJugador(j, p), 2) THEN movimientosParaCapturar(c, p) + 1 ELSE 0 FI} FI  }
 
 
 
