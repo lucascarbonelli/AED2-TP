@@ -29,7 +29,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %cuatrimestre de acuerdo a la opcion
-\newcommand{\Cuatrimestre}{$2^\mathrm{do}$ cuatrimestre de 2014 (compilado 24/10/2014)}
+\newcommand{\Cuatrimestre}{$2^\mathrm{do}$ cuatrimestre de 2016 (compilado?)}
 %\newcommand{\Cuatrimestre}{$1^\mathrm{er}$ cuatrimestre de 2012 (compilado 08/05/2012)}
 %\renewcommand{\Cuatrimestre}{$2^\mathrm{do}$ cuatrimestre de 2010 (compilado 13/05/2011)}
 
@@ -173,7 +173,7 @@
 \newpage
 
 
-\section{Módulo Coordenada($\alpha$)}
+\section{Módulo Coordenada}
 
 El módulo Lista Enlazada provee una secuencia que permite la inserción, modificación, borrado y acceso eficiente del primer y último elemento.  En cambio, el acceso a un elemento aleatorio tiene un costo lineal.  En forma concisa, este módulo implementa lo que se conoce como una lista doblemente enlazada, con punteros al inicio y al fin.
 
@@ -197,12 +197,12 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(a)$ al co
 
   \textbf{géneros}: \TipoVariable{lista$(\alpha)$}, \TipoVariable{itLista($\alpha$)}.
 
-  \Titulo{Operaciones básicas de lista}
+  \Titulo{Operaciones básicas de coordenada}
 
-  \InterfazFuncion{Vacía}{}{lista$(\alpha)$}%
-  {$res \igobs \secuencia{}$}%
+  \InterfazFuncion{crearCoor}{\In{n}{Nat}, \In{n'}{Nat}}{Coordenada}%
+  {$ longitud(res) = n \land latitud(res) = n'$ }
   [$\Theta(1)$]
-  [genera una lista vacía.]
+  [genera una coordenada con longitud y latitud pasadas por parametro.]
 
   \InterfazFuncion{AgregarAdelante}{\Inout{l}{lista($\alpha$)}, \In{a}{$\alpha$}}{itLista($\alpha$}
   [$l \igobs l_0$]
@@ -453,9 +453,9 @@ En esta sección se hace abuso de notación en los cálculos de álgebra de órdenes 
  \Titulo{Algoritmos del módulo}
   	\medskip
   
-\begin{algorithm}[H]{\textbf{iVacía}() $\to$ $res$ : lst}
+\begin{algorithm}[H]{\textbf{iCrearCoord}(\In{n}{Nat}, \In{n'}{Nat}) $\to$ $res$ : Coordenada}
     	\begin{algorithmic}[1]
-			 \State $res \gets \langle NULL, 0 \rangle$ \Comment $\Theta(1)$
+			 \State $res \gets \langle n, n' \rangle$ \Comment $\Theta(1)$
 
 			\medskip
 			\Statex \underline{Complejidad:} $\Theta(1)$
