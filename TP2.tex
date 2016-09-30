@@ -204,161 +204,47 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(a)$ al co
   [$\Theta(1)$]
   [genera una coordenada con longitud y latitud pasadas por parametro.]
 
-  \InterfazFuncion{AgregarAdelante}{\Inout{l}{lista($\alpha$)}, \In{a}{$\alpha$}}{itLista($\alpha$}
-  [$l \igobs l_0$]
-  {$l \igobs \secuencia{a}[l_0]$ $\land$ $res$ $=$ CrearItBi(\secuencia{}, $l$) $\land$ alias(SecuSuby($res$) $=$ $l$)}
-  [$\Theta(copy(a))$]
-  [agrega el elemento $a$ como primer elemento de la lista.  Retorna un iterador a $l$, de forma tal que Siguiente devuelva $a$.]
-  [el elemento $a$ agrega por copia. El iterador se invalida si y sólo si se elimina el elemento siguiente del iterador sin utilizar la función \NombreFuncion{EliminarSiguiente}.]
-
-  \InterfazFuncion{AgregarAtras}{\Inout{l}{lista($\alpha$)}, \In{a}{$\alpha$}}{itLista($\alpha$)}
-  [$l \igobs l_0$]
-  {$l \igobs l_0 \circ a$ $\land$ $res$ $=$ CrearItBi($l_0$, $a$) $\land$ alias(SecuSuby($res$) $=$ $l$)}
-  [$\Theta(copy(a))$]
-  [agrega el elemento $a$ como último elemento de la lista. Retorna un iterador a $l$, de forma tal que Siguiente devuelva $a$.]
-  [el elemento $a$ se agrega por copia. El iterador se invalida si y sólo si se elimina el elemento siguiente del iterador sin utilizar la función \NombreFuncion{EliminarSiguiente}.]
-
-  \InterfazFuncion{EsVacía?}{\In{l}{lista($\alpha$)}}{bool}
-  {$res$ $\igobs$ vacia?($l$)}
+  \InterfazFuncion{Longitud}{\In{c}{Coordenada)}}{Nat}
+  {$res = longitud(c)$}
   [$\Theta(1)$]
-  [devuelve \texttt{true} si y sólo si $l$ no contiene elementos]
+  [devuelve el valor correspondiente a la longitud de la coordenada.]
 
-  \InterfazFuncion{Fin}{\Inout{l}{lista($\alpha$)}}{}
-  [$l \igobs l_0$ $\land$ $\lnot$vacía?($l$)]
-  {$l$ $\igobs$ fin($l_0$)}
+  \InterfazFuncion{Latitud}{\In{c}{Coordenada)}}{Nat}
+  {$res = latitud(c)$}
   [$\Theta(1)$]
-  [elimina el primer elemento de $l$]
+  [devuelve el valor correspondiente a la latitud de la coordenada.]
 
-  \InterfazFuncion{Comienzo}{\Inout{l}{lista($\alpha$)}}{}
-  [$l \igobs l_0$ $\land$ $\lnot$vacía?($l$)]
-  {$l$ $\igobs$ com($l_0$)}
+  \InterfazFuncion{DistEuclidea}{\In{c}{Coordenada}, \In{c'}{Coordenada}}{Nat}
+  {$res * res = (latitud(c) - latitud(c')) * (latitud(c) - latitud(c')) + (longitud(c) - longitud(c')) * (longitud(c) - longitud(c'))$)}
   [$\Theta(1)$]
-  [elimina el último elemento de $l$]
+  [devuelve la distancia euclidiana.]
 
-  \InterfazFuncion{Primero}{\In{l}{lista($\alpha$)}}{$\alpha$}
-  [$\lnot$vacía?($l$)]
-  {alias($res$ $\igobs$ prim($l$))}
+  \InterfazFuncion{coordenadaArriba}{\In{c}{Coordenada}}{Coordenada}
+  {$latitud(res) = latitud(c) \land longitud(res) = longitud(c) + 1$}
   [$\Theta(1)$]
-  [devuelve el primer elemento de la lista.]
-  [$res$ es modificable si y sólo si $l$ es modificable.]
-
-  \InterfazFuncion{Ultimo}{\In{l}{lista($\alpha$)}}{$\alpha$}
-  [$\lnot$vacía?($l$)]
-  {alias($res$ $\igobs$ ult($l$))}
+  [devuelve la coordenada de arriba.]
+  
+  \InterfazFuncion{coordenadaAbajo}{\In{c}{Coordenada}}{Coordenada}
+  {$latitud(res) = latitud(c) \land longitud(res) = longitud(c) - 1$}
   [$\Theta(1)$]
-  [devuelve el último elemento de la lista.]
-  [$res$ es modificable si y sólo si $l$ es modificable.]
+  [devuelve la coordenada de arriba.]
 
-
-  \InterfazFuncion{Longitud}{\In{l}{lista($\alpha$)}}{nat}
-  {$res$ $\igobs$ long($l$)}
+  \InterfazFuncion{coordenadaALaDerecha}{\In{c}{Coordenada}}{Coordenada}
+  {$latitud(res) = latitud(c) + 1  \land longitud(res) = longitud(c)$}
   [$\Theta(1)$]
-  [devuelve la cantidad de elementos que tiene la lista.]
-
-
-  \InterfazFuncion{$\bullet$[$\bullet$]}{\In{l}{lista($\alpha$)}, \In{i}{nat}}{$\alpha$}
-  [$i$ $<$ long($l$)]
-  {alias($res$ $\igobs$ iesimo($l$, $i$))}
-  [$\Theta(i)$]
-  [devuelve el elemento que se encuentra en la $i$-ésima posición de la lista en base $0$.  Es decir, {$l[i]$} devuelve el elemento que se encuentra en la posición $i+1$.]  
-  [$res$ es modificable si y sólo si $l$ es modificable.]
-
-  \InterfazFuncion{Copiar}{\In{l}{lista($\alpha$)}}{lista($\alpha$)}
-  {$res \igobs l$}
-  [{$\displaystyle\Theta\left(\sum_{i=1}^{\ell}copy({l[i]})\right)$, donde $\ell$ $=$ long($l$).}]
-  [genera una copia nueva de la lista.]
-
-  \InterfazFuncion{$\bullet = \bullet$}{\In{l_1}{lista($\alpha$)}, \In{l_2}{lista($\alpha$)}}{bool}
-  {$res \igobs l_1 = l_2$}
-  [{$\displaystyle\Theta\left(\sum_{i=1}^{\ell}{equal(l_1[i],l_2[i])}\right)$, donde $\ell = \min\{\text{long}(l_1),\text{long}(l_2)\}$}.]
-  [compara $l_1$ y $l_2$ por igualdad, cuando $\alpha$ posee operación de igualdad.]
-  []%no hay aliasing
-  [{\parbox[t]{\textwidth-3cm}{%
-    \InterfazFuncion{$\bullet = \bullet$}{\In{a_1}{$\alpha$}, \In{a_2}{$\alpha$}}{bool}
-    {$res \igobs (a_1 = a_2)$}
-    [$\Theta(equal(a_1, a_2))$]
-    [función de igualdad de $\alpha$'s]
-  }}]
-
-  \Titulo{Operaciones del iterador}
-
-  El iterador que presentamos permite modificar la lista recorrida.  Sin embargo, cuando la lista es no modificable, no se pueden utilizar las funciones que la modificarían, teniendo en cuenta el aliasing existente entre el iterador y la lista iterada.  Cuando la lista es modificable, vamos a decir que el iterador generado es modificable.
-
-  \InterfazFuncion{CrearIt}{\In{l}{lista($\alpha$)}}{itLista($\alpha$)}
-  {$res$ $\igobs$ crearItBi(\secuencia{}, $l$) $\land$ alias(SecuSuby($it$) $=$ $l$)}
+  [devuelve la coordenada de arriba.]
+  
+  \InterfazFuncion{coordenadaALaIzquierda}{\In{c}{Coordenada}}{Coordenada}
+  {$latitud(res) = latitud(c)-1  \land longitud(res) = longitud(c) $}
   [$\Theta(1)$]
-  [crea un iterador bidireccional de la lista, de forma tal que al pedir \NombreFuncion{Siguiente} se obtenga el primer elemento de $l$.]
-  [el iterador se invalida si y sólo si se elimina el elemento siguiente del iterador sin utilizar la función \NombreFuncion{EliminarSiguiente}.]
+  [devuelve la coordenada de arriba.]
 
-  \InterfazFuncion{CrearItUlt}{\In{l}{lista($\alpha$)}}{itLista($\alpha$)}
-  {$res$ $\igobs$ crearItBi($l$, \secuencia{}) $\land$ alias(SecuSuby($it$) $=$ $l$)}
-  [$\Theta(1)$]
-  [crea un iterador bidireccional de la lista, de forma tal que al pedir \NombreFuncion{Anterior} se obtenga el último elemento de $l$.]  
-  [el iterador se invalida si y sólo si se elimina el elemento siguiente del iterador sin utilizar la función \NombreFuncion{EliminarSiguiente}.]
+  
 
-  \InterfazFuncion{HaySiguiente}{\In{it}{itLista($\alpha$)}}{bool}
-  {$res$ $\igobs$ haySiguiente?($it$)}
-  [$\Theta(1)$]
-  [devuelve \texttt{true} si y sólo si en el iterador todavía quedan elementos para avanzar.]
+  
 
-  \InterfazFuncion{HayAnterior}{\In{it}{itLista($\alpha$)}}{bool}
-  {$res$ $\igobs$ hayAnterior?($it$)}
-  [$\Theta(1)$]
-  [devuelve \texttt{true} si y sólo si en el iterador todavía quedan elementos para retroceder.]
-
-  \InterfazFuncion{Siguiente}{\In{it}{itLista($\alpha$)}}{$\alpha$}
-  [HaySiguiente?($it$)]
-  {alias($res$ $\igobs$ Siguiente($it$))}
-  [$\Theta(1)$]
-  [devuelve el elemento siguiente a la posición del iterador.]
-  [$res$ es modificable si y sólo si $it$ es modificable.]
-
-  \InterfazFuncion{Anterior}{\In{it}{itLista($\alpha$)}}{$\alpha$}
-  [HayAnterior?($it$)]
-  {alias($res$ $\igobs$ Anterior($it$))}
-  [$\Theta(1)$]
-  [devuelve el elemento anterior del iterador.]
-  [$res$ es modificable si y sólo si $it$ es modificable.]
-
-
-  \InterfazFuncion{Avanzar}{\Inout{it}{itLista($\alpha$)}}{}
-  [$it = it_0$ $\land$ HaySiguiente?($it$)]
-  {$it$ $\igobs$ Avanzar($it_0$)}
-  [$\Theta(1)$]
-  [avanza el iterador a la posición siguiente.]
-
-  \InterfazFuncion{Retroceder}{\Inout{it}{itLista($\alpha$)}}{}
-  [$it = it_0$ $\land$ HayAnterior?($it$)]
-  {$it$ $\igobs$ Retroceder($it_0$)}
-  [$\Theta(1)$]
-  [retrocede el iterador a la posición anterior.]
-
-  \InterfazFuncion{EliminarSiguiente}{\Inout{it}{itLista($\alpha$)}}{}
-  [$it = it_0$ $\land$ HaySiguiente?($it$)]
-  {$it$ $\igobs$ EliminarSiguiente($it_0$)}
-  [$\Theta(1)$]
-  [elimina de la lista iterada el valor que se encuentra en la posición siguiente del iterador.]
-
-  \InterfazFuncion{EliminarAnterior}{\Inout{it}{itLista($\alpha$)}}{}
-  [$it = it_0$ $\land$ HayAnterior?($it$)]
-  {$it$ $\igobs$ EliminarAnterior($it_0$)}
-  [$\Theta(1)$]
-  [elimina de la lista iterada el valor que se encuentra en la posición anterior del iterador.]
-
-  \InterfazFuncion{AgregarComoSiguiente}{\Inout{it}{itLista($\alpha$)}, \In{a}{$\alpha$}}{}
-  [$it = it_0$]
-  {$it$ $\igobs$ AgregarComoSiguiente($it_0$, $a$)}
-  [$\Theta(copy(a))$]
-  [agrega el elemento $a$ a la lista iterada, entre las posiciones anterior y siguiente del iterador, dejando al iterador posicionado de forma tal que al llamar a \NombreFuncion{Siguiente} se obtenga $a$.]
-  [el elemento $a$ se agrega por copia.]
-
-
-  \InterfazFuncion{AgregarComoAnterior}{\Inout{it}{itLista($\alpha$)}, \In{a}{$\alpha$}}{}
-  [$it = it_0$]
-  {$it$ $\igobs$ AgregarComoAnterior($it_0$, $a$)}
-  [$\Theta(copy(a))$]
-  [agrega el elemento $a$ a la lista iterada, entre las posiciones anterior y siguiente del iterador, dejando al iterador posicionado de forma tal que al llamar a \NombreFuncion{Anterior} se obtenga $a$.]
-  [el elemento $a$ se agrega por copia.]
+ 
+  
 
 \end{Interfaz}
 
@@ -368,9 +254,9 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(a)$ al co
 
   El objetivo de este módulo es implementar una lista doblemente enlazada con punteros al principio y al fin.  Para simplificar un poco el manejo de la estructura, vamos a reemplazarla por una lista circular, donde el siguiente del último apunta al primero y el anterior del primero apunta al último.  La estructura de representación, su invariante de representación y su función de abstracción son las siguientes.
 
-  \begin{Estructura}{lista$(\alpha)$}[lst]
-    \begin{Tupla}[lst]
-      \tupItem{primero}{puntero(nodo)}%
+  \begin{Estructura}{Coordenada}[coord]
+    \begin{Tupla}[coord]
+      \tupItem{latitud}{nat}%
       \tupItem{longitud}{nat}%
     \end{Tupla}
 
