@@ -702,7 +702,111 @@ En esta sección se hace abuso de notación en los cálculos de álgebra de órdenes 
 	
 \end{Algoritmos}
 
+
+
 \newpage
 
+
+
+\section{Módulo Juego}
+
+Descripción del módulo Juego.
+
+\begin{Interfaz}
+  
+  \textbf{parámetros formales}\hangindent=2\parindent\\
+  \parbox{1.7cm}{\textbf{géneros}} $\alpha$\\
+  \parbox[t]{1.7cm}{\textbf{función}}\parbox[t]{\textwidth-2\parindent-1.7cm}{%
+    \InterfazFuncion{Copiar}{\In{a}{$\alpha$}}{$\alpha$}
+    {$res \igobs a$}
+    [$\Theta(copy(a))$]
+    [función de copia de $\alpha$'s]
+    %\TipoFuncion{Copiar}{\In{a}{$\alpha$}}{$\alpha$} \qquad función de copia, con costo temporal $\Theta(copy(a))$.
+  }
+
+  \textbf{se explica con}: \tadNombre{Secuencia$(\alpha)$}, \tadNombre{Iterador Bidireccional($\alpha$)}.
+
+  \textbf{géneros}: \TipoVariable{lista$(\alpha)$}, \TipoVariable{itLista($\alpha$)}.
+
+  \Titulo{Operaciones básicas de coordenada}
+  
+  \InterfazFuncion{Pokémons}{\In{e}{jugador}, \In{j}{juego}}{itMulticonj(pokémon)}
+  [$e \in jugadore(j)$]
+  {$res$ $=$ CrearIt(pokémons(e, j))}
+  [$\Theta(1)$]
+  [Retorna un iterador al multiconjunto de pokémons del jugador e.]
+  [El iterador se invalida si y sólo si se elimina el elemento siguiente del iterador sin utilizar la función \NombreFuncion{EliminarSiguiente}.]
+
+  \InterfazFuncion{Expulsados}{\In{j}{juego}}{itConj(jugador)}
+  {$res$ $=$ CrearIt(expulsados(j))}
+  [$\Theta(1)$]
+  [Retorna un iterador al conjunto de jugador expulsados.]
+  [El iterador se invalida si y sólo si se elimina el elemento siguiente del iterador sin utilizar la función \NombreFuncion{EliminarSiguiente}.]
+  
+  \InterfazFuncion{PosConPokémons}{\In{j}{juego}}{itConj(coor)}
+  {$res$ $=$ CrearIt(posConPokémons(j))}
+  [$\Theta(1)$]
+  [Retorna un iterador al conjunto de coordenadas donde hay pokémons.]
+  [El iterador se invalida si y sólo si se elimina el elemento siguiente del iterador sin utilizar la función \NombreFuncion{EliminarSiguiente}.]
+  
+  \InterfazFuncion{PokémonEnPos}{\In{c}{coor}, \In{j}{juego}}{pokémon}
+  [$c \in posConPokémons(j)$]
+  {$res$ $=$ pokémonEnPos(c, j))}
+  [$\Theta(??)$]
+  [Retorna por copia el pokémon que se encuentra en la coordenada c.]
+
+  \InterfazFuncion{CantMovimientosParaCaptura}{\In{c}{coor}, \In{j}{juego}}{nat}
+  [$c \in posConPokémons(j)$]
+  {$res$ $=$ cantMovimientosParaCaptura(c, j))}
+  [$\Theta(??)$]
+  [Retorna por copia la cantidad de movimientos para al pokémon que se encuentra en la coordenada c.]
+
+  \InterfazFuncion{TodosLosPokémons}{\In{j}{juego}}{itMulticonj(pokémon)}
+  {$res$ $=$ CrearIt(todosLosPokémons(j))}
+  [$\Theta(1)$]
+  [Retorna un iterador al multiconjunto de todos los pokémons del juego.]
+  [El iterador se invalida si y sólo si se elimina el elemento siguiente del iterador sin utilizar la función \NombreFuncion{EliminarSiguiente}.]
+
+  \InterfazFuncion{PokemonsSalvajes}{\In{cs}{conj(coor)}, \In{j}{juego}}{itMulticonj(pokémon)}
+  [$l \igobs l_0$]
+  {$res$ $=$ CrearItBi(pokemonsSalvajes(cs, j))}
+  [$\Theta(??)$]
+  [Retorna un iterador a un multiconjunto de pokémons, que contiene todos los pokémons que se encuentran en las coordenadas cs.]
+  [El iterador se invalida si y sólo si se elimina el elemento siguiente del iterador sin utilizar la función \NombreFuncion{EliminarSiguiente}.]
+  
+  \InterfazFuncion{PokemonsCapturados}{\In{es}{conj(jugador)}, \In{j}{juego}}{itMulticonj(pokémon)}
+  [$l \igobs l_0$]
+  {$res$ $=$ CrearItBi(pokemonsCapturados(es, j))}
+  [$\Theta(??)$]
+  [Retorna un iterador a un multiconjunto de pokémons, que contiene todos los pokémons que fueron capturados por los jugadores del conjunto es.]
+  [El iterador se invalida si y sólo si se elimina el elemento siguiente del iterador sin utilizar la función \NombreFuncion{EliminarSiguiente}.]
+  
+  \InterfazFuncion{BuscarPokémonsCercanos}{\In{c}{coor}, \In{cs}{conj(coor)}, \In{j}{juego}}{itConj(coor)}
+  {$res$ $=$ CrearItBi(buscarPokémonsCercanos(c, cs, j))}
+  [$\Theta(??)$]
+  [Retorna un iterador a un multiconjunto de coordenadas, que contiene todos las coordenadas del conjunto cs que se encuentran a una distancia menor o igual a 4 de la coordenada c.]
+  [El iterador se invalida si y sólo si se elimina el elemento siguiente del iterador sin utilizar la función \NombreFuncion{EliminarSiguiente}.]
+  
+  \InterfazFuncion{CantMismaEspecie}{\In{p}{pokémon}, \In{cp}{multiconj(pokémon)}}{nat}
+  {$res$ $=$ cantMismaEspecie(p, cp)}
+  [$\Theta(??))$]
+  [Retorna la cantidad de pokémons de la especie p que hay en el conjunto cp.]
+  []%%No modifica el conjunto cp.%%]
+  
+\end{Interfaz}
+
+\begin{Representacion}
+
+
+\end{Representacion}
+
+\bigskip
+
+\begin{Algoritmos}
+
+	
+\end{Algoritmos}
+
+\newpage
 
 \end{document}
