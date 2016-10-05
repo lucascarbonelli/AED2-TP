@@ -16,3 +16,10 @@ conj(Pokemons) => diccTrie(tipo, tupla<cant, conjuntoLineal(tupla<coord, cantMov
 						//si no hay salvajes, su conjuntoLineal	//ordenado por la
 						//de coord está vacío					//cant de pokes de las id
 */
+
+vector está, conjuntoLineal está, it de conjuntoLineal está
+HACER:
+·matriz
+·diccTrie
+·it a id (de heap)
+·heap
