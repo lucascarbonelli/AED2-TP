@@ -217,32 +217,38 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(a)$ al co
   [$\bigcirc (\# jugadores(j))$]
   [agrega un nuevo jugador, designandole la proxima ID disponible.]
 
-  \InterfazFuncion{DistEuclidea}{\In{c}{Coordenada}, \In{c'}{Coordenada}}{Nat}
-  {$res * res = (latitud(c) - latitud(c')) * (latitud(c) - latitud(c')) + (longitud(c) - longitud(c')) * (longitud(c) - longitud(c'))$)}
+  \InterfazFuncion{pudoAgregarPokemon}{\In{c}{Coordenada}, \Inout{j}{Juego}}{bool}
+  {$res = c \not \in posConPokemons(j)$}
   [$\Theta(1)$]
-  [devuelve la distancia euclidiana.]
+  [devuelve verdadero si la coordenada pasada por parametro no está en el juego.]
 
-  \InterfazFuncion{coordenadaArriba}{\In{c}{Coordenada}}{Coordenada}
-  {$latitud(res) = latitud(c) \land longitud(res) = longitud(c) + 1$}
+  \InterfazFuncion{debeSancionarse}{\In{e}{Jugador}, \In{c}{Coordenada}, \Inout{j}{Juego}}{bool}
+  {$ res = \lnot hayCamino(posicion(e,j),c,mapa(j)) \lor distEuclidea(posicion(e,j),c,mapa(j)) > 100$}
   [$\Theta(1)$]
-  [devuelve la coordenada de arriba.]
+  [devuelve verdadero si el jugador realizó un movimiento invalido.]
   
-  \InterfazFuncion{coordenadaAbajo}{\In{c}{Coordenada}}{Coordenada}
-  {$latitud(res) = latitud(c) \land longitud(res) = longitud(c) - 1$}
+  \InterfazFuncion{debeExpulsarse}{\In{e}{Jugador}, \In{c}{Coordenada}, \Inout{j}{Juego}}{bool}
+  [$e \in jugadores(j)$]
+  {$res = 10 == sanciones(e,j)$}
   [$\Theta(1)$]
-  [devuelve la coordenada de arriba.]
+  [devuelve verdadero si las sanciones del jugador pasado son 10.]
 
-  \InterfazFuncion{coordenadaALaDerecha}{\In{c}{Coordenada}}{Coordenada}
-  {$latitud(res) = latitud(c) + 1  \land longitud(res) = longitud(c)$}
+  \InterfazFuncion{hayPokemonCercano}{\In{c}{Coordenada}, \In{j}{Juego}}{bool}
+  {$res = \lnot \phi ? (buscarPokemonsCercano(c,posConPokemons(j),j))$}
   [$\Theta(1)$]
-  [devuelve la coordenada de arriba.]
+  [devuelve verdadero si hay algún pokemon cercano a la coordenada pasada.]
   
-  \InterfazFuncion{coordenadaALaIzquierda}{\In{c}{Coordenada}}{Coordenada}
-  {$latitud(res) = latitud(c)-1  \land longitud(res) = longitud(c) $}
+  \InterfazFuncion{posPokemonCercano}{\In{c}{Coordenada}, \In{j}{Juego}}{Coordenada}
+  [$hayPokemonCercano(c,j)$]
+  {$res = dameUno(buscarPokemonsCercano(c,posConPokemons(j),j))$}
   [$\Theta(1)$]
-  [devuelve la coordenada de arriba.]
+  [devuelve una coordenada, cercana a la coordenada pasada, donde hay un pokemon.]
     
-
+  \InterfazFuncion{entrenadoresPosibles}{\In{c}{Coordenada}, \In{es}{conj(jugador)}, \In{j}{Juego}}{conj(jugador)}
+  [$hayPokemonCercano(c,j) \land es \subseteq jugadoresConcectados(j)$]
+  {$res = entrenadoresPosibles(c,es,j)$}
+  [$\Theta(1)$]
+  [devuelve un conjunto con los jugadores cercanos a un pokemon.]
   
 
  
