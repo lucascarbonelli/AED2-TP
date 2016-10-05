@@ -9,6 +9,12 @@ posConPokes => conjuntoLineal(tupla<cant, conjuntoLineal(tupla<coord, cantMovCap
 									//cant total de pokes (ps y pc), si el tipo es solo pc, su conj es vacio
 posPokemonesCercano => matriz(coord)
 
+__________
+
+mapa => matriz(matriz(bool))
+//para ver si una coord P está conectada con otra Q, voy a la coord P, me lleva con un puntero a una matriz igual, pero de bool, y veo
+//si Q está en true o false. En rep, va a tener que contemplarse que P está con Q como que Q está con P.
+
 
 /*
 conj(Pokemons) => diccTrie(tipo, tupla<cant, conjuntoLineal(tupla<coord, cantMovCapt, heap(id)>)>)) 
