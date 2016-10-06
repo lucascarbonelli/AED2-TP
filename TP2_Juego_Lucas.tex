@@ -183,7 +183,7 @@ Descripción del módulo Juego.
   
   \InterfazFuncion{Pokémons}{\In{e}{jugador}, \In{j}{juego}}{itConj(<pokémon, nat>)}
   [$e \in jugadore(j)$]
-  {??}
+  {res = CrearIt(clasificarPokemons(pokémons(e, j)))}
   [$\Theta(1)$]
   [Retorna un iterador al conjunto de tuplas <pokémons, cantidad> del jugador e.]
   [El iterador se invalida si y sólo si se elimina el elemento siguiente del iterador sin utilizar la función \NombreFuncion{EliminarSiguiente}.]
@@ -217,6 +217,25 @@ Descripción del módulo Juego.
   [$\Theta(??))$]
   [Retorna la cantidad de pokémons de la especie p que hay en el conjunto cp.]
 
+  
+  \Titulo{Especificación de las operaciones auxiliares utilizadas en la interfaz}
+  
+  \begin{tad}{Juego Extendido}
+    \parskip=0pt
+    \tadExtiende{\tadNombre{Juego}}
+    
+    \tadTitulo{otras operaciones (no exportadas)}
+    
+    \tadAlinearFunciones{clasificarPokemons}{multiconj(pokémon), pokémon}
+    \tadOperacion{clasificarPokemons}{multiconj(pokémon)}{conj(<pokémon, nat>)}{}
+    \tadOperacion{eliminar}{multiconj(pokémon), pokémon}{multiconj(pokémon)}{}
+    
+    \tadAxiomas
+    \tadAlinearAxiomas{clasificarPokemons(m)}
+    \tadAxioma{clasificarPokemons(m)}{\IF $\emptyset$(m) THEN $\emptyset$ ELSE Ag(<dameUno(m), $\#$dameUno(m)>, \\clasificarPokémons(eliminar(m, dameUno(m)))) FI}
+    \tadAxioma{eliminar(m, p)}{\IF $\emptyset$(m) THEN $\emptyset$ ELSE {\IF dameUno(m) = p THEN eliminar(sinUno(m), p) ELSE Ag(dameUno(m), eliminar(sinUno(m), p)) FI} FI}
+  \end{tad}
+  
   
 \end{Interfaz}
 
