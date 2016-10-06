@@ -1,7 +1,38 @@
 conj(jugadores) => vector(tupla<id, tupla<estaConect, sanciones, posicion, conjuntoLineal(tupla<tipoPokemon, cantidad>), it(a id en heap)>>)
-																			//con it							//este puntero lleva al heap
+_______________________________________________								//con it							//este puntero lleva al heap
 																												//del poke cercano
-conj(expulsados) => vector(id)
+jugadores => it vector(puntero(infoJug))
+//si está expulsado, o no está agregado, apunta a NULL
+infoJug:
+estaConect bool
+sanciones nat
+posicion coord
+pokemons
+it(colaPrioridad)
+
+
+pokemons => it conjuntoLineal(tupla<tipoPokemon, cant>)
+
+
+expulsados => conjuntoLineal(id)
+
+posPokemons => conjuntoLineal(coord)
+//si agregamos un poke, es agregar coord a este dicc, que es O(1)
+
+pokemonsTotales => diccTrie(tipo, puntero(infoPoke))
+
+infoPoke:
+ant
+conjuntoLineal(puntero(infoCoord))
+
+infoCoord:
+coord
+cantMovCapt
+colaPrioridad
+
+
+posPokemonesCercano => matriz(coord)
+_______________________________________________
 
 conj(Pokemons) => diccTrie(tipo, it)
 							//it a la tupla correcta del conj de abajo
