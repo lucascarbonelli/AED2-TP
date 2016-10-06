@@ -7,12 +7,15 @@ infoJug:
 estaConect bool
 sanciones nat
 posicion coord
-pokemons
+it pokemons
 it(colaPrioridad)
 
+jugadores => vector(it(matrizJ))
+
+matrizJugadores => matrizJ(coord)
 
 pokemons => it conjuntoLineal(tupla<tipoPokemon, cant>)
-
+//de un jugador
 
 expulsados => conjuntoLineal(id)
 
@@ -20,16 +23,17 @@ posPokemons => conjuntoLineal(coord)
 //si agregamos un poke, es agregar coord a este dicc, que es O(1)
 
 pokemonsTotales => diccTrie(tipo, puntero(infoPoke))
-
+//acá están los PS y PC
 infoPoke:
-ant
+cant
 conjuntoLineal(puntero(infoCoord))
-
+//si hay algun tipo que no este en el mapa, o el conj es vacio o el puntero va a NULL (decidir)
 infoCoord:
 coord
 cantMovCapt
 colaPrioridad
 
+cantidadPokeTot => nat
 
 posPokemonesCercano => matriz(coord)
 _______________________________________________
