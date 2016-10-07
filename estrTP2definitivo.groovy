@@ -42,7 +42,7 @@ it pokemons
 it(colaPrioridad)
 
 //estas dos son para saber posiciones y adyacencias. Las como el mapa
-matrizJugadores => it matrizJ(conj(id))
+matrizJugadores => it matriz(conj(id))
 //true si está, false si no
 
 __________
@@ -71,31 +71,20 @@ colaPrioridad
 
 cantidadPokeTot => nat
 
-_______________________________________________
-/*
-conj(Pokemons) => diccTrie(tipo, it)
-							//it a la tupla correcta del conj de abajo
-posConPokes => conjuntoLineal(tupla<cant, conjuntoLineal(tupla<coord, cantMovCapt, heap(id)>)>)
-									//cant total de pokes (ps y pc), si el tipo es solo pc, su conj es vacio
-posPokemonesCercano => matriz(coord)
-
 __________
 
-mapa => matriz(matriz(bool))
-//para ver si una coord P está conectada con otra Q, voy a la coord P, me lleva con un it a una matriz igual, pero de bool, y veo
-//si Q está en true o false. En rep, va a tener que contemplarse que P está con Q como que Q está con P.
+mapa => matriz(conjuntoLineal)
+_______________________________________________
 
 
 
-conj(Pokemons) => diccTrie(tipo, tupla<cant, conjuntoLineal(tupla<coord, cantMovCapt, heap(id)>)>)) 
-						//representa todos los pokes: 			//el heap debe estar
-						//si no hay salvajes, su conjuntoLineal	//ordenado por la
-						//de coord está vacío					//cant de pokes de las id
-*/
 
 vector está, conjuntoLineal está, it de conjuntoLineal está
-HACER:
-·matriz
-·diccTrie
-·it a id (de heap)
-·heap
+HACER y divisiones:
+·matriz, it(matriz) -> P
+·diccTrie, it(diccTrie) -> I
+·colaPrioridad, it(colaPrioridad) -> L
+
+
+·mapa -> J
+·juego -> P/J (y los que terminen)
