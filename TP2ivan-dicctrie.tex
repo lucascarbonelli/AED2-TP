@@ -1,0 +1,429 @@
+% % Apunte de modulos basicos
+%
+\documentclass[a4paper,10pt]{article}
+\usepackage[paper=a4paper, hmargin=1.5cm, bottom=1.5cm, top=3.5cm]{geometry}
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{xspace}
+\usepackage{xargs}
+\usepackage{ifthen}
+\usepackage{aed2-tad,aed2-symb,aed2-itef}
+\usepackage{algorithmicx, algpseudocode, algorithm}
+\usepackage[colorlinks=true, linkcolor=blue]{hyperref}
+
+
+\hypersetup{%
+ % Para que el PDF se abra a página completa.
+ pdfstartview= {FitH \hypercalcbp{\paperheight-\topmargin-1in-\headheight}},
+ pdfauthor={Cátedra de Algoritmos y Estructuras de Datos II - DC - UBA},
+ pdfkeywords={Módulos básicos},
+ pdftitle={Módulos básicos de diseño},
+ pdfsubject={Módulos básicos de diseño}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% PARAMETROS A SER MODIFICADOS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%cuatrimestre de acuerdo a la opcion
+\newcommand{\Cuatrimestre}{$2^\mathrm{do}$ cuatrimestre de 2016 (compilado?)}
+%\newcommand{\Cuatrimestre}{$1^\mathrm{er}$ cuatrimestre de 2012 (compilado 08/05/2012)}
+%\renewcommand{\Cuatrimestre}{$2^\mathrm{do}$ cuatrimestre de 2010 (compilado 13/05/2011)}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% OTRAS OPCIONES QUE NO HAY QUE MODIFICAR
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%opening
+\title{Apunte de Módulos Básicos (v.\ 0.3$\alpha$)}
+\author{Algoritmos y Estructuras de Datos II, DC, UBA.}
+\date{\Cuatrimestre}
+
+% Acomodo fancyhdr.
+\pagestyle{fancy}
+\thispagestyle{fancy}
+\lhead{Algoritmos y Estructuras de Datos II}
+\rhead{\Cuatrimestre}
+\cfoot{\thepage /\pageref{LastPage}}
+\renewcommand{\footrulewidth}{0.4pt}
+\setlength{\headheight}{13pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% COMANDOS QUE ALGUN DIA PUEDAN FORMAR UN PAQUETE.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\moduloNombre}[1]{\textbf{#1}}
+
+\let\NombreFuncion=\textsc
+\let\TipoVariable=\texttt
+\let\ModificadorArgumento=\textbf
+\newcommand{\res}{$res$\xspace}
+\newcommand{\tab}{\hspace*{7mm}}
+
+\newcommandx{\TipoFuncion}[3]{%
+  \NombreFuncion{#1}(#2) \ifx#3\empty\else $\to$ \res\,: \TipoVariable{#3}\fi%
+}
+\newcommand{\In}[2]{\ModificadorArgumento{in} \ensuremath{#1}\,: \TipoVariable{#2}\xspace}
+\newcommand{\Out}[2]{\ModificadorArgumento{out} \ensuremath{#1}\,: \TipoVariable{#2}\xspace}
+\newcommand{\Inout}[2]{\ModificadorArgumento{in/out} \ensuremath{#1}\,: \TipoVariable{#2}\xspace}
+\newcommand{\Aplicar}[2]{\NombreFuncion{#1}(#2)}
+
+\newlength{\IntFuncionLengthA}
+\newlength{\IntFuncionLengthB}
+\newlength{\IntFuncionLengthC}
+%InterfazFuncion(nombre, argumentos, valor retorno, precondicion, postcondicion, complejidad, descripcion, aliasing)
+\newcommandx{\InterfazFuncion}[9][4=true,6,7,8,9]{%
+  \hangindent=\parindent
+  \TipoFuncion{#1}{#2}{#3}\\%
+  \textbf{Pre} $\equiv$ \{#4\}\\%
+  \textbf{Post} $\equiv$ \{#5\}%
+  \ifx#6\empty\else\\\textbf{Complejidad:} #6\fi%
+  \ifx#7\empty\else\\\textbf{Descripción:} #7\fi%
+  \ifx#8\empty\else\\\textbf{Aliasing:} #8\fi%
+  \ifx#9\empty\else\\\textbf{Requiere:} #9\fi%
+}
+
+\newenvironment{Interfaz}{%
+  \parskip=2ex%
+  \noindent\textbf{\Large Interfaz}%
+  \par%
+}{}
+
+\newenvironment{Representacion}{%
+  \vspace*{2ex}%
+  \noindent\textbf{\Large Representación}%
+  \vspace*{2ex}%
+}{}
+
+\newenvironment{Algoritmos}{%
+  \vspace*{2ex}%
+  \noindent\textbf{\Large Algoritmos}%
+  \vspace*{2ex}%
+}{}
+
+
+\newcommand{\Titulo}[1]{
+  \vspace*{1ex}\par\noindent\textbf{\large #1}\par
+}
+
+\newenvironmentx{Estructura}[2][2={estr}]{%
+  \par\vspace*{2ex}%
+  \TipoVariable{#1} \textbf{se representa con} \TipoVariable{#2}%
+  \par\vspace*{1ex}%
+}{%
+  \par\vspace*{2ex}%
+}%
+
+\newboolean{EstructuraHayItems}
+\newlength{\lenTupla}
+\newenvironmentx{Tupla}[1][1={estr}]{%
+    \settowidth{\lenTupla}{\hspace*{3mm}donde \TipoVariable{#1} es \TipoVariable{tupla}$($}%
+    \addtolength{\lenTupla}{\parindent}%
+    \hspace*{3mm}donde \TipoVariable{#1} es \TipoVariable{tupla}$($%
+    \begin{minipage}[t]{\linewidth-\lenTupla}%
+    \setboolean{EstructuraHayItems}{false}%
+}{%
+    $)$%
+    \end{minipage}
+}
+
+\newcommandx{\tupItem}[3][1={\ }]{%
+    %\hspace*{3mm}%
+    \ifthenelse{\boolean{EstructuraHayItems}}{%
+        ,#1%
+    }{}%
+    \emph{#2}: \TipoVariable{#3}%
+    \setboolean{EstructuraHayItems}{true}%
+}
+
+\newcommandx{\RepFc}[3][1={estr},2={e}]{%
+  \tadOperacion{Rep}{#1}{bool}{}%
+  \tadAxioma{Rep($#2$)}{#3}%
+}%
+
+\newcommandx{\Rep}[3][1={estr},2={e}]{%
+  \tadOperacion{Rep}{#1}{bool}{}%
+  \tadAxioma{Rep($#2$)}{true \ssi #3}%
+}%
+
+\newcommandx{\Abs}[5][1={estr},3={e}]{%
+  \tadOperacion{Abs}{#1/#3}{#2}{Rep($#3$)}%
+  \settominwidth{\hangindent}{Abs($#3$) \igobs #4: #2 $\mid$ }%
+  \addtolength{\hangindent}{\parindent}%
+  Abs($#3$) \igobs #4: #2 $\mid$ #5%
+}%
+
+\newcommandx{\AbsFc}[4][1={estr},3={e}]{%
+  \tadOperacion{Abs}{#1/#3}{#2}{Rep($#3$)}%
+  \tadAxioma{Abs($#3$)}{#4}%
+}%
+
+
+\newcommand{\DRef}{\ensuremath{\rightarrow}}
+
+\begin{document}
+
+%pagina de titulo
+\thispagestyle{empty}
+\maketitle
+\tableofcontents
+
+\newpage
+
+
+\section{Módulo Diccionario en Cadena($\kappa$, $\sigma$)}
+
+El módulo Diccionario en Cadena provee un diccionario básico en el que se puede definir, borrar, y testear si una clave está definida en tiempo lineal (si es |p+larga|, es lineal... lo dejo así?).  Cuando ya se sabe que la clave a definir no esta definida en el diccionario, la definición se puede hacer en tiempo $O(|K|)$, donde $K \in \kappa$ es la clave mas larga.
+
+(tema del it...)En cuanto al recorrido de los elementos, se provee un iterador bidireccional que permite recorrer y eliminar los elementos de $d$ como si fuera una secuencia de pares $\kappa,\sigma$.
+
+(aca ya ni idea)
+Para describir la complejidad de las operaciones, vamos a llamar $copy(k)$ al costo de copiar el elemento $k \in \kappa \cup \sigma$ y $equal(k_1, k_2)$ al costo de evaluar si dos elementos $k_1, k_2 \in \kappa$ son iguales (i.e., $copy$ y $equal$ son funciones de $\kappa \cup \sigma$ y $\kappa \times \kappa$ en $\mathbb{N}$, respectivamente).\footnote{Nótese que este es un abuso de notación, ya que no estamos describiendo $copy$ y $equal$ en función del tamaño de $k$.  A la hora de usarlo, habrá que realizar la traducción.}
+
+\begin{Interfaz}
+
+  \textbf{parámetros formales}\hangindent=2\parindent\\
+  \parbox{1.7cm}{\textbf{géneros}}$\kappa,\sigma$\\
+  \parbox[t]{1.7cm}{\textbf{función}}\parbox[t]{.5\textwidth-\parindent-1.7cm}{%
+    \InterfazFuncion{$\bullet = \bullet$}{\In{k_1}{$\kappa$}, \In{k_2}{$\kappa$}}{bool}
+    {$res \igobs (k_1 = k_2)$}
+    [$\Theta(equal(k_1, k_2))$]
+    [función de igualdad de $\kappa$'s]
+  }%
+  \parbox[t]{1.7cm}{\textbf{función}}\parbox[t]{.5\textwidth-\parindent-1.7cm}{%
+    \InterfazFuncion{Copiar}{\In{k}{$\kappa$}}{$\kappa$}
+    {$res \igobs k$}
+    [$\Theta(copy(k))$]
+    [función de copia de $\kappa$'s]
+  }\\[2ex]
+  \parbox[t]{1.7cm}{\textbf{función}}\parbox[t]{.5\textwidth-\parindent-1.7cm}{%
+    \InterfazFuncion{Copiar}{\In{s}{$\sigma$}}{$\sigma$}
+    {$res \igobs s$}
+    [$\Theta(copy(s))$]
+    [función de copia de $\sigma$'s]
+  }
+
+  \textbf{se explica con}: \tadNombre{Diccionario$(\kappa, \sigma)$}, \tadNombre{Iterador Bidireccional(tupla($\kappa,\sigma$))}.
+
+  \textbf{géneros}: \TipoVariable{dicc$(\kappa, \sigma)$}, \TipoVariable{itDicc($\kappa, \sigma$)}.
+
+  \Titulo{Operaciones básicas de diccionario}
+
+  \InterfazFuncion{Vacío}{}{dicc$(\kappa,\sigma)$}%
+  {$res$ $\igobs$ vacio}%
+  [$\Theta(1)$]
+  [genera un diccionario vacío.]
+
+  \InterfazFuncion{Definir}{\Inout{d}{dicc($\kappa,\sigma$)}, \In{k}{$\kappa$}, \In{s}{$\sigma$}}{itDicc($\kappa, \sigma$)}
+  [$d \igobs d_0$]
+  {$d$ $\igobs$ definir($d, k, s$) $\land$ haySiguiente($res$) $\land_L$ Siguiente($res$) $=$ $\langle k,s\rangle$ $\land$ alias(esPermutación(SecuSuby($res$), $d$))}
+  [$\displaystyle\Theta\left(\sum_{k' \in K}equal(k,k') + copy(k) + copy(s)\right)$, donde $K$ $=$ claves($d$)]
+  [define la clave $k$ con el significado $s$ en el diccionario.  Retorna un iterador al elemento recién agregado.]
+  [los elementos $k$ y $s$ se definen por copia.  El iterador se invalida si y sólo si se elimina el elemento siguiente del iterador sin utilizar la función \NombreFuncion{EliminarSiguiente}. Además, anteriores($res$) y siguientes($res$) podrían cambiar completamente ante cualquier operación que modifique el $d$ sin utilizar las funciones del iterador.]
+
+
+  \InterfazFuncion{DefinirRapido}{\Inout{d}{dicc($\kappa,\sigma$)}, \In{k}{$\kappa$}, \In{s}{$\sigma$}}{itDicc($\kappa, \sigma$)}
+  [$d \igobs d_0$ $\land$ $\lnot$definido?($d$, $k$)]
+  {$d$ $\igobs$ definir($d, k, s$) $\land$ haySiguiente($res$) $\land_L$ Siguiente($res$) $=$ $\langle k,s\rangle$ $\land$ esPermutación(SecuSuby($res$), $d$)}
+  [$\Theta(copy(k) + copy(s))$]
+  [define la clave $k$ $\not\in$ claves($d$) con el significado $s$ en el diccionario. Retorna un iterador al elemento recién agregado.]
+  [los elementos $k$ y $s$ se definen por copia. El iterador se invalida si y sólo si se elimina el elemento siguiente del iterador sin utilizar la función \NombreFuncion{EliminarSiguiente}. Además, anteriores($res$) y siguientes($res$) podrían cambiar completamente ante cualquier operación que modifique el $d$ sin utilizar las funciones del iterador.]
+
+  \InterfazFuncion{Definido?}{\In{d}{dicc($\kappa,\sigma$)}, \In{k}{$\kappa$}}{bool}
+  {$res$ $\igobs$ def?($d$, $k$)}
+  [$\Theta(\sum_{k' \in K}equal(k,k'))$, donde $K$ $=$ claves($d$)]
+  [devuelve \texttt{true} si y sólo $k$ está definido en el diccionario.]
+
+  \InterfazFuncion{Significado}{\In{d}{dicc($\kappa,\sigma$)}, \In{k}{$\kappa$}}{$\sigma$}
+  [def?($d$, $k$)]
+  {alias($res$ $\igobs$ Significado($d$, $k$))}
+  [$\Theta(\sum_{k' \in K}equal(k,k'))$, donde $K$ $=$ claves($d$)]
+  [devuelve el significado de la clave $k$ en $d$.]
+  [$res$ es modificable si y sólo si $d$ es modificable.]
+
+  \InterfazFuncion{Borrar}{\Inout{d}{dicc($\kappa,\sigma$)}, \In{k}{$\kappa$}}{}
+  [$d = d_0$ $\land$ def?($d$, $k$)]
+  {$d$ $\igobs$ borrar($d_0, k$)}
+  [$\Theta(\sum_{k' \in K}equal(k,k'))$, donde $K$ $=$ claves($d$)]
+  [elimina la clave $k$ y su significado de $d$.]
+
+  \InterfazFuncion{\#Claves}{\In{d}{dicc($\kappa,\sigma$)}}{nat}
+  {$res$ $\igobs$ \#claves($d$)}
+  [$\Theta(1)$]
+  [devuelve la cantidad de claves del diccionario.]
+
+  \InterfazFuncion{Copiar}{\In{d}{dicc($\kappa,\sigma$)}}{dicc($\kappa,\sigma$)}
+  {$res \igobs d$}
+  [$\displaystyle\Theta\left(\sum_{k \in K}\left(copy(k) + copy(\text{significado}(k,d))\right)\right)$, donde $K$ $=$ claves($d$)]
+  [genera una copia nueva del diccionario.]
+
+  \InterfazFuncion{$\bullet = \bullet$}{\In{d_1}{dicc($\kappa,\sigma$)}, \In{d_2}{dicc($\kappa,\sigma$)}}{bool}
+  {$res \igobs c_1 = c_2$}
+  [$\displaystyle O\left(\sum_{\substack{k_1 \in K_1\\k_2\in K_2}}equal(\langle k_1,s_1\rangle, \langle k_2, s_2 \rangle)\right)$, donde $K_i$ $=$ claves($d_i$) y $s_i$ $=$ significado($d_i, k_i$), $i \in \{1,2\}$.]
+  [compara $d_1$ y $d_2$ por igualdad, cuando $\sigma$ posee operación de igualdad.]
+  []%no hay aliasing
+  [{\parbox[t]{\textwidth-3cm}{%
+    \InterfazFuncion{$\bullet = \bullet$}{\In{s_1}{$\sigma$}, \In{s_2}{$\sigma$}}{bool}
+    {$res \igobs (s_1 = s_2)$}
+    [$\Theta(equal(s_1, s_2))$]
+    [función de igualdad de $\sigma$'s]
+  }}]
+
+  \Titulo{Operaciones del iterador}
+
+  El iterador que presentamos permite modificar el diccionario recorrido, eliminando elementos.  Sin embargo, cuando el diccionario es no modificable, no se pueden utilizar las funciones de eliminación.  Además, las claves de los elementos iterados no pueden modificarse nunca, por cuestiones de implementación.  Cuando $d$ es modificable, decimos que $it$ es modificable.
+
+  Para simplificar la notación, vamos a utilizar clave y significado en lugar de $\Pi_1$ y $\Pi_2$ cuando utilicemos una tupla($\kappa,\sigma$).
+
+  \InterfazFuncion{CrearIt}{\In{d}{dicc($\kappa,\sigma$)}}{itDicc($\kappa,\sigma$)}
+  {alias(esPermutación(SecuSuby($res$), $d$)) $\land$ vacia?(Anteriores($res$))}
+  [$\Theta(1)$]
+  [crea un iterador bidireccional del diccionario, de forma tal que \NombreFuncion{HayAnterior} evalúe a \texttt{false} (i.e., que se pueda recorrer los elementos aplicando iterativamente \NombreFuncion{Siguiente}).]
+  [El iterador se invalida si y sólo si se elimina el elemento siguiente del iterador sin utilizar la función \NombreFuncion{EliminarSiguiente}.  Además, anteriores($res$) y siguientes($res$) podrían cambiar completamente ante cualquier operación que modifique $d$ sin utilizar las funciones del iterador.]
+
+  \InterfazFuncion{HaySiguiente}{\In{it}{itDicc($\kappa,\sigma$)}}{bool}
+  {$res$ $\igobs$ haySiguiente?($it$)}
+  [$\Theta(1)$]
+  [devuelve \texttt{true} si y sólo si en el iterador todavía quedan elementos para avanzar.]
+
+  \InterfazFuncion{HayAnterior}{\In{it}{itDicc($\kappa,\sigma$)}}{bool}
+  {$res$ $\igobs$ hayAnterior?($it$)}
+  [$\Theta(1)$]
+  [devuelve \texttt{true} si y sólo si en el iterador todavía quedan elementos para retroceder.]
+
+  \InterfazFuncion{Siguiente}{\In{it}{itDicc($\kappa,\sigma$)}}{tupla($\kappa, \sigma$)}
+  [HaySiguiente?($it$)]
+  {alias($res$ $\igobs$ Siguiente($it$))}
+  [$\Theta(1)$]
+  [devuelve el elemento siguiente del iterador.]
+  [$res$.significado es modificable si y sólo si $it$ es modificable.  En cambio, $res$.clave no es modificable.]
+
+  \InterfazFuncion{SiguienteClave}{\In{it}{itDicc($\kappa,\sigma$)}}{$\kappa$}
+  [HaySiguiente?($it$)]
+  {alias($res$ $\igobs$ Siguiente($it$).clave)}
+  [$\Theta(1)$]
+  [devuelve la clave del elemento siguiente del iterador.]
+  [$res$ no es modficable.]
+
+  \InterfazFuncion{SiguienteSignificado}{\In{it}{itDicc($\kappa,\sigma$)}}{$\sigma$}
+  [HaySiguiente?($it$)]
+  {alias($res$ $\igobs$ Siguiente($it$).significado)}
+  [$\Theta(1)$]
+  [devuelve el significado del elemento siguiente del iterador.]
+  [$res$ es modificable si y sólo si $it$ es modficable.]
+
+  \InterfazFuncion{Anterior}{\In{it}{itDicc($\kappa,\sigma$)}}{tupla(clave: $\kappa$, significado: $\sigma$)}
+  [HayAnterior?($it$)]
+  {alias($res$ $\igobs$ Anterior($it$))}
+  [$\Theta(1)$]
+  [devuelve el elemento anterior del iterador.]
+  [$res$.\TipoVariable{significado} es modificable si y sólo si $it$ es modificable.  En cambio, $res$.\TipoVariable{clave} no es modificable.]
+
+  \InterfazFuncion{AnteriorClave}{\In{it}{itDicc($\kappa,\sigma$)}}{$\kappa$}
+  [HayAnterior?($it$)]
+  {alias($res$ $\igobs$ Anterior($it$).clave)}
+  [$\Theta(1)$]
+  [devuelve la clave del elemento anterior del iterador.]
+  [$res$ no es modficable.]
+
+  \InterfazFuncion{AnteriorSignificado}{\In{it}{itDicc($\kappa,\sigma$)}}{$\sigma$}
+  [HayAnterior?($it$)]
+  {alias($res$ $\igobs$ Anterior($it$).significado)}
+  [$\Theta(1)$]
+  [devuelve el significado del elemento anterior del iterador.]
+  [$res$ es modificable si y sólo si $it$ es modficable.]
+
+
+  \InterfazFuncion{Avanzar}{\Inout{it}{itDicc($\kappa,\sigma$)}}{}
+  [$it = it_0$ $\land$ HaySiguiente?($it$)]
+  {$it$ $\igobs$ Avanzar($it_0$)}
+  [$\Theta(1)$]
+  [avanza a la posición siguiente del iterador.]
+
+  \InterfazFuncion{Retroceder}{\Inout{it}{itDicc($\kappa,\sigma$)}}{}
+  [$it = it_0$ $\land$ HayAnterior?($it$)]
+  {$it$ $\igobs$ Retroceder($it_0$)}
+  [$\Theta(1)$]
+  [retrocede a la posición anterior del iterador.]
+
+  \InterfazFuncion{EliminarSiguiente}{\Inout{it}{itDicc($\kappa,\sigma$)}}{}
+  [$it = it_0$ $\land$ HaySiguiente?($it$)]
+  {$it$ $\igobs$ EliminarSiguiente($it_0$)}
+  [$\Theta(1)$]
+  [elimina del diccionario la clave del elemento que se encuentra en la posición siguiente.]
+
+  \InterfazFuncion{EliminarAnterior}{\Inout{it}{itDicc($\kappa,\sigma$)}}{}
+  [$it = it_0$ $\land$ HayAnterior?($it$)]
+  {$it$ $\igobs$ EliminarAnterior($it_0$)}
+  [$\Theta(1)$]
+  [elimina del diccionario la clave del elemento que se encuentra en la posición anterior.]
+
+  \Titulo{Especificación de las operaciones auxiliares utilizadas en la interfaz}
+
+  \begin{tad}{Diccionario Extendido($\kappa$, $\sigma$)}
+    \parskip=0pt
+    \tadExtiende{\tadNombre{Conjunto($\kappa$, $\sigma$)}}
+    
+    \tadTitulo{otras operaciones (no exportadas)}
+    \tadOperacion{esPermutacion?}{secu({tupla($\kappa,\sigma$)}),dicc({$\kappa,\sigma$)}}{bool}{}
+    \tadOperacion{secuADicc}{secu({tupla($\kappa,\sigma$)})}{dicc($\kappa,\sigma$)}{}
+    \tadAxiomas
+    \tadAxioma{esPermutacion?($s,d$)}{$d$ $=$ secuADicc($s$) $\land$ \#claves($d$) $=$ long($s$)}
+    \tadAxioma{secuADicc($s$)}{\IF vacia?($s$) THEN vacio ELSE definir($\Pi_1$(prim($s$)), $\Pi_2$(prim($s$)), secuADict(fin($s$))) FI}
+  \end{tad}
+
+\end{Interfaz}
+
+\begin{Representacion}
+  
+  \Titulo{Representación del diccionario}
+
+  (((Representamos al diccionario en cadena como una lista de nodos. Los nodos seran de tuplas de $\sigma$, para guardar la definicion, y vector de puntero a nodo. Como es un requerimiento que todo elemento de $\kappa$ sea divisible (aca ver si no ponemos string enves de kappa, y listo), los vectores de los nodos seran de la cantidad de valores....)))
+  Representamos al diccionario en cadena como una lista de nodos. Los nodos seran de tuplas de $\sigma$, para guardar la definicion, y vector de puntero a nodo (por ahi a esta altura no hace falta decir que son punteros, sino decir nada mas vectores de nodo). Como las claves son string, vamos a pedir que los vectores sean de 256 posiciones, ya que los strings estan compuestos por chars, y tomamos la convencion de que habra 256 chars distintos para formar nuestros strings. 
+  
+  \begin{Estructura}{dicc$(\kappa,\sigma)$}[dicCadena]
+    \begin{Tupla}[dicCadena]%
+             \tupItem{dicCadena}{Nodo(\tupItem{definicion}{$\sigma$}\tupItem{siguientes}{vector(puntero(Nodo))}}%nose si cuando haga el objeto nodo hacer que ya tenga estos atributos, lo cual dejaria que dicCadena sea solo Nodo
+    \end{Tupla}
+  \end{Estructura}
+
+  \Rep[dicCadena][d]{$(\forall n, n' : Nodo)((n' \in descendencia(d.dicCadena) \land (n = d.dicCadena \lor n \in descendencia(d.dicCadena)) \land _{L} n' \in descendencia(n) \Rightarrow _{L} (\forall i : Nat)( 0 \leq i < 256 \Rightarrow _{L} n'.siguientes[i] \neq n))$}
+  %
+
+  ~
+
+  \AbsFc[dicc]{dicc($\kappa,\sigma$)}[d]{\IF vacía?($d$.claves) THEN vacío ELSE definir(prim($d$).claves, prim($d$).significado, Abs(fin($d$))) FI}
+
+  \Titulo{Representación del iterador}
+
+  El iterador del diccionario es simplemente un par de iteradores a las listas correspondientes.  Lo único que hay que pedir es que se satisfaga el Rep de este par de listas.
+
+  \begin{Estructura}{itDicc($\kappa$, $\sigma$)}[itDic]
+    \begin{Tupla}[itDic]%
+      \tupItem{claves}{itLista($\kappa$)}%
+      \tupItem{significados}{itLista($\sigma$)}%
+    \end{Tupla}
+  \end{Estructura}
+
+  \Rep[itDic][it]{Rep($\langle$SecuSuby($it$.claves), SecuSuby($it$.significados)$\rangle$)}
+
+  ~
+
+  \AbsFc[itDic]{itBi(tupla($\kappa$, $\sigma$))}[it]{CrearItBi(Join(Anteriores($it$.claves), Anteriores($it$.significados)), \\\phantom{CrearItBi(}Join(Siguientes($it$.claves), Siguientes($it$.significados)))}\mbox{}
+
+  ~
+
+  \tadOperacion{Join}{secu($\alpha$)/a,secu($\beta$)/b}{secu(tupla($\alpha,\beta$))}{long($a$) $=$ long($b$)}
+  \tadAxioma{Join($a$, $b$)}{\IF vacia?($a$) THEN \secuencia{} ELSE \secuencia{$\langle${prim($a$), prim($b$)}$\rangle$}[Join(Fin($a$), Fin($b$))] FI}
+
+\end{Representacion}
+
+\begin{Algoritmos}
+  
+\end{Algoritmos}
+\newpage
+
+
+\end{document}
