@@ -172,8 +172,13 @@
 
 \newpage
 
+\section{Renombres de TADs}
 
-\section{Módulo Cola de prioridad($\alpha$)}
+\tadNombre{TAD NodoHeap($\alpha$)} es \tadNombre{Tupla(Nat,$\alpha$)}
+
+\section{Módulo Heap Modificable($\alpha$)}
+
+Este módulo implementa una cola de prioridad que permite eliminar elemntos en tiempo logaritmico. La cola de prioridad está formada por un conjunto de nodos, los cuales contienen el elemento que se quiere colocar en la cola y un número que define univocamente la prioridad del elemento respecto del resto de los elemento en la cola. Siendo n el número asociado a un elemento dado, debe cumplirse que los elementos con asociados a los números 2*n+1 y 2*n+2 tienen menor prioridad que el elemento asociado a n, y el elemento asociado a (n-1)/2 tiene mayor prioridad.
 
 Para describir la complejidad de las operaciones, vamos a llamar $copy(a)$ al costo de copiar el elemento $a \in \alpha$ y $compare(a_1, a_2)$ al costo de comparar los elementos $a_1, a_2 \in \alpha$ (i.e., $copy$ y $compare$ son funciones de $\alpha$ en $\mathbb{N}$)\footnote{Nótese que este es un abuso de notación, ya que no estamos describiendo $copy$ y $compare$ en función del tamaño de $a$.  A la hora de usarlo, habrá que realizar la traducción}
 
@@ -197,104 +202,71 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(a)$ al co
   }
   
 
-  \textbf{se explica con}: \tadNombre{Cola de prioridad$(\alpha)$}.
+  \textbf{se explica con}: \tadNombre{Cola de prioridad$(\alpha)$}, \tadNombre{NodoHeap$(\alpha)$}.
 
-  \textbf{géneros}: \TipoVariable{colaPrior$(\alpha)$}.
+  \textbf{géneros}: \TipoVariable{heapMod$(\alpha)$}.
   
-  \Titulo{Operaciones básicas de cola de prioridad($\alpha$)}
+  \Titulo{Operaciones básicas de Heap Modificable($\alpha$)}
   
-  \InterfazFuncion{Vacía?}{\In{c}{colaPrior$(\alpha)$}}{bool}
+  \InterfazFuncion{Vacía?}{\In{c}{heapMod$(\alpha)$}}{bool}
   {res $\igobs$ vacía?($\alpha$)}
   [$\Theta(1)$]
   [Devuelve true si la cola de prioridad está vacia.]
 
-  \InterfazFuncion{Próximo}{\In{c}{colaPrior$(\alpha)$}}{$\alpha$}
+  \InterfazFuncion{Próximo}{\In{c}{heapMod$(\alpha)$}}{$\alpha$}
   [$\lnot$vacía?(c)]
   {alias($res$, próximo())}
   [$\Theta(1)$]
   [Retorna por referencia el próximo valor en la cola.]
   [La referencia es constante, el elemento a no puede modificarse]
   
-  \InterfazFuncion{Desncolar}{\Inout{c}{colaPrior$(\alpha)$}}{}
+  \InterfazFuncion{Desncolar}{\Inout{c}{heapMod$(\alpha)$}}{}
   [$\lnot$vacía?(c) $\land$ $c \igobs c_0$]
   {c $\igobs$ desencolar($c_0$)}
-  [$\Theta\left(log\left(\displaystyle\sum_{a' \in c}compare(a,a')\right)\right)$]
+  [$\Theta\left(log\left(\displaystyle\sum_{a' \in heapSecu(c)}compare(a,a')\right)\right)$]
   [Desencola el próximo elemento.]
   
-  \InterfazFuncion{Vacía}{}{colaPrior$(\alpha)$}
+\newpage  
+  
+  \InterfazFuncion{Vacía}{}{heapMod$(\alpha)$}
   {$res$ $\igobs$ vacía()}
   [$\Theta(1)$]
   [Retorna por referencia una cola vacía.]
 
-  \InterfazFuncion{Encolar}{\In{a}{$\alpha$}, \Inout{c}{colaPrior$(\alpha)$}}{itColarPrior$(\alpha)$}
+  \InterfazFuncion{Encolar}{\In{a}{$\alpha$}, \Inout{c}{heapMod$(\alpha)$}}{NodoHeap$(\alpha)$}
   [$c \igobs c_0$]
-  {c $\igobs$ encolar($c_0$) $\land$ HaySiguiente($res$) $\land_L$ Siguiente($res$) $=$ $a$ $\land$ alias(esPermutacion?(SecuSuby($res$), $c$))}
-  [$\Theta\left(log\left(\displaystyle\sum_{a' \in c}compare(a,a')\right)\right)$]
-  [Encola el elemento a. El elemento $a$ se agrega por copia.  El iterador se invalida si y sólo si se elimina el elemento siguiente del iterador sin utilizar la función \NombreFuncion{EliminarSiguiente}.  Además, anteriores($res$) y siguientes($res$) podrían cambiar completamente ante cualquier operación que modifique $c$ sin utilizar las funciones del iterador.]
+  {c $\igobs$ encolar($c_0$) $\land$ $\Pi_{2}(res) \igobs a$}
+%  {c $\igobs$ encolar($c_0$) $\land$ $\Pi_{2}$(res) $\igobs$ a $\land$ $\Pi_{1}$(res) $<$ $\#$ heapSecu(c) $\land$ \\($\Pi_{1}$(res) $=$ 0 $\lor$ (($\exists$ x $\in$ heapSecu(c)) $\Pi_{1}$(x) = ($\Pi_{1}(res)-1)/2$ $\land$ $\Pi_{2}$(res) $<$ $\Pi_{2}$(x))) $\land$ \\($\Pi_{1}$(res) $>$ $\#$heapSecu(c)/2 $\lor$ (($\exists$ x,y $\in$ heapSecu(c)) \\$\Pi_{1}$(x) = (2*$\Pi_{1}(res)$)+1 $\land$ $\Pi_{2}$(x) $<$ $\Pi_{2}$(res) $\land$ \\$\Pi_{1}$(y) = (2*$\Pi_{1}(res)$)+2 $\land$ $\Pi_{2}$(y) $<$ $\Pi_{2}$(res)))}
+  [$\Theta\left(log\left(\displaystyle\sum_{a' \in heapSecu(c)}compare(a,a')\right)\right)$]
+  [Encola el elemento $a$. Devuelve un nodo que coniene una referencia al elemento agregado $a$.]
   
   
+  \InterfazFuncion{Eliminar}{\Inout{c}{heapMod$(\alpha)$}, \In{a}{NodoHeap($\alpha$)}}{}
+  [$c \igobs c_0 \land a \in heapSecu(c_0)$]
+  {$c \igobs eliminar(\Pi_{2}(c_0), a)$}
+  [$\Theta\left(log\left(\displaystyle\sum_{a' \in heapSecu(c)}compare(a,a')\right)\right)$]
+  [Elimina el elemento $a$.]
   
   
-  \Titulo{Operaciones del iterador}
-
-  El iterador que presentamos permite modificar la cola de prioridad recorrida, eliminando elementos. Sin embargo, cuando el conjunto es no modificable, no se pueden utilizar las funciones de eliminación. Además, los elementos iterados no pueden modificarse, por cuestiones de implementación.
-
-  \InterfazFuncion{CrearIt}{\In{c}{colarPrior($\alpha$)}}{itColarPrior($\alpha$)}
-  {alias(esPermutacion?(SecuSuby($res$), $c$)) $\land$ vacia?(Anteriores($res$))}
-  [$\Theta(1)$]
-  [crea un iterador bidireccional del conjunto, de forma tal que \NombreFuncion{HayAnterior} evalúe a \texttt{false} (i.e., que se pueda recorrer los elementos aplicando iterativamente \NombreFuncion{Siguiente}).]
-  [El iterador se invalida si y sólo si se elimina el elemento siguiente del iterador sin utilizar la función \NombreFuncion{EliminarSiguiente}.  Además, anteriores($res$) y siguientes($res$) podrían cambiar completamente ante cualquier operación que modifique $c$ sin utilizar las funciones del iterador.]
-
-  \InterfazFuncion{HaySiguiente}{\In{it}{itColarPrior($\alpha$)}}{bool}
-  {$res$ $\igobs$ haySiguiente?($it$)}
-  [$\Theta(1)$]
-  [devuelve \texttt{true} si y sólo si en el iterador todavía quedan elementos para avanzar.]
-
-  \InterfazFuncion{HayAnterior}{\In{it}{itColarPrior($\alpha$)}}{bool}
-  {$res$ $\igobs$ hayAnterior?($it$)}
-  [$\Theta(1)$]
-  [devuelve \texttt{true} si y sólo si en el iterador todavía quedan elementos para retroceder.]
-
-  \InterfazFuncion{Siguiente}{\In{it}{itColarPrior($\alpha$)}}{$\alpha$}
-  [HaySiguiente?($it$)]
-  {alias($res$ $\igobs$ Siguiente($it$))}
-  [$\Theta(1)$]
-  [devuelve el elemento siguiente a la posición del iterador.]
-  [$res$ no es modificable.]
-
-
-  \InterfazFuncion{Anterior}{\In{it}{itColarPrior($\alpha$)}}{$\alpha$}
-  [HayAnterior?($it$)]
-  {alias($res$ $\igobs$ Anterior($it$))}
-  [$\Theta(1)$]
-  [devuelve el elemento anterior a la posición del iterador.]
-  [$res$ no es modificable.]
-
-  \InterfazFuncion{Avanzar}{\Inout{it}{itColarPrior($\alpha$)}}{}
-  [$it = it_0$ $\land$ HaySiguiente?($it$)]
-  {$it$ $\igobs$ Avanzar($it_0$)}
-  [$\Theta(1)$]
-  [Avanza a la posición siguiente del iterador.]
-
-  \InterfazFuncion{Retroceder}{\Inout{it}{itColarPrior($\alpha$)}}{}
-  [$it = it_0$ $\land$ HayAnterior?($it$)]
-  {$it$ $\igobs$ Retroceder($it_0$)}
-  [$\Theta(1)$]
-  [Retrocede a la posición anterior del iterador.]
-
-  \InterfazFuncion{EliminarSiguiente}{\Inout{it}{itColarPrior($\alpha$)}}{}
-  [$it = it_0$ $\land$ HaySiguiente?($it$)]
-  {$it$ $\igobs$ EliminarSiguiente($it_0$)}
-  [$\Theta\left(log\left(\displaystyle\sum_{a' \in SecuSuby(it)}compare(Siguiente(it),a')\right)\right)$]
-  [Elimina de la lista iterada el valor que se encuentra en la posición siguiente del iterador.]
-
-  \InterfazFuncion{EliminarAnterior}{\Inout{it}{itColarPrior($\alpha$)}}{}
-  [$it = it_0$ $\land$ HayAnterior?($it$)]
-  {$it$ $\igobs$ EliminarAnterior($it_0$)}
-  [$\Theta\left(log\left(\displaystyle\sum_{a' \in SecuSuby(it)}compare(Anterior(it),a')\right)\right)$]
-  [Elimina de la lista iterada el valor que se encuentra en la posición anterior del iterador.]
+  \Titulo{Especificación de las operaciones auxiliares utilizadas en la interfaz}
   
+  \begin{tad}{Cola de Prioridad extendida}
+    \parskip=0pt
+    \tadExtiende{\tadNombre{Cola de Prioridad}}
     
+    \tadTitulo{otras operaciones}
+    
+    \tadAlinearFunciones{eliminar(c, a)}{heapMod($\alpha$), $\alpha$}
+    \tadOperacion{eliminar}{heapMod($\alpha$), $\alpha$}{heapMod($\alpha$)}{}
+    \tadOperacion{heapSecu}{heapMod($\alpha$)}{secu($\alpha$)}{}
+    
+    \tadAxiomas
+    \tadAlinearAxiomas{eliminar(c, a)}
+    \tadAxioma{eliminar(c, a)}{HACER!!}
+    \tadAxioma{heapSecu(c)}{HACER!!}
+  \end{tad}
+  
+   
 \end{Interfaz}
 
 
@@ -303,34 +275,30 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(a)$ al co
 
   \Titulo{Representación de la Cola de Prioridad}
   
-  En este módulo vamos a utilizar un vector para representar la cola
+  En este módulo vamos a utilizar un vector para representar la cola, donde cada elemento es un puntero a una tupla (nodo). La primera componente del nodo es la posicion de la tupla en el vector, mientras que la segunda componente es el elemento que queremos colocar en la cola de prioridad.
   
-  \begin{Estructura}{colaPrior$(\alpha)$}[vector($\alpha$)]
+  \begin{Estructura}{heapMod$(\alpha)$}[vector( puntero(nodo))]
+  
+   
+    \begin{Tupla}[nodo]
+      \tupItem{posicion}{nat}%
+      \tupItem{dato}{$\alpha$}%
+    \end{Tupla}
   \end{Estructura}
 
-  \RepFc[vector({$\alpha$})][c]{($\forall i$: nat) ($0 < i <$ Longitud(c)) $c[(i-1)/2] < c[i]$}
+  \Rep[vector( puntero(nodo))][c]{($\forall i$: nat) ($0 \leq i <$ Longitud(c)) $\impluego$ c[i].posicion = i $\land$\\($\forall i$: nat) ($0 < i <$ Longitud(c)) $\impluego$ $c[i].dato < c[(i-1)/2].dato$ $\land$\\ ($\forall i$: nat) $\impluego$ ($0 \leq i <$ Longitud(c)/2) $c[(2*i)+1].dato < c[i].dato \land c[2*i)+2].dato < c[i].dato$)}
 
   ~
 
-  \AbsFc[vector({$\alpha$})]{colaPrior($\alpha$)}[c]{\IF vacia?($c$) THEN vacía ELSE encolar(Ultimo($c$), Abs(Comienzo($c$))) FI}.
+  \AbsFc[vector({nodo})]{colaPrior($\alpha$)}[c]{\IF vacia?($c$) THEN vacía ELSE encolar(Ultimo($c$).dato, Abs(Comienzo($c$))) FI}.
   
   
-  \Titulo{Representación del iterador}
-  
-  El iterador de la cola de prioridad 
-  
-  \begin{Estructura}{itColaPrior$(\alpha)$}[itector($\alpha$)]
-  \end{Estructura}
-
-  \RepFc[itVector({$\alpha$})][it]{true}
-
-  ~
-
-  \AbsFc[itVector({$\alpha$})]{itBi($\alpha$)}[it]{b}{Anteriores($b$) $=$ Anteriores($it$) $\land$ Siguientes($b$) $=$ Siguientes($it$)}\mbox{}
   
 \end{Representacion}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+
 \begin{Algoritmos}
 
 \medskip
@@ -338,9 +306,9 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(a)$ al co
  \Titulo{Algoritmos del módulo}
   	\medskip
   
-\begin{algorithm}[H]{\textbf{iVacía?}() $\to$ $res$ : vector($\alpha$)}
+\begin{algorithm}[H]{\textbf{iVacía?}(\In{c}{vector( puntero(nodo))}) $\to$ $res$ : $bool$}
     	\begin{algorithmic}[1]
-			 \State $res \gets \langle NULL, 0 \rangle$ \Comment $\Theta(1)$
+			 \State $res \gets iLongitud(c) = 0$ \Comment $\Theta(1)$
 
 			\medskip
 			\Statex \underline{Complejidad:} $\Theta(1)$
@@ -348,9 +316,9 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(a)$ al co
 \end{algorithm}
 
 
-\begin{algorithm}[H]{\textbf{iPróximo}(\In{c}{vector$(\alpha)$}) $\to$ $res$ : $\alpha$}
+\begin{algorithm}[H]{\textbf{iPróximo}(\In{c}{vector( puntero(nodo))}) $\to$ $res$ : $\alpha$}
     	\begin{algorithmic}[1]
-			 \State $res \gets \langle NULL, 0 \rangle$ \Comment $\Theta(1)$
+			 \State $res \gets c[0].dato$ \Comment $\Theta(1)$
 
 			\medskip
 			\Statex \underline{Complejidad:} $\Theta(1)$
@@ -358,51 +326,108 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(a)$ al co
 \end{algorithm}
 
 
-\begin{algorithm}[H]{\textbf{iPróximo}(\In{c}{vector$(\alpha)$}) $\to$ $res$ : $\alpha$}
+\begin{algorithm}[H]{\textbf{iDesncolar}(\Inout{c}{vector( puntero(nodo))})}
     	\begin{algorithmic}[1]
-			 \State $res \gets \langle NULL, 0 \rangle$ \Comment $\Theta(1)$
+    	 \If{$iLongitud(c) = 1$} \Comment $\Theta(1)$
+    	 	\State $iEliminar(c, 0) $ \Comment {Si hay un solo elemento, simplemente se elimina} // $\Theta(1)$
+    	\Else
+				\State $c[0] \gets c[iLongitud(c)-1]$ \Comment{Sino, intercambiamos con el ultimo	// $\Theta(1)$}
+				\State $c[0].posicion \gets 0$ \Comment{Se coloca la posicion correcta // $\Theta(1)$}
+				\State $iElimnar(c, iLongitud(c)-1)$ \Comment{Se elimina el elemento en la ultima posicion	// $\Theta(1)$}
+			\EndIf
+			 \State $iSiftDown(c, 0)$ \Comment {Se repara el heap} // $\Theta(log(iLongitud(c)))$
 
 			\medskip
-			\Statex \underline{Complejidad:} $\Theta(1)$
+			\Statex \underline{Complejidad:} $\Theta(log(iLongitud(c)))$
+			\Statex \underline{Justificación:} 
+
     	\end{algorithmic}
 \end{algorithm}
 
 
-\begin{algorithm}[H]{\textbf{iPróximo}(\In{c}{vector$(\alpha)$}) $\to$ $res$ : $\alpha$}
+\begin{algorithm}[H]{\textbf{iVacía}() $\to$ $res$ : $vector( puntero(nodo))$}
     	\begin{algorithmic}[1]
-			 \State $res \gets \langle NULL, 0 \rangle$ \Comment $\Theta(1)$
+			 \State $res \gets iVacia()$ \Comment $\Theta(1)$
 
 			\medskip
 			\Statex \underline{Complejidad:} $\Theta(1)$
+
     	\end{algorithmic}
 \end{algorithm}
 
 
-\begin{algorithm}[H]{\textbf{iPróximo}(\In{c}{vector$(\alpha)$}) $\to$ $res$ : $\alpha$}
+\begin{algorithm}[H]{\textbf{iEncolar}(\In{a}{$\alpha$}, \Inout{c}{vector( puntero(nodo))}) $\to$ $res$ : $nodo$}
     	\begin{algorithmic}[1]
-			 \State $res \gets \langle NULL, 0 \rangle$ \Comment $\Theta(1)$
-
-			\medskip
-			\Statex \underline{Complejidad:} $\Theta(1)$
-    	\end{algorithmic}
-\end{algorithm}
-  
-  
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\Titulo{Algoritmos del iterador}	
- 
-\begin{algorithm}[H]
-	\begin{algorithmic}[1]
-		\State \textbf{iCrearIt}(\In{l}{lst}) $\to$ $res$ : iter
-		
-			\State $res \gets \langle l.primero, l \rangle$ 	\Comment $\Theta(1)$
+    	\State $puntero(nodo) \ nuevo \gets \& \langle iLongitud(c), a \rangle$ \Comment {Se crea un nuevo nodo, $a$ se pasa por referencia} // $\Theta(1)$
+  		\State $iAgregarAtras(c, nuevo)$ \Comment {Se agrega al final del vector el nuevo elemento} // $\Theta(($f$(long($c$)) $+$ $copy(nuevo)$))$
+  		\State $iSiftUp(c, iLongitud(c)-1) $ \Comment {Se repara el heap} // $\Theta(log(iLongitud(c)))$
     	
-		\medskip
-		\Statex \underline{Complejidad:} $\Theta(1)$
-    \end{algorithmic}
-\end{algorithm}	
+			\medskip
+			\Statex \underline{Complejidad:} $\Theta(log(iLongitud(c)) + ($f$(long($c$)) $+$ $copy(nuevo)$))$
+			\Statex \underline{Justificación:} 
+    	\end{algorithmic}
+\end{algorithm}
+  
+  
+\begin{algorithm}[H]{\textbf{iEliminar}(\Inout{c}{vector( puntero(nodo)), \In{a}{nodo})}}
+    	\begin{algorithmic}[1]
+    	 \If{$iLongitud(c) = 1$} \Comment $\Theta(1)$
+    	 	\State $iEliminar(c, 0) $ \Comment {Si hay un solo elemento, simplemente se elimina} // $\Theta(1)$
+    	\Else
+				\State $c[a.posicion] \gets c[iLongitud(c)-1]$ \Comment{Sino, intercambiamos con el ultimo	// $\Theta(1)$}
+				\State $c[a.posicion].posicion \gets a.posicion$ \Comment{Se coloca la posicion correcta // $\Theta(1)$}
+				\State $iElimnar(c, iLongitud(c)-1)$ \Comment{Se elimina el elemento en la ultima posicion	// $\Theta(1)$}
+			\EndIf
+			 \State $iSiftUp(c, iLongitud(c)-1)$ \Comment {Se repara el heap} // $\Theta(log(iLongitud(c)))$
+
+			\medskip
+			\Statex \underline{Complejidad:} $\Theta(log(iLongitud(c)))$
+			\Statex \underline{Justificación:} 
+    	\end{algorithmic}
+\end{algorithm}
 
 
+\begin{algorithm}[H]{\textbf{iSiftDown}(\Inout{c}{vector( puntero(nodo)), \In{i}{nat})}}
+    	\begin{algorithmic}[1]
+    	\State {$l \gets 2*i+1$} \Comment {Posición del hipotético hijo izquierdo} $\Theta(1)$
+    	\State {$r \gets 2*i+2$} \Comment {Posición del hipotético hijo derecho} $\Theta(1)$
+    	\State {$largest \gets i$}
+    	\If{$l < iLongitud(c) \land c[l].dato > c[i].dato$} \Comment {Vemos si el dato del hijo izquierdo es el mayor} $\Theta(1)$
+    		\State {$largest = l$}	\Comment {El hijo izquierdo es mayor que el padre, guardamos la posicion} $\Theta(1)$
+			\EndIf
+    	\If{$r < iLongitud(c) \land c[r].dato > c[largest].dato$} \Comment {Vemos si el dato del hijo derecho es el mayor} $\Theta(1)$
+    		\State {$largest = r$}	\Comment {El hijo derecho es mayor que el padre y el hijo izquierdo, guardamos la posicion} $\Theta(1)$
+			\EndIf
+    	\If{$largest \neq i$} \Comment {Algun hijo es mayor} $\Theta(1)$
+    		\State {$puntero(nodo) \ nuevo = c[i]$}  \Comment {Creamos una variable para intercambiar los elementos} $\Theta(1)$
+    		\State {$c[i] \gets c[largest]$} \Comment {Intercambiamos el padre con el hijo} $\Theta(1)$
+    		\State {$c[largest] \gets nuevo$}	\Comment $\Theta(1)$
+    		\State {$iSiftDown(c, largest)$} \Comment {Llamamos a la funcion recursivamente} $\Theta(1)$
+			\EndIf
+
+			\medskip
+			\Statex \underline{Complejidad:} $\Theta(log(iLongitud(c)))$
+			\Statex \underline{Justificación:} 
+    	\end{algorithmic}
+\end{algorithm}
+
+
+\begin{algorithm}[H]{\textbf{iSiftUp}(\Inout{c}{vector( puntero(nodo)), \In{i}{nat})}}
+    	\begin{algorithmic}[1]
+			
+    	\If{$i \neq 0 \land c[(i-1)/2].dato < c[(i].dato$} \Comment {Vemos que no esta al tope de la cola ni es menor al padres} $\Theta(1)$
+    		\State {$puntero(nodo) \ nuevo = c[i]$} \Comment {Creamos una variable para intercambiar los elementos} $\Theta(1)$
+    		\State {$c[i] \gets c[(i-1)/2]$} \Comment {Intercambiamos el padre con el hijo} $\Theta(1)$
+    		\State {$c[(i-1)/2] \gets nuevo$} \Comment $\Theta(1)$
+    		\State {$iSiftUp(c, largest)$} \Comment {Llamamos a la funcion recursivamente} $\Theta(1)$
+			\EndIf
+			
+			\medskip
+			\Statex \underline{Complejidad:} $\Theta(log(iLongitud(c)))$
+			\Statex \underline{Justificación:} 
+    	\end{algorithmic}
+\end{algorithm}
+  
 \end{Algoritmos}
 
 \end{document}
