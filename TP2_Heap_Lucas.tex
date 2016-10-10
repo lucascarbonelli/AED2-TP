@@ -243,7 +243,7 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(a)$ al co
   
   \InterfazFuncion{Eliminar}{\Inout{c}{heapMod$(\alpha)$}, \In{a}{NodoHeap($\alpha$)}}{}
   [$c \igobs c_0 \land a \in heapSecu(c_0)$]
-  {$c \igobs eliminar(\Pi_{2}(c_0), a)$}
+  {$c \igobs eliminar(c_0, \Pi_{2}(a))$}
   [$\Theta\left(log\left(\displaystyle\sum_{a' \in heapSecu(c)}compare(a,a')\right)\right)$]
   [Elimina el elemento $a$.]
   
@@ -262,8 +262,8 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(a)$ al co
     
     \tadAxiomas
     \tadAlinearAxiomas{eliminar(c, a)}
-    \tadAxioma{eliminar(c, a)}{HACER!!}
-    \tadAxioma{heapSecu(c)}{HACER!!}
+    \tadAxioma{eliminar(c, $a$)}{\IF vacía?(c) THEN c ELSE {\IF próximo(c) = $a$ THEN desencolar(c) ELSE encolar(próximo(c), eliminar(desencolar(c), $a$))) FI} FI}
+    \tadAxioma{heapSecu(c)}{\IF vacía?(c) THEN $<>$ ELSE próximo(c) $\bullet$ heapSecu(desencolar(c)) FI}
   \end{tad}
   
    
@@ -277,23 +277,19 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(a)$ al co
   
   En este módulo vamos a utilizar un vector para representar la cola, donde cada elemento es un puntero a una tupla (nodo). La primera componente del nodo es la posicion de la tupla en el vector, mientras que la segunda componente es el elemento que queremos colocar en la cola de prioridad.
   
-  \begin{Estructura}{heapMod$(\alpha)$}[vector( puntero(nodo))]
-  
-   
+  \begin{Estructura}{heapMod$(\alpha)$}[vector(puntero(nodo))]
     \begin{Tupla}[nodo]
       \tupItem{posicion}{nat}%
       \tupItem{dato}{$\alpha$}%
     \end{Tupla}
   \end{Estructura}
 
-  \Rep[vector( puntero(nodo))][c]{($\forall i$: nat) ($0 \leq i <$ Longitud(c)) $\impluego$ c[i].posicion = i $\land$\\($\forall i$: nat) ($0 < i <$ Longitud(c)) $\impluego$ $c[i].dato < c[(i-1)/2].dato$ $\land$\\ ($\forall i$: nat) $\impluego$ ($0 \leq i <$ Longitud(c)/2) $c[(2*i)+1].dato < c[i].dato \land c[2*i)+2].dato < c[i].dato$)}
-
+	\RepFc[vector(puntero(nodo))][c]{true}
+%  \Rep[vector( puntero(nodo))][c]{($\forall i$: nat) ($0 \leq i <$ Longitud(c)) $\impluego$ c[i].posicion = i $\land$\\($\forall i$: nat) ($0 < i <$ Longitud(c)) $\impluego$ $c[i].dato < c[(i-1)/2].dato$ $\land$\\ ($\forall i$: nat) $\impluego$ ($0 \leq i <$ Longitud(c)/2) $c[(2*i)+1].dato < c[i].dato \land c[2*i)+2].dato < c[i].dato$)}
   ~
+  \AbsFc[vector({nodo})]{colaPrior($\alpha$)}[c]{\IF vacia?($c$) THEN vacía ELSE encolar(Ultimo($c$).dato, Abs(Comienzo($c$))) FI}
+  
 
-  \AbsFc[vector({nodo})]{colaPrior($\alpha$)}[c]{\IF vacia?($c$) THEN vacía ELSE encolar(Ultimo($c$).dato, Abs(Comienzo($c$))) FI}.
-  
-  
-  
 \end{Representacion}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -339,7 +335,7 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(a)$ al co
 
 			\medskip
 			\Statex \underline{Complejidad:} $\Theta(log(iLongitud(c)))$
-			\Statex \underline{Justificación:} 
+			\Statex \underline{Justificación: $\Theta(1) + \Theta(1) + \Theta(1) + \Theta(1) + \Theta(1) + \Theta(log(iLongitud(c))) = \Theta(log(iLongitud(c)))$} 
 
     	\end{algorithmic}
 \end{algorithm}
@@ -363,8 +359,8 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(a)$ al co
   		\State $iSiftUp(c, iLongitud(c)-1) $ \Comment {Se repara el heap} // $\Theta(log(iLongitud(c)))$
     	
 			\medskip
-			\Statex \underline{Complejidad:} $\Theta(log(iLongitud(c)) + ($f$(long($c$)) $+$ $copy(nuevo)$))$
-			\Statex \underline{Justificación:} 
+			\Statex \underline{Complejidad:} $\Theta(log(iLongitud(c)) + ($f$(long($c$)) $+$ $copy(nuevo)$)) = \Theta(log(iLongitud(c)) + copy(nuevo))) amortizado$
+			\Statex \underline{Justificación:} el algoritmo llama a la función $iAgregarAtras$ que agrega un elemento al final de un vector, tiene complejidad $\Theta(($f$(long($c$)) $+$ $copy(nuevo)$))$ = $\Theta(copy(nuevo)) \ amortizado$, luego la suma de las complejidades es $\Theta(1) + \Theta(copy(nuevo)) amortizado) + \Theta(log(iLongitud(c))) = \Theta(log(iLongitud(c)) + copy(nuevo))$
     	\end{algorithmic}
 \end{algorithm}
   
@@ -382,7 +378,7 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(a)$ al co
 
 			\medskip
 			\Statex \underline{Complejidad:} $\Theta(log(iLongitud(c)))$
-			\Statex \underline{Justificación:} 
+			\Statex \underline{Justificación:} $\Theta(1) + \Theta(1) + \Theta(1) + \Theta(1) + \Theta(1) + \Theta(log(iLongitud(c))) = \Theta(log(iLongitud(c)))$
     	\end{algorithmic}
 \end{algorithm}
 
@@ -399,9 +395,11 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(a)$ al co
     		\State {$largest = r$}	\Comment {El hijo derecho es mayor que el padre y el hijo izquierdo, guardamos la posicion} $\Theta(1)$
 			\EndIf
     	\If{$largest \neq i$} \Comment {Algun hijo es mayor} $\Theta(1)$
-    		\State {$puntero(nodo) \ nuevo = c[i]$}  \Comment {Creamos una variable para intercambiar los elementos} $\Theta(1)$
+    		\State {$puntero(nodo) \ nuevo \gets c[i]$}  \Comment {Creamos una variable para intercambiar los elementos} $\Theta(1)$
     		\State {$c[i] \gets c[largest]$} \Comment {Intercambiamos el padre con el hijo} $\Theta(1)$
+    		\State {$c[i].posicion \gets i$} \Comment {Le guardamos la nueva posición} $\Theta(1)$
     		\State {$c[largest] \gets nuevo$}	\Comment $\Theta(1)$
+    		\State {$c[largest].posicion \gets largest$} \Comment {Le guardamos la nueva posición} $\Theta(1)$
     		\State {$iSiftDown(c, largest)$} \Comment {Llamamos a la funcion recursivamente} $\Theta(1)$
 			\EndIf
 
@@ -416,10 +414,12 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(a)$ al co
     	\begin{algorithmic}[1]
 			
     	\If{$i \neq 0 \land c[(i-1)/2].dato < c[(i].dato$} \Comment {Vemos que no esta al tope de la cola ni es menor al padres} $\Theta(1)$
-    		\State {$puntero(nodo) \ nuevo = c[i]$} \Comment {Creamos una variable para intercambiar los elementos} $\Theta(1)$
+    		\State {$puntero(nodo) \ nuevo \gets c[i]$} \Comment {Creamos una variable para intercambiar los elementos} $\Theta(1)$
     		\State {$c[i] \gets c[(i-1)/2]$} \Comment {Intercambiamos el padre con el hijo} $\Theta(1)$
+    		\State {$c[i].posicion \gets i$} \Comment {Le guardamos la nueva posición} $\Theta(1)$
     		\State {$c[(i-1)/2] \gets nuevo$} \Comment $\Theta(1)$
-    		\State {$iSiftUp(c, largest)$} \Comment {Llamamos a la funcion recursivamente} $\Theta(1)$
+    		\State {$c[(i-1)/2].posicion \gets (i-1)/2$} \Comment {Le guardamos la nueva posición} $\Theta(1)$
+    		\State {$iSiftUp(c, (i-1)/2)$} \Comment {Llamamos a la funcion recursivamente} $\Theta(1)$
 			\EndIf
 			
 			\medskip
