@@ -173,31 +173,18 @@
 \newpage
 
 
-\section{Módulo Diccionario en Cadena($\kappa$, $\sigma$)}
+\section{Módulo Diccionario en Cadena($string$, $\sigma$)}
 
-El módulo Diccionario en Cadena provee un diccionario básico en el que se puede definir, borrar, y testear si una clave está definida en tiempo lineal (si es |p+larga|, es lineal... lo dejo así?).  Cuando ya se sabe que la clave a definir no esta definida en el diccionario, la definición se puede hacer en tiempo $O(|K|)$, donde $K \in \kappa$ es la clave mas larga.
+El módulo Diccionario en Cadena provee un diccionario básico en el que se puede definir, borrar, y testear si una clave está definida en tiempo lineal.  Cuando ya se sabe que la clave a definir no esta definida en el diccionario, la definición se puede hacer en tiempo $O(|K|)$, donde $K \in string$ es la clave mas larga.
 
-(tema del it...)En cuanto al recorrido de los elementos, se provee un iterador bidireccional que permite recorrer y eliminar los elementos de $d$ como si fuera una secuencia de pares $\kappa,\sigma$.
-
-(aca ya ni idea)
-Para describir la complejidad de las operaciones, vamos a llamar $copy(k)$ al costo de copiar el elemento $k \in \kappa \cup \sigma$ y $equal(k_1, k_2)$ al costo de evaluar si dos elementos $k_1, k_2 \in \kappa$ son iguales (i.e., $copy$ y $equal$ son funciones de $\kappa \cup \sigma$ y $\kappa \times \kappa$ en $\mathbb{N}$, respectivamente).\footnote{Nótese que este es un abuso de notación, ya que no estamos describiendo $copy$ y $equal$ en función del tamaño de $k$.  A la hora de usarlo, habrá que realizar la traducción.}
+%(NO USE NI COPY NI EQUAL, REV SI VAN)
+Para describir la complejidad de las operaciones, vamos a llamar $copy(k)$ al costo de copiar el elemento $k \in string \cup \sigma$ y $equal(k_1, k_2)$ al costo de evaluar si dos elementos $k_1, k_2 \in string$ son iguales (i.e., $copy$ y $equal$ son funciones de $string \cup \sigma$ y $string \times string$ en $\mathbb{N}$, respectivamente).\footnote{Nótese que este es un abuso de notación, ya que no estamos describiendo $copy$ y $equal$ en función del tamaño de $k$.  A la hora de usarlo, habrá que realizar la traducción.}
 
 \begin{Interfaz}
 
   \textbf{parámetros formales}\hangindent=2\parindent\\
-  \parbox{1.7cm}{\textbf{géneros}}$\kappa,\sigma$\\
-  \parbox[t]{1.7cm}{\textbf{función}}\parbox[t]{.5\textwidth-\parindent-1.7cm}{%
-    \InterfazFuncion{$\bullet = \bullet$}{\In{k_1}{$\kappa$}, \In{k_2}{$\kappa$}}{bool}
-    {$res \igobs (k_1 = k_2)$}
-    [$\Theta(equal(k_1, k_2))$]
-    [función de igualdad de $\kappa$'s]
-  }%
-  \parbox[t]{1.7cm}{\textbf{función}}\parbox[t]{.5\textwidth-\parindent-1.7cm}{%
-    \InterfazFuncion{Copiar}{\In{k}{$\kappa$}}{$\kappa$}
-    {$res \igobs k$}
-    [$\Theta(copy(k))$]
-    [función de copia de $\kappa$'s]
-  }\\[2ex]
+  \parbox{1.7cm}{\textbf{géneros}}$string,\sigma$\\
+[2ex]
   \parbox[t]{1.7cm}{\textbf{función}}\parbox[t]{.5\textwidth-\parindent-1.7cm}{%
     \InterfazFuncion{Copiar}{\In{s}{$\sigma$}}{$\sigma$}
     {$res \igobs s$}
@@ -205,63 +192,53 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(k)$ al co
     [función de copia de $\sigma$'s]
   }
 
-  \textbf{se explica con}: \tadNombre{Diccionario$(\kappa, \sigma)$}, \tadNombre{Iterador Bidireccional(tupla($\kappa,\sigma$))}.
+  \textbf{se explica con}: \tadNombre{Diccionario$(string, \sigma)$}
 
-  \textbf{géneros}: \TipoVariable{dicc$(\kappa, \sigma)$}, \TipoVariable{itDicc($\kappa, \sigma$)}.
+  \textbf{géneros}: \TipoVariable{dicc$(string, \sigma)$}
 
   \Titulo{Operaciones básicas de diccionario}
 
-  \InterfazFuncion{Vacío}{}{dicc$(\kappa,\sigma)$}%
+  \InterfazFuncion{Vacío}{}{dicc$(string,\sigma)$}%
   {$res$ $\igobs$ vacio}%
   [$\Theta(1)$]
   [genera un diccionario vacío.]
 
-  \InterfazFuncion{Definir}{\Inout{d}{dicc($\kappa,\sigma$)}, \In{k}{$\kappa$}, \In{s}{$\sigma$}}{itDicc($\kappa, \sigma$)}
+  \InterfazFuncion{Definir}{\Inout{d}{dicc($string,\sigma$)}, \In{k}{$string$}, \In{s}{$\sigma$}}{}
   [$d \igobs d_0$]
-  {$d$ $\igobs$ definir($d, k, s$) $\land$ haySiguiente($res$) $\land_L$ Siguiente($res$) $=$ $\langle k,s\rangle$ $\land$ alias(esPermutación(SecuSuby($res$), $d$))}
-  [$\displaystyle\Theta\left(\sum_{k' \in K}equal(k,k') + copy(k) + copy(s)\right)$, donde $K$ $=$ claves($d$)]
-  [define la clave $k$ con el significado $s$ en el diccionario.  Retorna un iterador al elemento recién agregado.]
-  [los elementos $k$ y $s$ se definen por copia.  El iterador se invalida si y sólo si se elimina el elemento siguiente del iterador sin utilizar la función \NombreFuncion{EliminarSiguiente}. Además, anteriores($res$) y siguientes($res$) podrían cambiar completamente ante cualquier operación que modifique el $d$ sin utilizar las funciones del iterador.]
-
-
-  \InterfazFuncion{DefinirRapido}{\Inout{d}{dicc($\kappa,\sigma$)}, \In{k}{$\kappa$}, \In{s}{$\sigma$}}{itDicc($\kappa, \sigma$)}
-  [$d \igobs d_0$ $\land$ $\lnot$definido?($d$, $k$)]
-  {$d$ $\igobs$ definir($d, k, s$) $\land$ haySiguiente($res$) $\land_L$ Siguiente($res$) $=$ $\langle k,s\rangle$ $\land$ esPermutación(SecuSuby($res$), $d$)}
-  [$\Theta(copy(k) + copy(s))$]
-  [define la clave $k$ $\not\in$ claves($d$) con el significado $s$ en el diccionario. Retorna un iterador al elemento recién agregado.]
-  [los elementos $k$ y $s$ se definen por copia. El iterador se invalida si y sólo si se elimina el elemento siguiente del iterador sin utilizar la función \NombreFuncion{EliminarSiguiente}. Además, anteriores($res$) y siguientes($res$) podrían cambiar completamente ante cualquier operación que modifique el $d$ sin utilizar las funciones del iterador.]
-
-  \InterfazFuncion{Definido?}{\In{d}{dicc($\kappa,\sigma$)}, \In{k}{$\kappa$}}{bool}
+  {$d$ $\igobs$ definir($d, k, s$)}
+  [$\mathcal{O} (iLongitud(k))$]
+  [define la clave $k$ con el significado $s$ en el diccionario.]
+  
+  \InterfazFuncion{Definido?}{\In{d}{dicc($string,\sigma$)}, \In{k}{$string$}}{bool}
   {$res$ $\igobs$ def?($d$, $k$)}
-  [$\Theta(\sum_{k' \in K}equal(k,k'))$, donde $K$ $=$ claves($d$)]
+  [$\mathcal{O} (iLongitud(k))$]
   [devuelve \texttt{true} si y sólo $k$ está definido en el diccionario.]
 
-  \InterfazFuncion{Significado}{\In{d}{dicc($\kappa,\sigma$)}, \In{k}{$\kappa$}}{$\sigma$}
+  \InterfazFuncion{Obtener}{\In{d}{dicc($string,\sigma$)}, \In{k}{$string$}}{$\sigma$}
   [def?($d$, $k$)]
-  {alias($res$ $\igobs$ Significado($d$, $k$))}
-  [$\Theta(\sum_{k' \in K}equal(k,k'))$, donde $K$ $=$ claves($d$)]
+  {$res$ $\igobs$ obtener($d$, $k$)}
+  [$\mathcal{O} (iLongitud(k))$]
   [devuelve el significado de la clave $k$ en $d$.]
-  [$res$ es modificable si y sólo si $d$ es modificable.]
 
-  \InterfazFuncion{Borrar}{\Inout{d}{dicc($\kappa,\sigma$)}, \In{k}{$\kappa$}}{}
+  \InterfazFuncion{Borrar}{\Inout{d}{dicc($string,\sigma$)}, \In{k}{$string$}}{}
   [$d = d_0$ $\land$ def?($d$, $k$)]
   {$d$ $\igobs$ borrar($d_0, k$)}
-  [$\Theta(\sum_{k' \in K}equal(k,k'))$, donde $K$ $=$ claves($d$)]
+  [$\mathcal{O} (iLongitud(k))$]
   [elimina la clave $k$ y su significado de $d$.]
 
-  \InterfazFuncion{\#Claves}{\In{d}{dicc($\kappa,\sigma$)}}{nat}
-  {$res$ $\igobs$ \#claves($d$)}
+  \InterfazFuncion{Claves}{\In{d}{dicc($string,\sigma$)}}{nat}
+  {$res$ $\igobs$ claves($d$)}
   [$\Theta(1)$]
-  [devuelve la cantidad de claves del diccionario.]
+  [devuelve las claves del diccionario.]
 
-  \InterfazFuncion{Copiar}{\In{d}{dicc($\kappa,\sigma$)}}{dicc($\kappa,\sigma$)}
+  \InterfazFuncion{Copiar}{\In{d}{dicc($string,\sigma$)}}{dicc($string,\sigma$)}
   {$res \igobs d$}
-  [$\displaystyle\Theta\left(\sum_{k \in K}\left(copy(k) + copy(\text{significado}(k,d))\right)\right)$, donde $K$ $=$ claves($d$)]
+  [$\mathcal{O} (iLongitud(c) + iCardinal(claves))$]
   [genera una copia nueva del diccionario.]
 
-  \InterfazFuncion{$\bullet = \bullet$}{\In{d_1}{dicc($\kappa,\sigma$)}, \In{d_2}{dicc($\kappa,\sigma$)}}{bool}
+  \InterfazFuncion{$\bullet = \bullet$}{\In{d_1}{dicc($string,\sigma$)}, \In{d_2}{dicc($string,\sigma$)}}{bool}
   {$res \igobs c_1 = c_2$}
-  [$\displaystyle O\left(\sum_{\substack{k_1 \in K_1\\k_2\in K_2}}equal(\langle k_1,s_1\rangle, \langle k_2, s_2 \rangle)\right)$, donde $K_i$ $=$ claves($d_i$) y $s_i$ $=$ significado($d_i, k_i$), $i \in \{1,2\}$.]
+  [$\mathcal{O} (iLongitud(c) + iCardinal(claves))$]
   [compara $d_1$ y $d_2$ por igualdad, cuando $\sigma$ posee operación de igualdad.]
   []%no hay aliasing
   [{\parbox[t]{\textwidth-3cm}{%
@@ -271,107 +248,24 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(k)$ al co
     [función de igualdad de $\sigma$'s]
   }}]
 
-  \Titulo{Operaciones del iterador}
-
-  El iterador que presentamos permite modificar el diccionario recorrido, eliminando elementos.  Sin embargo, cuando el diccionario es no modificable, no se pueden utilizar las funciones de eliminación.  Además, las claves de los elementos iterados no pueden modificarse nunca, por cuestiones de implementación.  Cuando $d$ es modificable, decimos que $it$ es modificable.
-
-  Para simplificar la notación, vamos a utilizar clave y significado en lugar de $\Pi_1$ y $\Pi_2$ cuando utilicemos una tupla($\kappa,\sigma$).
-
-  \InterfazFuncion{CrearIt}{\In{d}{dicc($\kappa,\sigma$)}}{itDicc($\kappa,\sigma$)}
-  {alias(esPermutación(SecuSuby($res$), $d$)) $\land$ vacia?(Anteriores($res$))}
-  [$\Theta(1)$]
-  [crea un iterador bidireccional del diccionario, de forma tal que \NombreFuncion{HayAnterior} evalúe a \texttt{false} (i.e., que se pueda recorrer los elementos aplicando iterativamente \NombreFuncion{Siguiente}).]
-  [El iterador se invalida si y sólo si se elimina el elemento siguiente del iterador sin utilizar la función \NombreFuncion{EliminarSiguiente}.  Además, anteriores($res$) y siguientes($res$) podrían cambiar completamente ante cualquier operación que modifique $d$ sin utilizar las funciones del iterador.]
-
-  \InterfazFuncion{HaySiguiente}{\In{it}{itDicc($\kappa,\sigma$)}}{bool}
-  {$res$ $\igobs$ haySiguiente?($it$)}
-  [$\Theta(1)$]
-  [devuelve \texttt{true} si y sólo si en el iterador todavía quedan elementos para avanzar.]
-
-  \InterfazFuncion{HayAnterior}{\In{it}{itDicc($\kappa,\sigma$)}}{bool}
-  {$res$ $\igobs$ hayAnterior?($it$)}
-  [$\Theta(1)$]
-  [devuelve \texttt{true} si y sólo si en el iterador todavía quedan elementos para retroceder.]
-
-  \InterfazFuncion{Siguiente}{\In{it}{itDicc($\kappa,\sigma$)}}{tupla($\kappa, \sigma$)}
-  [HaySiguiente?($it$)]
-  {alias($res$ $\igobs$ Siguiente($it$))}
-  [$\Theta(1)$]
-  [devuelve el elemento siguiente del iterador.]
-  [$res$.significado es modificable si y sólo si $it$ es modificable.  En cambio, $res$.clave no es modificable.]
-
-  \InterfazFuncion{SiguienteClave}{\In{it}{itDicc($\kappa,\sigma$)}}{$\kappa$}
-  [HaySiguiente?($it$)]
-  {alias($res$ $\igobs$ Siguiente($it$).clave)}
-  [$\Theta(1)$]
-  [devuelve la clave del elemento siguiente del iterador.]
-  [$res$ no es modficable.]
-
-  \InterfazFuncion{SiguienteSignificado}{\In{it}{itDicc($\kappa,\sigma$)}}{$\sigma$}
-  [HaySiguiente?($it$)]
-  {alias($res$ $\igobs$ Siguiente($it$).significado)}
-  [$\Theta(1)$]
-  [devuelve el significado del elemento siguiente del iterador.]
-  [$res$ es modificable si y sólo si $it$ es modficable.]
-
-  \InterfazFuncion{Anterior}{\In{it}{itDicc($\kappa,\sigma$)}}{tupla(clave: $\kappa$, significado: $\sigma$)}
-  [HayAnterior?($it$)]
-  {alias($res$ $\igobs$ Anterior($it$))}
-  [$\Theta(1)$]
-  [devuelve el elemento anterior del iterador.]
-  [$res$.\TipoVariable{significado} es modificable si y sólo si $it$ es modificable.  En cambio, $res$.\TipoVariable{clave} no es modificable.]
-
-  \InterfazFuncion{AnteriorClave}{\In{it}{itDicc($\kappa,\sigma$)}}{$\kappa$}
-  [HayAnterior?($it$)]
-  {alias($res$ $\igobs$ Anterior($it$).clave)}
-  [$\Theta(1)$]
-  [devuelve la clave del elemento anterior del iterador.]
-  [$res$ no es modficable.]
-
-  \InterfazFuncion{AnteriorSignificado}{\In{it}{itDicc($\kappa,\sigma$)}}{$\sigma$}
-  [HayAnterior?($it$)]
-  {alias($res$ $\igobs$ Anterior($it$).significado)}
-  [$\Theta(1)$]
-  [devuelve el significado del elemento anterior del iterador.]
-  [$res$ es modificable si y sólo si $it$ es modficable.]
-
-
-  \InterfazFuncion{Avanzar}{\Inout{it}{itDicc($\kappa,\sigma$)}}{}
-  [$it = it_0$ $\land$ HaySiguiente?($it$)]
-  {$it$ $\igobs$ Avanzar($it_0$)}
-  [$\Theta(1)$]
-  [avanza a la posición siguiente del iterador.]
-
-  \InterfazFuncion{Retroceder}{\Inout{it}{itDicc($\kappa,\sigma$)}}{}
-  [$it = it_0$ $\land$ HayAnterior?($it$)]
-  {$it$ $\igobs$ Retroceder($it_0$)}
-  [$\Theta(1)$]
-  [retrocede a la posición anterior del iterador.]
-
-  \InterfazFuncion{EliminarSiguiente}{\Inout{it}{itDicc($\kappa,\sigma$)}}{}
-  [$it = it_0$ $\land$ HaySiguiente?($it$)]
-  {$it$ $\igobs$ EliminarSiguiente($it_0$)}
-  [$\Theta(1)$]
-  [elimina del diccionario la clave del elemento que se encuentra en la posición siguiente.]
-
-  \InterfazFuncion{EliminarAnterior}{\Inout{it}{itDicc($\kappa,\sigma$)}}{}
-  [$it = it_0$ $\land$ HayAnterior?($it$)]
-  {$it$ $\igobs$ EliminarAnterior($it_0$)}
-  [$\Theta(1)$]
-  [elimina del diccionario la clave del elemento que se encuentra en la posición anterior.]
 
   \Titulo{Especificación de las operaciones auxiliares utilizadas en la interfaz}
 
-  \begin{tad}{Diccionario Extendido($\kappa$, $\sigma$)}
+  \begin{tad}{Diccionario Extendido($string$, $\sigma$)}
     \parskip=0pt
-    \tadExtiende{\tadNombre{Conjunto($\kappa$, $\sigma$)}}
+    \tadExtiende{\tadNombre{Conjunto($string$, $\sigma$)}}
     
     \tadTitulo{otras operaciones (no exportadas)}
-    \tadOperacion{esPermutacion?}{secu({tupla($\kappa,\sigma$)}),dicc({$\kappa,\sigma$)}}{bool}{}
-    \tadOperacion{secuADicc}{secu({tupla($\kappa,\sigma$)})}{dicc($\kappa,\sigma$)}{}
+    \tadOperacion{descendencia}{dNodo}{conjunto(dNodo)}{}
+    \tadOperacion{Definido}{$string$, dNodo}{bool}{}
+    \tadOperacion{Obtener}{$string$, dNodo}{$\sigma$}{Definido($string$, dNodo)}
     \tadAxiomas
-    \tadAxioma{esPermutacion?($s,d$)}{$d$ $=$ secuADicc($s$) $\land$ \#claves($d$) $=$ long($s$)}
-    \tadAxioma{secuADicc($s$)}{\IF vacia?($s$) THEN vacio ELSE definir($\Pi_1$(prim($s$)), $\Pi_2$(prim($s$)), secuADict(fin($s$))) FI}
+    \tadAxioma{descendencia(d)}{}
+    \tadAxioma{Definido($c, d$)}{\IF $\Phi$?($c$) $\land$ $d$.Definicion $\neq$ NULL THEN true ELSE {\IF $c$.length() $>$ 0 $\land _{L}$ $d$.Siguientes[int($c$[0])] $\neq$ NULL THEN Definido(fin($c$), $d$.Siguientes[int($c$[0])]) ELSE false FI} FI}
+    \tadAxioma{Obtener($c, d$)}{\IF $\phi$?($c$) THEN d.Definicion ELSE Obtener(fin($c$), $d$.Siguientes[int($c$[0])]) FI}
+    
+    
+    
   \end{tad}
 
 \end{Interfaz}
@@ -380,49 +274,285 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(k)$ al co
   
   \Titulo{Representación del diccionario}
 
-  (((Representamos al diccionario en cadena como una lista de nodos. Los nodos seran de tuplas de $\sigma$, para guardar la definicion, y vector de puntero a nodo. Como es un requerimiento que todo elemento de $\kappa$ sea divisible (aca ver si no ponemos string enves de kappa, y listo), los vectores de los nodos seran de la cantidad de valores....)))
-  Representamos al diccionario en cadena como una lista de nodos. Los nodos seran de tuplas de $\sigma$, para guardar la definicion, y vector de puntero a nodo (por ahi a esta altura no hace falta decir que son punteros, sino decir nada mas vectores de nodo). Como las claves son string, vamos a pedir que los vectores sean de 256 posiciones, ya que los strings estan compuestos por chars, y tomamos la convencion de que habra 256 chars distintos para formar nuestros strings. 
+  Representamos al diccionario en cadena como una tupla de conjuntoLineal de string y puntero a nodo. Los nodos seran tuplas de $\sigma$, para guardar la definicion, y vector de puntero a nodo.
+  Como las claves son string, vamos a pedir que los vectores sean de 256 posiciones, ya que los strings estan compuestos por chars, y tomamos la convencion de que habra 256 chars distintos para formar nuestros strings. Lo que le pediremos a cada instancia del diccionario en cadena, es que todo puntero en su vector de siguientes nunca apunte a algun nodo aregagado anteriormente a la instancia, es decir: "que un nodo no apunte a nodos anteriores".
   
-  \begin{Estructura}{dicc$(\kappa,\sigma)$}[dicCadena]
+  \begin{Estructura}{dicc$(string,\sigma)$}[dicCadena]
     \begin{Tupla}[dicCadena]%
-             \tupItem{dicCadena}{Nodo(\tupItem{definicion}{$\sigma$}\tupItem{siguientes}{vector(puntero(Nodo))}}%nose si cuando haga el objeto nodo hacer que ya tenga estos atributos, lo cual dejaria que dicCadena sea solo Nodo
+             \tupItem{dNodo}{puntero(Nodo)}
+             \tupItem{claves}{c}
+    \end{Tupla}
+    \begin{Tupla}[Nodo]%
+             \tupItem{definicion}{$\sigma$}
+             \tupItem{siguientes}{vector(puntero(dNodo))}
     \end{Tupla}
   \end{Estructura}
 
-  \Rep[dicCadena][d]{$(\forall n, n' : Nodo)((n' \in descendencia(d.dicCadena) \land (n = d.dicCadena \lor n \in descendencia(d.dicCadena)) \land _{L} n' \in descendencia(n) \Rightarrow _{L} (\forall i : Nat)( 0 \leq i < 256 \Rightarrow _{L} n'.siguientes[i] \neq n))$}
-  %
+  \Rep[dNodo][d]{$(\forall n, n' : Nodo)((n' \in descendencia(d.dNodo) \land (n = d.dNodo \lor n \in descendencia(d.dNodo)) \land _{L} n' \in descendencia(n) \Rightarrow _{L} (\forall i : Nat)( 0 \leq i < 256 \Rightarrow _{L} n'.siguientes[i] \neq n)) \land _L (\forall c: string)(Definido(c,d.dNodo)) \Leftrightarrow Pertenece?(d.claves, c))$}
+  %no se me ocurre como hacer descendencia... osea, lo unico que quiero decir es que un nodo de la estr no puede tener un puntero en sus sig apuntando a algun nodo anterior
 
   ~
 
-  \AbsFc[dicc]{dicc($\kappa,\sigma$)}[d]{\IF vacía?($d$.claves) THEN vacío ELSE definir(prim($d$).claves, prim($d$).significado, Abs(fin($d$))) FI}
-
-  \Titulo{Representación del iterador}
-
-  El iterador del diccionario es simplemente un par de iteradores a las listas correspondientes.  Lo único que hay que pedir es que se satisfaga el Rep de este par de listas.
-
-  \begin{Estructura}{itDicc($\kappa$, $\sigma$)}[itDic]
-    \begin{Tupla}[itDic]%
-      \tupItem{claves}{itLista($\kappa$)}%
-      \tupItem{significados}{itLista($\sigma$)}%
-    \end{Tupla}
-  \end{Estructura}
-
-  \Rep[itDic][it]{Rep($\langle$SecuSuby($it$.claves), SecuSuby($it$.significados)$\rangle$)}
-
-  ~
-
-  \AbsFc[itDic]{itBi(tupla($\kappa$, $\sigma$))}[it]{CrearItBi(Join(Anteriores($it$.claves), Anteriores($it$.significados)), \\\phantom{CrearItBi(}Join(Siguientes($it$.claves), Siguientes($it$.significados)))}\mbox{}
-
-  ~
-
-  \tadOperacion{Join}{secu($\alpha$)/a,secu($\beta$)/b}{secu(tupla($\alpha,\beta$))}{long($a$) $=$ long($b$)}
-  \tadAxioma{Join($a$, $b$)}{\IF vacia?($a$) THEN \secuencia{} ELSE \secuencia{$\langle${prim($a$), prim($b$)}$\rangle$}[Join(Fin($a$), Fin($b$))] FI}
+  \AbsFc[dicc]{dicc($string,\sigma$)}[d]{def?(clave, d.dNodo) = Definido(clave, d.dNodo) \\ 
+  obtener(clave, d.dNodo) = Obtener(clave, d.dNodo)}
 
 \end{Representacion}
 
 \begin{Algoritmos}
+  En esta sección se hace abuso de notación en los cálculos de álgebra de órdenes presentes en la justificaciones de los algoritmos. La operación de suma ``+'' denota secuencialización de operaciones con determinado orden de complejidad, y el símbolo de igualdad ``='' denota la pertenencia al orden de complejidad resultante.
+
+\medskip
+	
+ \Titulo{Algoritmos del módulo}
+  	\medskip
   
+\begin{algorithm}[H]{\textbf{iVacía}() $\to$ $res$ : dicc}
+    	\begin{algorithmic}[1]
+			 \State $res \gets \langle iVacío(), NULL \rangle$ \Comment $\Theta(1)$
+
+			\medskip
+			\Statex \underline{Complejidad:} $\Theta(1)$
+    	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iDefinir}(\Inout{d}{dicc}, \In{c}{$string$}, \In{s}{$\sigma$})}
+	\begin{algorithmic}[1]
+			 \State $actual \gets d.dNodo$
+			 \State $i \gets 0$
+			 \If{$d = NULL$}		\Comment $\Theta (1)$ Si el diccionario estaba vacío, le agrego un nodo
+			 \State $inicio \gets Nodo$ \Comment $\Theta (1)$
+			 \State $d.dNodo = inicio$ \Comment $\Theta (1)$
+			 \Else \Comment Busco el nodo donde aparesca la ultima letra de la clave c
+			 	\While{$i < iLongitud(c)$} \Comment $\mathcal{O} (iLongitud(c))$
+			 	\If{$actual.Siguientes[int([i])] =  NULL$} \Comment $\Theta (1)$
+				\State $break$ \Comment $\Theta (1)$
+				\EndIf
+				\State $actual \gets actual.Siguientes[int([i])]$ \Comment $\Theta (1)$
+				\State $i \gets i + 1$ \Comment $\Theta (1)$
+			 	\EndWhile
+			 \EndIf
+			 \If{$i = iLongitud(c)$} \Comment $\Theta (1)$ Si la clave está, quizá tiene otra definición: la reemplazo
+			 \State $actual.Definicion \gets NULL$ \Comment $\Theta (1)$
+			 \Else
+			 \While{$i < iLongitud(c)$} \Comment $\mathcal{O} (iLongitud(c))$ Si no estaba la clave completa, agrego nodos para completarla
+			 \State $nuevo \gets Nodo$ \Comment $\Theta (1)$
+			 \State $actual.Siguientes[int([i])] \gets nuevo$ \Comment $\Theta (1)$
+			 \State $actual \gets actual.Siguientes[int([i])]$ \Comment $\Theta (1)$
+			 \State $i \gets i + 1$ \Comment $\Theta (1)$
+			 \EndWhile
+			 \EndIf
+			 \State $actual.Definicion \gets s$ \Comment $\Theta (1)$. Ya estoy en el nodo correcto, agrego la definicón
+			 \State $iAgregar(d.claves, c)$ \Comment $\Theta (1)$
+
+			\medskip
+			\Statex \underline{Complejidad:} $\mathcal{O} (iLongitud(c))$
+			\Statex \underline{Justificación:} El algoritmo tiene llamadas a funciones con costo $\Theta(1)$, en su mayoría asignar o inicializar, y dos $while$, cada uno con costo, en el peor caso, $\mathcal{O} (iLongitud(c))$. En el peor caso, el diccionario estará vacío, entonces entrará en los dos $while$, sumando $\mathcal{O} (iLongitud(c))$ por cada uno (estarán sumando porque estos $while$ no están anidados). Luego, como sabemos que, aplicando álgebra de ordenes, $\mathcal{O} (iLongitud(c))$ + $\Theta (1)$ = $\mathcal{O} (iLongitud(c))$, podemos decir que sólo nos quedará: $\mathcal{O} (iLongitud(c))$ + $\mathcal{O} (iLongitud(c))$ = $\mathcal{O} (iLongitud(c))$.
+    	\end{algorithmic}
+\end{algorithm}
+
+
+\begin{algorithm}[H]{\textbf{iDefifinido}(\Inout{d}{dicc}, \In{c}{$string$}) $\to$ $res$ : $bool$}
+	\begin{algorithmic}[1]
+			\State $actual \gets d.dNodo$ \Comment $\Theta (1)$ 
+			\State $i \gets 0$ \Comment $\Theta (1)$
+			\While{$i < iLongitud(c)$} \Comment $\mathcal{O} (iLongitud(c))$
+			 	\If{$actual.Siguientes[int([i])] =  NULL$} \Comment $\Theta (1)$
+				\State $break$ \Comment $\Theta (1)$
+				\EndIf
+				\State $actual \gets actual.Siguientes[int([i])]$ \Comment $\Theta (1)$
+				\State $i \gets i + 1$ \Comment $\Theta (1)$
+			 	\EndWhile
+			 	\State $res \gets (i = iLongitud(c) \land _{L} actual.Definicion \neq NULL)$ \Comment $\Theta (1)$
+			\medskip
+			\Statex \underline{Complejidad:} $\mathcal{O} (iLongitud(c))$
+			\Statex \underline{Justificación:} El algoritmo tiene llamadas a funciones con costo $\Theta(1)$, y un $while$ de peor costo $\mathcal{O} (iLongitud(c))$. Por álgebra de ordenes sabemos que: $\mathcal{O} (iLongitud(c))$ + $\Theta (1)$ = $\mathcal{O} (iLongitud(c))$, luego, en el caso en que recorra todas las posiciones de la clave, la complejidad será $\mathcal{O} (iLongitud(c))$.
+    	\end{algorithmic}
+\end{algorithm}
+	
+
+\begin{algorithm}[H]{\textbf{iObtener}(\In{d}{dicc}) $\to$ $res$ : $\sigma$}
+	\begin{algorithmic}[1]
+			\State $actual \gets d.dNodo$ \Comment $\Theta (1)$
+			\State $i \gets 0$ \Comment $\Theta (1)$
+			\While{$i < iLongitud(c)$} \Comment $\mathcal{O} (iLongitud(c))$
+				\State $actual \gets actual.Siguientes[int([i])]$ \Comment $\Theta (1)$
+				\State $i \gets i + 1$ \Comment $\Theta (1)$
+			 	\EndWhile
+			\State $res \gets actual.Definicion$ \Comment $\Theta (1)$
+			\medskip
+			\Statex \underline{Complejidad:} $\mathcal{O} (iLongitud(c))$
+			\Statex \underline{Justificación:} Como por restricción sé que la clave pasada debe estar en el diccionario, sé que tendré que iterar, en el $while$, hasta la longitud de la clave. Además, por álgebra de ordenes sé que: $\mathcal{O} (iLongitud(c))$ + $\Theta (1)$ = $\mathcal{O} (iLongitud(c))$, y como todo, menos el $while$, es $\Theta (1)$, la complejidad es $\mathcal{O} (iLongitud(c))$.
+    	\end{algorithmic}
+\end{algorithm}	
+
+
+\begin{algorithm}[H]{\textbf{iBorrar}(\Inout{d}{dicc}, \In{c}{$string$})}
+	\begin{algorithmic}[1]
+			 \State $ruptura \gets d.dNodo$ \Comment $\Theta (1)$
+			 \State $letraRuptura \gets buscarRuptura(d.dNodo, c, ruptura)$ \Comment $\mathcal{O} (iLongitud(c))$
+			 \State $nodoDef \gets buscarNodoDef(dNodo, c)$ \Comment $\mathcal{O} (iLongitud(c))$
+			 \If{$d.dNodo = ruptura$} \Comment $\Theta (1)$
+			 	\If{$cantidadNoNull(nodoDef) = 0$} \Comment $\Theta (1)$
+			 		\If{$cantidadNoNull(d.dNodo) = 0$} \Comment $\Theta (1)$
+					 \State $borrarDesde(d.dNodo,c,0)$ \Comment $\mathcal{O} (iLongitud(c))$
+			 		\State $d.dNodo = NULL$ \Comment $\Theta (1)$
+					 \Else
+			 		\State $borrarDesde(d.dNodo, c, 0)$ \Comment $\mathcal{O} (iLongitud(c))$
+				 \EndIf
+				\Else
+			 	\State $nodoDef.Definicion = NULL$ \Comment $\Theta (1)$
+			 	\EndIf
+			 \Else
+			 	\If{$cantidadNoNull(nodoDef) = 0$} \Comment $\Theta (1)$
+			 	\State $borrarDesde(d.dNodo, c, letraRuptura)$ \Comment $\mathcal{O} (iLongitud(c))$
+			 	\Else
+			 	\State $nodoDef.Definicion = NULL$ \Comment $\Theta (1)$
+			 	\EndIf
+			 \EndIf
+
+			\medskip
+			\Statex \underline{Complejidad:} $\mathcal{O} (iLongitud(c))$
+			\Statex \underline{Justificación:} El algoritmo tiene llamadas a funciones $\Theta (1)$, y a funciones $\mathcal{O} (iLongitud(c))$. Notar que no tengo funciones que cuesten $\mathcal{O} (iLongitud(c))$ anidadas. A la hora de buscar el nodo donde está la definición de la clave pasada, es decir $nodoDef$, ya sé que tengo complejidad $\mathcal{O} (iLongitud(c))$, por lo tanto, por propiedades de álgebra de ordenes, la complejidad del algoritmo será $\mathcal{O} (iLongitud(c))$, ya que: $\mathcal{O} (iLongitud(c))$ + $\Theta (1)$ = $\mathcal{O} (iLongitud(c))$, y como mucho estaré sumando varias veces $\mathcal{O} (iLongitud(c))$, por lo notado anteriormente, que dará $\mathcal{O} (iLongitud(c))$.
+    	\end{algorithmic}
+\end{algorithm}	
+
+	
+\begin{algorithm}[H]{\textbf{iClaves}(\Inout{d}{dicc}) $\to$ $res$ : conjuntoLineal($\sigma$)}	
+	\begin{algorithmic}[1]
+			 \State $res \gets d.claves$ \Comment $\Theta(1)$
+    	    
+			\medskip
+			\Statex \underline{Complejidad:} $\Theta(1)$
+			 
+    	\end{algorithmic}
+\end{algorithm}	
+
+\begin{algorithm}[H]{\textbf{iCopiar}(\In{d}{dic})$\to$ $res$ : dicc($string , \sigma$)}	
+	\begin{algorithmic}[1]
+			\State $res.dNodo = NULL$ \Comment $\Theta(1)$
+			\State $res.claves = iVacío()$ \Comment $\Theta(1)$
+			 \State $claves \gets iClaves(d)$ \Comment $\Theta(1)$
+			 \While{$\lnot iEsVacío?(claves)$} \Comment $\Theta (iCardinal(claves))$
+				 \State $iDefinir(res, primeraClave, iObtener(d, primeraClave))$ \Comment $\mathcal{O} (iLongitud(c))$
+				 \State $iEliminar(claves, primeraClave)$ \Comment $\mathcal{O} (iLongitud(c))$
+			\EndWhile
+    	    
+			\medskip
+			\Statex \underline{Complejidad:} $iCardinal(claves)*\mathcal{O} (iLongitud(c))$
+			\Statex \underline{Justificación:} El algoritmo tiene llamadas a funciones $\Theta (1)$, un $while$ que ejecuta siempre $iCardinal(claves)$ veces, y dentro de este fucniones $\mathcal{O} (iLongitud(c))$. Luego, su complejidad debe ser $iCardinal(claves)$*$\mathcal{O} (iLongitud(c))$.
+			 
+    	\end{algorithmic}
+\end{algorithm}	
+
+\begin{algorithm}[H]{\textbf{$\bullet =_i \bullet$}(\In{d1}{dicc}, \In{d2}{dicc})}	
+	\begin{algorithmic}[1]
+			 \State $res \gets (d1.claves = d2.claves \land _L mismasDefiniciones(d1,d2))$ \Comment $\mathcal{O} (iLongitud(c) + iCardinal(claves))$
+    	    
+			\medskip
+			\Statex \underline{Complejidad:} $iCardinal(claves)*\mathcal{O} (iLongitud(c))$
+			\Statex \underline{Justificación:} $\Theta (1)$ + $iCardinal(claves)*\mathcal{O} (iLongitud(c))$ = $iCardinal(claves)$*$\mathcal{O} (iLongitud(c))$
+			 
+    	\end{algorithmic}
+\end{algorithm}	
+	
+\begin{algorithm}[H]{\textbf{buscarRuptura}(\In{p}{puntero(Nodo)}, \In{c}{$string$}, \Inout{ruptura}{puntero(Nodo)}) $\to$ $res$ : $Nat$}	
+	\begin{algorithmic}[1]
+		\State $actual \gets p$ \Comment $\Theta (1)$
+		\State $i \gets 0$ \Comment $\Theta (1)$
+		\State $letraRuptura \gets 0$ \Comment $\Theta (1)$
+		\While{$i < iLongitud(c)$} \Comment $\mathcal{O} (iLongitud(c))$
+			\If{$cantidadNoNull(actual) > 1 \lor actual.Definicion \leq NULL$} \Comment $\Theta (1)$
+			\State $ruptura \gets actual$ \Comment $\Theta (1)$
+			\State $letraRuptura \gets i$ \Comment $\Theta (1)$
+			\EndIf
+			\State $actual \gets actual.Siguientes[int(c[i])]$ \Comment $\Theta (1)$
+			\State $i \gets i + 1$ \Comment $\Theta (1)$
+		\EndWhile
+		\State $res \gets letraRuptura$ \Comment $\Theta (1)$
+
+		\medskip
+		\Statex \underline{Complejidad:}  $\mathcal{O} (iLongitud(c))$
+		\Statex \underline{Justificación:}  El algoritmo tiene llamadas a funciones con costo $\Theta(1)$, y un $while$ de peor costo $\mathcal{O} (iLongitud(c))$. Por álgebra de ordenes sabemos que: $\mathcal{O} (iLongitud(c))$ + $\Theta (1)$ = $\mathcal{O} (iLongitud(c))$, luego, en el caso en que recorra todas las posiciones de la clave, la complejidad será $\mathcal{O} (iLongitud(c))$.
+    \end{algorithmic}
+\end{algorithm}	
+	
+\begin{algorithm}[H]{\textbf{buscarNodoDef}(\In{p}{puntero(Nodo)}, \In{c}{$string$}) $\to$ $res$ : $puntero(Nodo)$}	
+	\begin{algorithmic}[1]
+		\State $actual \gets p$ \Comment $\Theta (1)$
+		\State $i \gets 0$ \Comment $\Theta (1)$
+		\While{$i < iLongitud(c)$} \Comment $\mathcal{O} (iLongitud(c))$
+			\State $actual \gets actual.Siguientes[int(c[i])]$ \Comment $\Theta (1)$
+			\State $i \gets i + 1$ \Comment $\Theta (1)$
+		\EndWhile
+		\State $res \gets actual$ \Comment $\Theta (1)$
+		
+		\medskip
+		\Statex \underline{Complejidad:} $\mathcal{O} (iLongitud(c))$
+		\Statex \underline{Justificación:}  El algoritmo tiene llamadas a funciones con costo $\Theta(1)$, y un $while$ de peor costo $\mathcal{O} (iLongitud(c))$. Por álgebra de ordenes sabemos que: $\mathcal{O} (iLongitud(c))$ + $\Theta (1)$ = $\mathcal{O} (iLongitud(c))$, luego, en el caso en que recorra todas las posiciones de la clave, la complejidad será $\mathcal{O} (iLongitud(c))$.
+    	\end{algorithmic}
+\end{algorithm}	
+	
+\begin{algorithm}[H]{\textbf{cantidadNoNull}(\In{p}{puntero(Nodo)}) $\to$ $res$ : $nat$}	
+	\begin{algorithmic}[1]
+		\State $contador \gets 0$ \Comment $\Theta (1)$
+		\State $i \gets 0$ \Comment $\Theta (1)$
+		\While{$i < 256$} \Comment $\Theta (1)$
+			\If{$p.Siguientes[i] \neq NULL$} \Comment $\Theta (1)$
+			\State $contador \gets contador + 1$ \Comment $\Theta (1)$
+			\EndIf
+			\State $i \gets i + 1$ \Comment $\Theta (1)$
+		\EndWhile
+		\State $res \gets contador$ \Comment $\Theta (1)$
+    	
+		\medskip
+		\Statex \underline{Complejidad:} $\Theta(1)$
+		\Statex \underline{Justificación:}  El algoritmo tiene llamadas a funciones con costo $\Theta(1)$, y un $while$ que será ejecutado 256 veces, y sabemos que $\Theta (256)$ = $\Theta (1)$. Luego, la complejidad de este algoritmo será $\Theta (1)$.
+    \end{algorithmic}
+\end{algorithm}	
+
+
+\begin{algorithm}[H]{\textbf{borrarDesde}(\In{actual}{puntero(Nodo)}, \In{c}{$string$}, \In{i}{nat})}	
+	\begin{algorithmic}[1]
+		\State $letraRuptura \gets i$ \Comment $\Theta (1)$
+		\While{$i < iLongitud(c)$} \Comment $\mathcal{O} (iLongitud(c))$
+			\If{$i = iLongitud(c) - 1$} \Comment $\Theta (1)$
+			\State $actual \gets NULL$ \Comment $\Theta (1)$
+			\Else
+				\If{$i < iLongitud(c) - 1$} \Comment $\Theta (1)$
+				\State $actual \gets  actual.Siguientes[int(c[letraRuptura])].Siguientes[int(c[i+1])]$ \Comment $\Theta (1)$
+				\EndIf
+			\EndIf
+			\State $i \gets i + 1$ \Comment $\Theta (1)$
+		\EndWhile
+    	
+		\medskip
+		\Statex \underline{Complejidad:} $\mathcal{O} (iLongitud(c))$
+		\Statex \underline{Justificación:}  El algoritmo tiene llamadas a funciones con costo $\Theta(1)$, y un $while$ de peor costo $\mathcal{O} (iLongitud(c))$. Por álgebra de ordenes sabemos que: $\mathcal{O} (iLongitud(c))$ + $\Theta (1)$ = $\mathcal{O} (iLongitud(c))$, luego, en el caso en que recorra todas las posiciones de la clave, la complejidad será $\mathcal{O} (iLongitud(c))$.
+    \end{algorithmic}
+\end{algorithm}	
+
+%    
 \end{Algoritmos}
+
+\begin{algorithm}[H]{\textbf{mismasDefiniciones}(\In{d1}{dicc}, \In{d2}{dicc})$\to$ $res$ : $bool$}
+	\begin{algorithmic}[1]
+			 \State $claves \gets d1.claves$ \Comment $\Theta (1)$
+			 \While{$ \lnot iEsVacío?(claves)$} \Comment $\Theta (iCardinal(claves)))$
+				 \If{$iObetener(d1, primeraClave) = iObtener(d2, primeraClave)$}\Comment $\mathcal{O} (iLongitud(c))$
+				 \State $contador \gets contador + 1$ \Comment $\Theta (1)$
+				 \EndIf
+				 \State $iEliminar(claves, primeraClave)$ \Comment $\Theta (1)$
+			\EndWhile
+			\State $res \gets iCardinal(d1.claves) = contador$ \Comment $\Theta (1)$
+    	    
+			\medskip
+			\Statex \underline{Complejidad:} $iCardinal(claves)*\mathcal{O} (iLongitud(c))$
+			\Statex \underline{Justificación:} El algoritmo tiene llamadas a funciones $\Theta (1)$, un $while$ que ejecuta siempre $iCardinal(claves)$ veces, y dentro de este fucniones $\mathcal{O} (iLongitud(c))$. Luego, su complejidad debe ser $iCardinal(claves)$*$\mathcal{O} (iLongitud(c))$.
+			 
+    	\end{algorithmic}
+\end{algorithm}	
+
+
 \newpage
 
 
