@@ -356,13 +356,13 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(k)$ al co
 			\State $actual \gets d.dNodo$ \Comment $\Theta (1)$ 
 			\State $i \gets 0$ \Comment $\Theta (1)$
 			\While{$i < iLongitud(c)$} \Comment $\mathcal{O} (iLongitud(c))$
-			 	\If{$actual.Siguientes[int([i])] =  NULL$} \Comment $\Theta (1)$
+			 	\If{$actual.Siguientes[int([i])] =  NULL$} \Comment $\Theta (1)$ Si falta tan sólo una letra, ya paro el ciclo.
 				\State $break$ \Comment $\Theta (1)$
 				\EndIf
 				\State $actual \gets actual.Siguientes[int([i])]$ \Comment $\Theta (1)$
 				\State $i \gets i + 1$ \Comment $\Theta (1)$
 			 	\EndWhile
-			 	\State $res \gets (i = iLongitud(c) \land _{L} actual.Definicion \neq NULL)$ \Comment $\Theta (1)$
+			 	\State $res \gets (i = iLongitud(c) \land _{L} actual.Definicion \neq NULL)$ \Comment $\Theta (1)$ Si se cumple es porque el while se ejecuto tantas veces como la longitud de la palabra, así que "la recorrí" toda, y, además, su definicón está donde debe estar.
 			\medskip
 			\Statex \underline{Complejidad:} $\mathcal{O} (iLongitud(c))$
 			\Statex \underline{Justificación:} El algoritmo tiene llamadas a funciones con costo $\Theta(1)$, y un $while$ de peor costo $\mathcal{O} (iLongitud(c))$. Por álgebra de ordenes sabemos que: $\mathcal{O} (iLongitud(c))$ + $\Theta (1)$ = $\mathcal{O} (iLongitud(c))$, luego, en el caso en que recorra todas las posiciones de la clave, la complejidad será $\mathcal{O} (iLongitud(c))$.
@@ -374,7 +374,7 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(k)$ al co
 	\begin{algorithmic}[1]
 			\State $actual \gets d.dNodo$ \Comment $\Theta (1)$
 			\State $i \gets 0$ \Comment $\Theta (1)$
-			\While{$i < iLongitud(c)$} \Comment $\mathcal{O} (iLongitud(c))$
+			\While{$i < iLongitud(c)$} \Comment $\mathcal{O} (iLongitud(c))$ Busco el final de la clave, para devolver su definición
 				\State $actual \gets actual.Siguientes[int([i])]$ \Comment $\Theta (1)$
 				\State $i \gets i + 1$ \Comment $\Theta (1)$
 			 	\EndWhile
@@ -388,22 +388,22 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(k)$ al co
 
 \begin{algorithm}[H]{\textbf{iBorrar}(\Inout{d}{dicc}, \In{c}{$string$})}
 	\begin{algorithmic}[1]
-			 \State $ruptura \gets d.dNodo$ \Comment $\Theta (1)$
-			 \State $letraRuptura \gets buscarRuptura(d.dNodo, c, ruptura)$ \Comment $\mathcal{O} (iLongitud(c))$
-			 \State $nodoDef \gets buscarNodoDef(dNodo, c)$ \Comment $\mathcal{O} (iLongitud(c))$
-			 \If{$d.dNodo = ruptura$} \Comment $\Theta (1)$
-			 	\If{$cantidadNoNull(nodoDef) = 0$} \Comment $\Theta (1)$
-			 		\If{$cantidadNoNull(d.dNodo) = 0$} \Comment $\Theta (1)$
+			 \State $ruptura \gets d.dNodo$ \Comment $\Theta (1)$ La ruptura será el último nodo el cual o tiene una def, y no es la def de mi clave, o hay otra clave con el mismo prefijo que llega hasta la ruptura
+			 \State $letraRuptura \gets buscarRuptura(d.dNodo, c, ruptura)$ \Comment $\mathcal{O} (iLongitud(c))$ Acá lo busco, y además devuelvo en qué letra de la clave aparece dicho nodo
+			 \State $nodoDef \gets buscarNodoDef(dNodo, c)$ \Comment $\mathcal{O} (iLongitud(c))$ Busco el nodo que corresponde a la def de mi clave
+			 \If{$d.dNodo = ruptura$} \Comment $\Theta (1)$ Si la raíz del dicc es la ruptura
+			 	\If{$cantidadNoNull(nodoDef) = 0$} \Comment $\Theta (1)$ Si la clave pasada no es prefijo de ninguna otra clave en mi dicc
+			 		\If{$cantidadNoNull(d.dNodo) = 1$} \Comment $\Theta (1)$ El caso en que tenga solo la clave pasada
 					 \State $borrarDesde(d.dNodo,c,0)$ \Comment $\mathcal{O} (iLongitud(c))$
 			 		\State $d.dNodo = NULL$ \Comment $\Theta (1)$
-					 \Else
+					 \Else  \Comment El caso en que tenga alguna clave mas
 			 		\State $borrarDesde(d.dNodo, c, 0)$ \Comment $\mathcal{O} (iLongitud(c))$
 				 \EndIf
-				\Else
+				\Else \Comment El caso en que la clave pasada sea prefijo de alguna otra clave en mi dicc
 			 	\State $nodoDef.Definicion = NULL$ \Comment $\Theta (1)$
 			 	\EndIf
-			 \Else
-			 	\If{$cantidadNoNull(nodoDef) = 0$} \Comment $\Theta (1)$
+			 \Else \Comment Si la ruptura se ocasiona en un nodo posterior a la raiz
+			 	\If{$cantidadNoNull(nodoDef) = 0$} \Comment $\Theta (1)$ Si la clave pasada no es prefijo de ninguna otra
 			 	\State $borrarDesde(d.dNodo, c, letraRuptura)$ \Comment $\mathcal{O} (iLongitud(c))$
 			 	\Else
 			 	\State $nodoDef.Definicion = NULL$ \Comment $\Theta (1)$
