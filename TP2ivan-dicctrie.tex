@@ -290,6 +290,7 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(k)$ al co
 
   \Rep[dNodo][d]{$(\forall n, n' : Nodo)((n' \in descendencia(d.dNodo) \land (n = d.dNodo \lor n \in descendencia(d.dNodo)) \land _{L} n' \in descendencia(n) \Rightarrow _{L} (\forall i : Nat)( 0 \leq i < 256 \Rightarrow _{L} n'.siguientes[i] \neq n)) \land _L (\forall c: string)(Definido(c,d.dNodo)) \Leftrightarrow Pertenece?(d.claves, c))$}
   %no se me ocurre como hacer descendencia... osea, lo unico que quiero decir es que un nodo de la estr no puede tener un puntero en sus sig apuntando a algun nodo anterior
+  %Una parte del enunciado del TP dice que se pueden escribir en castellano aquellas partes del rep que tengan punteros. De ultima, dejo escrito esto en castellano.
 
   ~
 
