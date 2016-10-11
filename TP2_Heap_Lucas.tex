@@ -178,7 +178,7 @@
 
 \section{Módulo Heap Modificable($\alpha$)}
 
-Este módulo implementa una cola de prioridad que permite eliminar elemntos en tiempo logaritmico. La cola de prioridad está formada por un conjunto de nodos, los cuales contienen el elemento que se quiere colocar en la cola y un número que define univocamente la prioridad del elemento respecto del resto de los elemento en la cola. Siendo n el número asociado a un elemento dado, debe cumplirse que los elementos con asociados a los números 2*n+1 y 2*n+2 tienen menor prioridad que el elemento asociado a n, y el elemento asociado a (n-1)/2 tiene mayor prioridad.
+Este módulo implementa una cola de prioridad que permite eliminar elemntos en tiempo logaritmico. La cola de prioridad está formada por un conjunto de nodos, los cuales contienen el elemento que se quiere colocar en la cola y un número que define univocamente la prioridad del elemento respecto del resto de los elemento en la cola.
 
 Para describir la complejidad de las operaciones, vamos a llamar $copy(a)$ al costo de copiar el elemento $a \in \alpha$ y $compare(a_1, a_2)$ al costo de comparar los elementos $a_1, a_2 \in \alpha$ (i.e., $copy$ y $compare$ son funciones de $\alpha$ en $\mathbb{N}$)\footnote{Nótese que este es un abuso de notación, ya que no estamos describiendo $copy$ y $compare$ en función del tamaño de $a$.  A la hora de usarlo, habrá que realizar la traducción}
 
@@ -256,8 +256,8 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(a)$ al co
     
     \tadTitulo{otras operaciones}
     
-    \tadAlinearFunciones{eliminar(c, a)}{heapMod($\alpha$), $\alpha$}
-    \tadOperacion{eliminar}{heapMod($\alpha$), $\alpha$}{heapMod($\alpha$)}{}
+    \tadAlinearFunciones{eliminar(c, a)}{heapMod($\alpha$), $\alpha$/a}
+    \tadOperacion{eliminar}{heapMod($\alpha$), $\alpha$/a}{heapMod($\alpha$)}{$a \in heapSecu(c_0)$}
     \tadOperacion{heapSecu}{heapMod($\alpha$)}{secu($\alpha$)}{}
     
     \tadAxiomas
@@ -269,13 +269,13 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(a)$ al co
    
 \end{Interfaz}
 
-
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{Representacion}
 
   \Titulo{Representación de la Cola de Prioridad}
   
-  En este módulo vamos a utilizar un vector para representar la cola, donde cada elemento es un puntero a una tupla (nodo). La primera componente del nodo es la posicion de la tupla en el vector, mientras que la segunda componente es el elemento que queremos colocar en la cola de prioridad.
+  En este módulo vamos a utilizar un vector para representar la cola, donde cada elemento es un puntero a una tupla (nodo). La primera componente del nodo es la posicion de la tupla en el vector, mientras que la segunda componente es el elemento que queremos colocar en la cola de prioridad. Siendo n la posición de un elemento dado, debe cumplirse que los elementos en las posiciones 2*n+1 y 2*n+2 tienen menor prioridad que el elemento en la posición n, y el elemento en la posición (n-1)/2 tiene mayor prioridad.
   
   \begin{Estructura}{heapMod$(\alpha)$}[vector(puntero(nodo))]
     \begin{Tupla}[nodo]
@@ -284,8 +284,13 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(a)$ al co
     \end{Tupla}
   \end{Estructura}
 
-	\RepFc[vector(puntero(nodo))][c]{true}
-%  \Rep[vector( puntero(nodo))][c]{($\forall i$: nat) ($0 \leq i <$ Longitud(c)) $\impluego$ c[i].posicion = i $\land$\\($\forall i$: nat) ($0 < i <$ Longitud(c)) $\impluego$ $c[i].dato < c[(i-1)/2].dato$ $\land$\\ ($\forall i$: nat) $\impluego$ ($0 \leq i <$ Longitud(c)/2) $c[(2*i)+1].dato < c[i].dato \land c[2*i)+2].dato < c[i].dato$)}
+	%\RepFc[vector(puntero(nodo))][c]{true}
+  \Rep[vector( puntero(nodo))][c]{($\forall i$: nat) ($0 \leq i <$ Longitud(c)) $\impluego$ $c[i].posicion = i$ $\land$\\(($\forall i$: nat) ($0 < i <$ Longitud(c)) $\impluego$ $c[i].dato < c[(i-1)/2].dato$) $\land$\\ (($\forall i$: nat) ($0 \leq i <$ (Longitud(c)-1)/2) $\impluego$ $c[(2*i)+1].dato < c[i].dato \land c[(2*i)+2].dato < c[i].dato$))\\$\land$ (esPar(Longitud(c)) $\impluego$ c[Longitud(c)-1].dato < c[(Longitud(c)-1)/2].dato)}\mbox{}
+  
+  ~
+
+  \tadOperacion{esPar}{nat}{bool}{}
+  \tadAxioma{esPar($n$)}{\IF $n \leq 1$ THEN $n = 0?$ ELSE esPar($n-2$) FI}
   ~
   \AbsFc[vector({nodo})]{colaPrior($\alpha$)}[c]{\IF vacia?($c$) THEN vacía ELSE encolar(Ultimo($c$).dato, Abs(Comienzo($c$))) FI}
   
@@ -293,7 +298,7 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(a)$ al co
 \end{Representacion}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newpage
+%\newpage
 
 \begin{Algoritmos}
 
@@ -302,7 +307,7 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(a)$ al co
  \Titulo{Algoritmos del módulo}
   	\medskip
   
-\begin{algorithm}[H]{\textbf{iVacía?}(\In{c}{vector( puntero(nodo))}) $\to$ $res$ : $bool$}
+\begin{algorithm}[H]{\textbf{iVacía?}(\In{c}{vector(puntero(nodo))}) $\to$ $res$ : $bool$}
     	\begin{algorithmic}[1]
 			 \State $res \gets iLongitud(c) = 0$ \Comment $\Theta(1)$
 
@@ -312,7 +317,7 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(a)$ al co
 \end{algorithm}
 
 
-\begin{algorithm}[H]{\textbf{iPróximo}(\In{c}{vector( puntero(nodo))}) $\to$ $res$ : $\alpha$}
+\begin{algorithm}[H]{\textbf{iPróximo}(\In{c}{vector(puntero(nodo))}) $\to$ $res$ : $\alpha$}
     	\begin{algorithmic}[1]
 			 \State $res \gets c[0].dato$ \Comment $\Theta(1)$
 
@@ -322,7 +327,7 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(a)$ al co
 \end{algorithm}
 
 
-\begin{algorithm}[H]{\textbf{iDesncolar}(\Inout{c}{vector( puntero(nodo))})}
+\begin{algorithm}[H]{\textbf{iDesncolar}(\Inout{c}{vector(puntero(nodo))})}
     	\begin{algorithmic}[1]
     	 \If{$iLongitud(c) = 1$} \Comment $\Theta(1)$
     	 	\State $iEliminar(c, 0) $ \Comment {Si hay un solo elemento, simplemente se elimina} // $\Theta(1)$
@@ -352,7 +357,7 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(a)$ al co
 \end{algorithm}
 
 
-\begin{algorithm}[H]{\textbf{iEncolar}(\In{a}{$\alpha$}, \Inout{c}{vector( puntero(nodo))}) $\to$ $res$ : $nodo$}
+\begin{algorithm}[H]{\textbf{iEncolar}(\In{a}{$\alpha$}, \Inout{c}{vector(puntero(nodo))}) $\to$ $res$ : $nodo$}
     	\begin{algorithmic}[1]
     	\State $puntero(nodo) \ nuevo \gets \& \langle iLongitud(c), a \rangle$ \Comment {Se crea un nuevo nodo, $a$ se pasa por referencia} // $\Theta(1)$
   		\State $iAgregarAtras(c, nuevo)$ \Comment {Se agrega al final del vector el nuevo elemento} // $\Theta(($f$(long($c$)) $+$ $copy(nuevo)$))$
@@ -365,7 +370,7 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(a)$ al co
 \end{algorithm}
   
   
-\begin{algorithm}[H]{\textbf{iEliminar}(\Inout{c}{vector( puntero(nodo)), \In{a}{nodo})}}
+\begin{algorithm}[H]{\textbf{iEliminar}(\Inout{c}{vector(puntero(nodo))}, \In{a}{nodo})}
     	\begin{algorithmic}[1]
     	 \If{$iLongitud(c) = 1$} \Comment $\Theta(1)$
     	 	\State $iEliminar(c, 0) $ \Comment {Si hay un solo elemento, simplemente se elimina} // $\Theta(1)$
@@ -383,15 +388,15 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(a)$ al co
 \end{algorithm}
 
 
-\begin{algorithm}[H]{\textbf{iSiftDown}(\Inout{c}{vector( puntero(nodo)), \In{i}{nat})}}
+\begin{algorithm}[H]{\textbf{iSiftDown}(\Inout{c}{vector(puntero(nodo))}, \In{i}{nat})}
     	\begin{algorithmic}[1]
     	\State {$l \gets 2*i+1$} \Comment {Posición del hipotético hijo izquierdo} $\Theta(1)$
     	\State {$r \gets 2*i+2$} \Comment {Posición del hipotético hijo derecho} $\Theta(1)$
     	\State {$largest \gets i$}
-    	\If{$l < iLongitud(c) \land c[l].dato > c[i].dato$} \Comment {Vemos si el dato del hijo izquierdo es el mayor} $\Theta(1)$
+    	\If{$l < iLongitud(c) \land c[l].dato > c[i].dato$} \Comment {Vemos si el hijo izquierdo es el mayor} $\Theta(compare(a_1, a_2))$
     		\State {$largest = l$}	\Comment {El hijo izquierdo es mayor que el padre, guardamos la posicion} $\Theta(1)$
 			\EndIf
-    	\If{$r < iLongitud(c) \land c[r].dato > c[largest].dato$} \Comment {Vemos si el dato del hijo derecho es el mayor} $\Theta(1)$
+    	\If{$r < iLongitud(c) \land c[r].dato > c[largest].dato$} \Comment {Vemos si el hijo derecho es el mayor} $\Theta(compare(a_1, a_2))$
     		\State {$largest = r$}	\Comment {El hijo derecho es mayor que el padre y el hijo izquierdo, guardamos la posicion} $\Theta(1)$
 			\EndIf
     	\If{$largest \neq i$} \Comment {Algun hijo es mayor} $\Theta(1)$
@@ -404,16 +409,16 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(a)$ al co
 			\EndIf
 
 			\medskip
-			\Statex \underline{Complejidad:} $\Theta(log(iLongitud(c)))$
-			\Statex \underline{Justificación:} 
+			\Statex \underline{Complejidad:} $\Theta(log(iLongitud(c)) * compare(a_1, a_2))$
+			\Statex \underline{Justificación:} Todas las operaciones del algoritmo tienen costo $\Theta(1)$ excepto las comparaciones entre los datos que cuestan $\Theta(compare(a_1, a_2))$. El algoritmo recorre el vector $c$ recursivamente. En cada nueva llamada a función el índice $i$ vale el doble de lo que valía originalmente, por lo tanto pueden haber como máximo $log(iLongitud(c))$ llamadas a función, y cada una de las llamadas tiene costo $\Theta(compare(a_1, a_2))$.
     	\end{algorithmic}
 \end{algorithm}
 
 
-\begin{algorithm}[H]{\textbf{iSiftUp}(\Inout{c}{vector( puntero(nodo)), \In{i}{nat})}}
+\begin{algorithm}[H]{\textbf{iSiftUp}(\Inout{c}{vector(puntero(nodo))}, \In{i}{nat})}
     	\begin{algorithmic}[1]
 			
-    	\If{$i \neq 0 \land c[(i-1)/2].dato < c[(i].dato$} \Comment {Vemos que no esta al tope de la cola ni es menor al padres} $\Theta(1)$
+    	\If{$i \neq 0 \land c[(i-1)/2].dato < c[(i].dato$} \Comment {No esta al tope ni el padres es menor} $\Theta(compare(a_1, a_2))$
     		\State {$puntero(nodo) \ nuevo \gets c[i]$} \Comment {Creamos una variable para intercambiar los elementos} $\Theta(1)$
     		\State {$c[i] \gets c[(i-1)/2]$} \Comment {Intercambiamos el padre con el hijo} $\Theta(1)$
     		\State {$c[i].posicion \gets i$} \Comment {Le guardamos la nueva posición} $\Theta(1)$
@@ -423,8 +428,8 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(a)$ al co
 			\EndIf
 			
 			\medskip
-			\Statex \underline{Complejidad:} $\Theta(log(iLongitud(c)))$
-			\Statex \underline{Justificación:} 
+			\Statex \underline{Complejidad:} $\Theta(log(iLongitud(c)) * compare(a_1, a_2))$
+			\Statex \underline{Justificación:} Todas las operaciones del algoritmo tienen costo $\Theta(1)$ excepto las comparaciones entre los datos que cuestan $\Theta(compare(a_1, a_2))$. El algoritmo recorre el vector $c$ recursivamente. En cada nueva llamada a función el índice $i$ vale mitad de lo que valía originalmente, por lo tanto pueden haber como máximo $log(iLongitud(c))$ llamadas a función, y cada una de las llamadas tiene costo $\Theta(compare(a_1, a_2))$.
     	\end{algorithmic}
 \end{algorithm}
   
