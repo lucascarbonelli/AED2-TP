@@ -280,7 +280,7 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(k)$ al co
   \begin{Estructura}{dicc$(string,\sigma)$}[dicCadena]
     \begin{Tupla}[dicCadena]%
              \tupItem{dNodo}{puntero(Nodo)}
-             \tupItem{claves}{c}
+             \tupItem{claves}{conjuntoLineal}
     \end{Tupla}
     \begin{Tupla}[Nodo]%
              \tupItem{definicion}{$\sigma$}
@@ -430,10 +430,10 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(k)$ al co
 
 \begin{algorithm}[H]{\textbf{iCopiar}(\In{d}{dic})$\to$ $res$ : dicc($string , \sigma$)}	
 	\begin{algorithmic}[1]
-			\State $res.dNodo = NULL$ \Comment $\Theta(1)$
-			\State $res.claves = iVacío()$ \Comment $\Theta(1)$
+			\State $res.dNodo \gets NULL$ \Comment $\Theta(1)$
+			\State $res.claves \gets iVacío()$ \Comment $\Theta(1)$
 			 \State $claves \gets iClaves(d)$ \Comment $\Theta(1)$
-			 \While{$\lnot iEsVacío?(claves)$} \Comment $\Theta (iCardinal(claves))$
+			 \While{$\lnot iEsVacío?(claves)$} \Comment $\Theta (1)$
 				 \State $iDefinir(res, primeraClave, iObtener(d, primeraClave))$ \Comment $\mathcal{O} (iLongitud(c))$
 				 \State $iEliminar(claves, primeraClave)$ \Comment $\mathcal{O} (iLongitud(c))$
 			\EndWhile

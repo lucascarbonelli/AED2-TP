@@ -37,17 +37,17 @@ jugadores => vector(it(infoJug))
 infoJug:
 estaConect bool
 sanciones nat
-it conj(id) //relacionar estaConect con esto
+posMatriz it conj(id) //relacionar estaConect con esto
 it pokemons
 it(colaPrioridad)
 
 //estas dos son para saber posiciones y adyacencias. Las como el mapa
 matrizJugadores => it matriz(conj(id))
 //true si está, false si no
-
+(queda la op3)
 __________
 
-matrizPokemons => matriz(bool)
+matrizPokemons => matriz(<bool, it(infoCoord)>)
 //donde true si hay un poke, false sino
 
 pokemons => it conjuntoLineal(tupla<tipoPokemon, cant>)
@@ -55,17 +55,17 @@ pokemons => it conjuntoLineal(tupla<tipoPokemon, cant>)
 
 expulsados => conjuntoLineal(id)
 
-posPokemons => dicc(coord, it pokemonsTotales)
+posPokemons => diccLineal(coord, infoCoord)
 //si agregamos un poke, es agregar coord a este dicc, que es O(1)
 
 pokemonsTotales => diccTrie(tipo, it(infoPoke))
 //acá están los PS y PC
 infoPoke:
 cant
-conjuntoLineal(it(infoCoord))
+pokesSalvajes conjuntoLineal(it(infoCoord))
 //si hay algun tipo que no este en el mapa, o el conj es vacio o el it va a NULL (decidir)
 infoCoord:
-coord
+tipo
 cantMovCapt
 colaPrioridad
 
@@ -88,3 +88,7 @@ HACER y divisiones:
 
 ·mapa -> J
 ·juego -> P/J (y los que terminen)
+
+__________
+
+infoJug, infoPoke, infoCoord, cantidadPokeTot, matrizes(todas con el modulo hecho)
