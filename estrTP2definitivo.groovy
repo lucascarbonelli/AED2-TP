@@ -47,7 +47,7 @@ matrizJugadores => it matriz(conj(id))
 (queda la op3)
 __________
 
-matrizPokemons => matriz(<bool, it(infoCoord)>)
+matrizPokemons => matriz(<bool, itDicc(posPokemons)>)
 //donde true si hay un poke, false sino
 
 pokemons => it conjuntoLineal(tupla<tipoPokemon, cant>)
@@ -58,11 +58,11 @@ expulsados => conjuntoLineal(id)
 posPokemons => diccLineal(coord, infoCoord)
 //si agregamos un poke, es agregar coord a este dicc, que es O(1)
 
-pokemonsTotales => diccTrie(tipo, it(infoPoke))
+pokemonsTotales => diccTrie(tipo, infoPoke)
 //acá están los PS y PC
 infoPoke:
 cant
-pokesSalvajes conjuntoLineal(it(infoCoord))
+pokesSalvajes conjuntoLineal(itDicc(posPokemons)) //
 //si hay algun tipo que no este en el mapa, o el conj es vacio o el it va a NULL (decidir)
 infoCoord:
 tipo
