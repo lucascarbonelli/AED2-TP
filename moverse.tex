@@ -1,0 +1,50 @@
+\begin{algorithm}[H]{\textbf{iMoverse}(\In {e}{jugador}, \In {c}{coordenada}, \Inout{j}{juego})}
+    \begin{algorithmic}[1]
+        \State $I \gets iSiguiente(jugadores[e])$ \Comment I de coordenada inicial
+        \State $F \gets c$  \Comment F de cordenada final
+        \While{$iHaySiguiente(pokemonsTotales.claves)$}
+            \If{$!iVacio?(iSiguiente(iObtener(iSiguiente(pokemonsTotales.claves))).pokemonsSalvajes)$}
+                \While{$iHaySiguiente(iObtener(iSiguiente(pokemonsTotales.claves)).pokemonsSalvajes)$}
+                    \State $k \gets LaCoordenadaDe->iSiguiente(iObtener(iSiguiente(pokemonsTotales.claves))).pokemonsSalvajes)$
+                \If{$k = I$}
+                    \If{$iHayPokemonCercano(k, j)$}
+                        \If{$iHayPokemonCercano(F,j)$}
+                            \If{$iPosPokemonCercano(k,j) = iPosPokemonCercano(F,j)$}
+                                \State \Comment No hago nada
+                            \Else
+                                \State $reinicio(k,j)$ \Comment cantmvp=0 y quito a e del heap
+                            \EndIf
+                        \Else
+                            \State $reinicio(k,j)$
+                        \EndIf
+                    \EndIf
+                \EndIf
+                \If{$k = F$}
+                    \If{$iHayPokemonCercano(k, j)$}
+                        \If{$iHayPokemonCercano(I, j)$}
+                            \If{$iPosPokemonCercano(k,j) = iPosPokemonCercano(I,j)$}
+                                \State \Comment No hago nada
+                            \Else
+                                \State $reinicio(k,j)$
+                            \EndIf
+                        \Else
+                            \State \Comment No hago nada
+                        \EndIf
+                    \EndIf
+                \EndIf
+                \If{$k \neq I \land k \neq F$}
+                    \If{$iHayPokemonCercano(k,j)$}
+                        \State $resuelvo(iPosPokemonCercano(I,j))$
+                    \Else
+                        \State \Comment No hago nada
+                    \EndIf
+                \EndIf
+                \State$iAvanzar(iObtener(iSiguiente(pokemonsTotales.claves))).pokemonsSalvajes)$
+                \EndWhile
+        \State $iAvanzar(pokemonsTotales.claves)$
+        \EndWhile
+
+		\Statex \underline{Complejidad:} $\Theta(???)$
+    \end{algorithmic}
+\end{algorithm}
+
