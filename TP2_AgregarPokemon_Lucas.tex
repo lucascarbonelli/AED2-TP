@@ -196,34 +196,68 @@
   
 \begin{algorithm}[H]{\textbf{iAgregarPokémon}(\In{p}{pokémon}, \In{c}{coor}, \Inout{j}{juego})}
     	\begin{algorithmic}[1]
-			 \State $puntero(heapMod) \ nuevoHeap \gets \& iCrearHeapPokemon(c)$ \Comment {Se crea el heap que contiene a todos los jugadores en radio 2 del pokémon} // $\Theta(EC * log(EC))$
-			 \State $puntero(infoCoord) \ nuevoInfoCoord \gets \& \langle p, 0, nuevoHeap \rangle$ \Comment {Se crea un infoCoord con los datos del pokémon} // $\Theta(1)$
- 			 \State $itDic \ dicLinealPoke \gets iDefinirRapido(posPokemon, c, nuevoInfoCoord)$ \Comment {Se define la coordenada del pokémon y se coloca la referencia a su infoCoord} // $\Theta(1)$
-			 \State $matrizPokemons[iLongitud(c)][iLatitud(c)] \gets \& \langle true, dicLinealPoke \rangle$ \Comment {Se cambia $true$ la posición donde está el pokémon y se pone una referencia al diccionario de coordenadas} // $\Theta(1)$
-    	 \If{$iDefinido?(pokemonsTotales, p)$} \Comment {Se verifica que esté definido el tipo pokémon $p$} // $\Theta(iLongitud(p))$
-    	 	\State $puntero(infoPoke) \ info \gets iObtener(pokemonsTotales, p)$ \Comment // $\Theta(iLongitud(p))$
-				\State $\Pi_{1}(info) \gets \Pi_{1}(info)+1$ \Comment {Se incremente la cantidad de pokemones del tipo agregado} // $\Theta(1)$
-				\State $iDefinirRapido(\Pi_{2}(info), c, nuevoInfoCoord)$ \Comment {Se agrga al diccionario de infoPoke} // $\Theta(1)$
+	\State $itHeapmod \ itNuevoHeap \gets iCrearHeapPokemon(j, c)$ \Comment {Se crea el heap que contiene a todos los jugadores en radio 2 del pokémon} // $\Theta(EC * log(EC))$
+
+ 	\State $itDic \ dicLinealPoke \gets iDefinirRapido(j.posPokemon, c, \langle p, 0, itNuevoHeap \rangle)$ \Comment {Se define la coordenada del pokémon y se coloca su infoCoord} // $\Theta(1)$
+ 			 
+	\State $j.matrizPokemons[iLongitud(c)][iLatitud(c)] \gets \langle true, dicLinealPoke \rangle$ \Comment {Se cambia $true$ la posición donde está el pokémon y se pone un iterador al diccionario de coordenadas} // $\Theta(1)$
+			 
+    	 \If{$iDefinido?(j.pokemonsTotales, p)$} \Comment {Se verifica que esté definido el tipo pokémon $p$} // $\Theta(iLongitud(p))$
+    	 
+    	 %	\State $ $ \Comment {Se incremente la cantidad de pokemones del tipo agregado} // $\Theta(iLongitud(p))$
+    	 
+		\State $iObtener(j.pokemonsTotales, p).cant \gets iObtener(j.pokemonsTotales, p).cant + 1$ \Comment {Se incremente la cantidad de pokemones del tipo agregado} // $\Theta(iLongitud(p))$
+				
+		\State $AgrgarRapido(iObtener(j.pokemonsTotales, p).pos, dicLinealPoke)$ \Comment {Se agrega el iterador al conjunto de posiciones} // $\Theta(iLongitud(p))$
+			
     	\Else
-    	 	\State $puntero(dicc(pokémon, infoPoke)) \ diccCoordPoke \gets iVacio()$ \Comment {Se crea un diccionario vacio} // $\Theta(1)$
-    	 	\State $itDicc(pokémon, infoPoke)) \ itDiccCoordPoke \gets iDefinirRapido(diccCoordPoke, c, nuevoInfoCoord)$ \Comment {Se agrga al diccionario de infoPoke} // $\Theta(1)$
-    	 	\State $puntero(infoPoke) \ info \gets \& \langle 1, itDiccCoordPoke \rangle$ \Comment {Se crea el infoPoke} // $\Theta(1)$
-				\State $iDefinir(pokemonsTotales, p, info)$ \Comment {Se agrga al diccionario de pokemonsTotales} // $\Theta(iLongitud(p))$
-			\EndIf
+    	
+	    	\State $iDefinir(j.pokemonsTotales, p, \langle 1, iVacio() \rangle)$	\Comment {Se define el nuevo tipo de pokemon} // $\Theta(iLongitud(p))$
+	    	
+		\State $AgrgarRapido(iObtener(j.pokemonsTotales, p).pos, dicLinealPoke)$ \Comment {Se agrega el iterador al conjunto de posiciones} // $\Theta(iLongitud(p))$
+
+	\EndIf
 			
 			\medskip
 			\Statex \underline{Complejidad:} $\Theta(|P| + EC * log(EC))$
-			\Statex \underline{Justificación:}
+			\Statex \underline{Justificación:} El algoritmo cuenta con una operación que tiene costo $\Theta(EC * log(EC))$, tres operaciones con costo $\Theta(|P|)$ y otra operaciones con costo $\Theta(1)$. Luego sumando las complejidades se obtiene que la complejidad del algoritmo es $\Theta(|P| + EC * log(EC))$.
     	\end{algorithmic}
 \end{algorithm}
 
 
-\begin{algorithm}[H]{\textbf{iCrearHeapPokemon}(\In{c}{coor}) $\to$ $res$ : heapMod($\alpha$)}
+\begin{algorithm}[H]{\textbf{iCrearHeapPokemon}(\In{j}{juego}, \In{c}{coor}) $\to$ $res$ : heapMod($\alpha$)}
     	\begin{algorithmic}[1]
-			 \State $res \gets c$ \Comment $\Theta(1)$
-
+    	\State $heapmod \ pokeHeap \gets Vacia()$ \Comment // $\Theta(1)$
+	\State $i \gets -2$ \Comment // $\Theta(1)$
+	\While {$i \leq 2$} \Comment // $\Theta(1)$
+	
+		\State $j \gets -2$ \Comment // $\Theta(1)$
+		\While {$j \leq 2$} \Comment // $\Theta(1)$
+		
+			\State $coor \ coorJug \gets \langle longitud(c)+i, latitud(c)+j \rangle$ \Comment // $\Theta(1)$
+			
+			\If {$posExistente(coorJug, j.mapa) \land DistEuclidea(c, coorJug) \leq 2$} \Comment {Vemos que la coordenada exista en el mapa y esté en rango del pokémon} // $\Theta(1)$
+			\State $itConj(Jugador) \ itJugHeap \gets CrearIt(j.matrizJugadores[i][j])$ \Comment // $\Theta(1)$
+			
+				\While {$HaySiguiente(itJugHeap)$} \Comment {Analizamos los jugadores que hay en esa coordenada} // $\Theta(1)$
+					\State $id \gets Siguiente(itJugHeap)$ \Comment $\Theta(1)$
+					\State $itHeapmod \ itPokeHeap \gets Encolar(\langle \#(jugadores[id].pokemons), id \rangle, pokeHeap)$ \Comment {Agregamos al jugador a la cola de prioridad del pokémon y creamos un iterador al heap} // $\Theta(log(EC))$
+					\State $jugadores[id].posicionCola \gets itPokeHeap$ \Comment {Colocamos el iterador info del jugador} // $\Theta(1)$
+					\State $Avanzar(itJugHeap)$ \Comment // $\Theta(1)$
+	
+				\EndWhile
+			\EndIf
+			
+			\State $j \gets j + 1$ \Comment // $\Theta(1)$
+			
+		\EndWhile
+		\State $i \gets i + 1$ \Comment // $\Theta(1)$
+		
+	\EndWhile
+	
 			\medskip
 			\Statex \underline{Complejidad:} $\Theta(EC * log(EC))$
+			\Statex \underline{Justificación:} Todas las operaciones tienen costo $\Theta(1)$, excepto $Encolar$ que tiene costo $\Theta(log(EC))$, donde $EC$ es la cantidad de elementos en la cola. El algoritmo tiene dos ciclos, pero tienen una cantidad predeterminada de iteraciones, tanto $i$ como $j$ toma valores en el intervalo [-2,2]. Luego la complejidad depende de la cantidad de elementos($jugadores$) que se coloquen en la cola. Denominamos $EC$ a la cantidad de jugadores que se encuentran en rango del pokémon y deben ser colocados en la cola de prioridad. Ya que $Encolar$ un jugador que tiene costo $\Theta(log(EC))$ y hay $EC$ jugadores, la complejidad es $\Theta(EC * log(EC))$.
     	\end{algorithmic}
 \end{algorithm}
 

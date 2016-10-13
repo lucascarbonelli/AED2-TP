@@ -204,7 +204,7 @@ Este módulo implementa una cola de prioridad. El TAD Cola de prioridad es paramé
   [$\Theta(log(\#heapSecu(c)))$]
   [Desencola el próximo elemento.]
   
-  \InterfazFuncion{Vacía}{}{heapMod$(\alpha)$}
+  \InterfazFuncion{Vacía}{}{heapMod}
   {$res$ $\igobs$ vacía()}
   [$\Theta(1)$]
   [Retorna por referencia una cola vacía.]
@@ -252,12 +252,12 @@ Este módulo implementa una cola de prioridad. El TAD Cola de prioridad es paramé
   [elimina de la lista iterada el valor que se encuentra en la posición siguiente del iterador.]
   
   
-%  \InterfazFuncion{AgregarComoSiguiente}{\Inout{it}{itHeapMod}, \In{a}{JugadorHeap}}{}
-%  [$it = it_0$]
-%  {$it$ $\igobs$ AgregarComoSiguiente($it_0$, $a$)}
-%  [$\Theta(log(\#heapSecu(c)))$]
-%  [agrega el elemento $a$ a la cola de prioridad, dejando al iterador posicionado de forma tal que al llamar a \NombreFuncion{Siguiente} se obtenga $a$.]
-%  [el elemento $a$ se agrega por copia.]
+  \InterfazFuncion{AgregarComoSiguiente}{\Inout{it}{itHeapMod}, \In{a}{JugadorHeap}}{}
+  [$it = it_0$]
+  {$it$ $\igobs$ AgregarComoSiguiente($it_0$, $a$)}
+  [$\Theta(log(\#heapSecu(c)))$]
+  [agrega el elemento $a$ a la cola de prioridad, dejando al iterador posicionado de forma tal que al llamar a \NombreFuncion{Siguiente} se obtenga $a$.]
+  [el elemento $a$ se agrega por copia.]
 
   
 
@@ -285,7 +285,7 @@ Este módulo implementa una cola de prioridad. El TAD Cola de prioridad es paramé
    
 \end{Interfaz}
 
-\newpage
+%\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{Representacion}
 
@@ -315,10 +315,10 @@ Este módulo implementa una cola de prioridad. El TAD Cola de prioridad es paramé
   \end{Estructura}
 
 	%\RepFc[vector(puntero(nodo))][c]{true}
-  \Rep[heapmod][c]{(c.tope.hijoIzq $\neq$ NULL $\impluego$ esMayor(c.elemento, (*c.hijoIzq).elemento)) $\land$ (c.hijoDer $\neq$ NULL $\impluego$ esMayor(c.elemento, (*c.hijoDer).elemento))}\mbox{}
-  
-  ~
-  \AbsFc[heapmod]{}
+%  \Rep[heapmod][c]{(c.tope.hijoIzq $\neq$ NULL $\impluego$ esMayor(c.elemento, (*c.hijoIzq).elemento)) $\land$ (c.hijoDer $\neq$ NULL $\impluego$ esMayor(c.elemento, (*c.hijoDer).elemento))}\mbox{}
+%  
+%  ~
+%  \AbsFc[heapmod]{}
   
 
   \Titulo{Representación del iterador}
@@ -328,15 +328,15 @@ Este módulo implementa una cola de prioridad. El TAD Cola de prioridad es paramé
   \begin{Estructura}{itHeapMod}[itHeapmod]
     \begin{Tupla}[itHeapmod]
       \tupItem{siguiente}{puntero(heapmod)}%
-      \tupItem{heap}{puntero(nodo)}%
+      \tupItem{heap}{puntero(heapmod)}%
     \end{Tupla}
   \end{Estructura}
 
-  \Rep[iter][it]{}
-
-  ~
-
-  \Abs[iter]{itBi($\alpha$)}[it]{b}{}
+%  \Rep[iter][it]{}
+%
+%  ~
+%
+%  \Abs[iter]{itBi($\alpha$)}[it]{b}{}
   
   
 
@@ -567,7 +567,7 @@ Este módulo implementa una cola de prioridad. El TAD Cola de prioridad es paramé
 \end{algorithm}
 
 
-\begin{algorithm}[H]{\textbf{iEliminarSiguiente}(\In{it}{itHeapmod})}
+\begin{algorithm}[H]{\textbf{iEliminarSiguiente}(\In{it}{itHeapmod}) $\to$ $res$ : jugadorHeap}
     	\begin{algorithmic}[1]
 		\State $puntero(nodo) \ buscarUlt \gets (*it.heap).tope$ \Comment {Se crea un puntero para buscar el último nodo} // $\Theta(1)$
     		\If{$(*buscarUlt).hijoIzq = NULL \land (*buscarUlt).hijoDer = NULL$} \Comment $\Theta(1)$
@@ -598,6 +598,16 @@ Este módulo implementa una cola de prioridad. El TAD Cola de prioridad es paramé
     	\end{algorithmic}
 \end{algorithm}
 
+
+\begin{algorithm}[H]{\textbf{AgregarComoSiguiente}(\In{it}{itHeapmod}, \In{a}{jugadorHeap}) }
+    	\begin{algorithmic}[1]
+    	\State $it \gets iEncolar(*(it.heap), a)$ \Comment {Le pasamos el elemento $a$ al heap al que pertenece el iterador} // $\Theta(log(\#nodos(it.heap))$
+    	
+			\medskip
+			\Statex \underline{Complejidad:} $\Theta(log(\#nodos(it.heap))$
+			\Statex \underline{Justificación:} El algoritmo simplemente llama $iEncolar$.
+    	\end{algorithmic}
+\end{algorithm}
 
   
 \end{Algoritmos}
