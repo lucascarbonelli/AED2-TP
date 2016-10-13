@@ -2,7 +2,7 @@
 _______________________________________________								//con it							//este it lleva al heap
 																												//del poke cercano
 
-Op1:
+Op1: (queda la op3)
 jugadores => vector(it(infoJug))
 //si está expulsado, o no está agregado, apunta a NULL
 infoJug:
@@ -16,7 +16,7 @@ it(colaPrioridad)
 matrizJugadores => it matrizJ(nat)
 //donde los nat son la cant de jug que hay ahi
 
-Op2:
+Op2: (queda la op3)
 jugAccRapido => vector(it(coord))
 //coord de la matrizJ
 //si está expulsado, o no está agregado, apunta a NULL
@@ -29,6 +29,7 @@ it(colaPrioridad)
 
 //estas dos son para saber posiciones y adyacencias. Las como el mapa
 matrizJugadores => it matrizJ(it(infoJug))
+_______________________________________________
 
 Op3:
 jugadores (el obs) it vector(infoJug) 
@@ -39,6 +40,7 @@ infoJug:
 estaConect bool
 sanciones nat
 posMatriz it conj(id) //relacionar estaConect con esto
+coordenada c
 it pokemons
 it(colaPrioridad)
 
@@ -60,6 +62,7 @@ posPokemons => diccLineal(coord, infoCoord)
 //si agregamos un poke, es agregar coord a este dicc, que es O(1)
 
 pokemonsTotales => diccTrie(tipo, infoPoke)
+pokemonsTotales.claves => conjuntoLineal
 //acá están los PS y PC
 infoPoke:
 cant
