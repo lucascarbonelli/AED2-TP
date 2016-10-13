@@ -31,7 +31,8 @@ it(colaPrioridad)
 matrizJugadores => it matrizJ(it(infoJug))
 
 Op3:
-jugadores => vector(it(infoJug))
+jugadores (el obs) it vector(infoJug) 
+jugadores ES vector(infoJug)
 //coord de la matrizJ
 //si está expulsado, o no está agregado, apunta a NULL
 infoJug:
@@ -73,7 +74,7 @@ cantidadPokeTot => nat
 
 __________
 
-mapa => matriz(conjuntoLineal)
+mapa => matriz(<bool, conjuntoLineal>)
 _______________________________________________
 
 
