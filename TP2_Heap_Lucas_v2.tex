@@ -374,31 +374,30 @@ Este módulo implementa una cola de prioridad. El TAD Cola de prioridad es paramé
 
 \begin{algorithm}[H]{\textbf{iDesencolar}(\Inout{c}{heapmod})}
     	\begin{algorithmic}[1]
-		\State $puntero(nodo) \ buscarUlt \gets c.tope$ \Comment {Se crea un puntero para buscar el último nodo} // $\Theta(1)$
-    		\If{$*(c.tope).hijoIzq = NULL \land *(c.tope).hijoDer = NULL$} \Comment $\Theta(1)$
-    	 		\State $c.tope \gets NULL$ \Comment {Si hay un solo elemento, simplemente se elimina} // $\Theta(1)$
-    		\Else
-			\While{$\neg((*buscarUlt).hijoIzq = NULL \land (*buscarUlt).hijoDer = NULL)$} \Comment {} // $\Theta(1)$
-				\If{$(*(*buscarUlt).hijoIzq).ramaMasLarga = *(*buscarUlt).hijoDer).ramaMasLarga$} \Comment {} // $\Theta(1)$
-					\State $buscarUlt \gets (*buscarUlt).hijoDer$ \Comment {Si la profundidad es la misma, va a la derecha} // $\Theta(1)$
+    	
+    	\If{$*(c.tope).hijoIzq = NULL \land *(c.tope).hijoDer = NULL$} \Comment $\Theta(1)$
+    	 	\State $c.tope \gets NULL$ \Comment {Si hay un solo elemento, simplemente se elimina} // $\Theta(1)$
+    	\Else
+				\State $puntero(nodo) \ ultimoNodo \gets iUltimoNodo(c)$ \Comment {Se obtiene un puntero al último nodo} // $\Theta(log(\#nodos(c))$
+				\State $puntero(nodo) \ padreUlt \gets (*ultimoNodo).padre$ \Comment {Se crea un puntero al padre del último nodo} // $\Theta(1)$
+				\If{$(*padreUlt).hijoDer = ultimoNodo$} \Comment {Vemos si el último nodo es el derecho del padre} // $\Theta(1)$
+					\State $(*padreUlt).hijoDer \gets NULL$ \Comment {Eliminamos la conexión al nodo} // $\Theta(1)$
 				\Else
-					\State $buscarUlt \gets (*buscarUlt).hijoIzq$ \Comment {Si no, va a la izquierda} // $\Theta(1)$
+					\State $(*padreUlt).hijoIzq \gets NULL$ \Comment {Eliminamos la conexión al nodo} // $\Theta(1)$
 				\EndIf
-			\EndWhile
-			\State $(*c.tope).elemeto \gets (*buscarUlt).elemento$ \Comment {Si elimina el tope colocando el último elemento} // $\Theta(1)$
-			\State $puntero(nodo) \ padreUlt \gets (*buscarUlt).padre$ \Comment {Se crea un puntero al padre del nodo a eliminar} // $\Theta(1)$
-			\If{$(*padreUlt).hijoDer = buscarUlt$} \Comment {Vemos si el nodo a eliminar es el derecho} // $\Theta(1)$
-				\State $(*padreUlt).hijoDer \gets NULL$ \Comment {Eliminamos el nodo} // $\Theta(1)$
-			\Else
-				\State $(*padreUlt).hijoIzq \gets NULL$ \Comment {Eliminamos el nodo} // $\Theta(1)$
-			\EndIf
-			\State $iCorregirProfundidad(padreUlt, c)$ \Comment {Corregimos la profundidad} // $\Theta(log(\#nodos(c))$
-			\State $iSiftDown(c.tope, c) $ \Comment {Se repara el heap} // $\Theta(log(\#nodos(c))$
+				\State $iCorregirProfundidad(padreUlt, c)$ \Comment {Corregimos la profundidad} // $\Theta(log(\#nodos(c))$
+				\State $(*ultimoNodo).padre \gets NULL$ \Comment {} $\Theta(1)$
+				\State $(*ultimoNodo).hijoIzq \gets (*c.tope).hijoIzq$ \Comment {} $\Theta(1)$
+				\State $(*ultimoNodo).hijoDer \gets (*c.tope).hijoDer$ \Comment {} $\Theta(1)$
+				\State $(*ultimoNodo).ramaMasCorta \gets (*c.tope).ramaMasCorta$ \Comment {} $\Theta(1)$
+				\State $(*ultimoNodo).ramaMasLarga \gets (*c.tope).ramaMasLarga$ \Comment {} $\Theta(1)$
+				\State $c.tope \gets ultimoNodo$ \Comment {} $\Theta(1)$
+				\State $iSiftDown(c.tope, c) $ \Comment {Se repara el heap} // $\Theta(log(\#nodos(c))$
 			\EndIf
 
 			\medskip
 			\Statex \underline{Complejidad:} $\Theta(log(\#nodos(c))$
-			\Statex \underline{Justificación: } El algoritmo cuenta con un ciclo que se repetirá $log(\#nodos(c)$ (recorre el árbol de arriba a abajo), llama a dos funciones con costo $\Theta(log(\#nodos(c))$ y el resto de las operaciones tienen costo $\Theta(1)$
+			\Statex \underline{Justificación: } El algoritmo llama a tres funciones con costo $\Theta(log(\#nodos(c))$ y el resto de las operaciones tienen costo $\Theta(1)$
 
     	\end{algorithmic}
 \end{algorithm}
@@ -417,49 +416,89 @@ Este módulo implementa una cola de prioridad. El TAD Cola de prioridad es paramé
 
 \begin{algorithm}[H]{\textbf{iEncolar}(\In{a}{jugadorHeap}, \Inout{c}{heapmod}) $\to$ $res$ : $itHeapmod$}
     	\begin{algorithmic}[1]
-			\State $puntero(nodo) \ buscarUlt \gets c.tope$ \Comment {Se crea un puntero para buscar la última posición} // $\Theta(1)$
 			\If{$c.tope = NULL$} \Comment {La cola está vacia} // $\Theta(1)$
 				\State $c.tope \gets \langle a,0,0,NULL,NULL,NULL \rangle$ \Comment {Se coloca el primer elemento} // $\Theta(1)$
 			\Else
-				\While{$(*buscarUlt).hijoIzq \neq NULL \land (*buscarUlt).hijoDer \neq NULL$} \Comment {} // $\Theta(1)$
-					\If{$(*(*buscarUlt).hijoIzq).ramaMasCorta = *(*buscarUlt).hijoDer).ramaMasCorta$} \Comment {} // $\Theta(1)$
-						\State $buscarUlt \gets (*buscarUlt).hijoIzq$ \Comment {Si la profundidad es la misma, va a la izquierda} // $\Theta(1)$
-					\Else
-						\State $buscarUlt \gets (*buscarUlt).hijoDer$ \Comment {Si no, va a la derecha} // $\Theta(1)$
-					\EndIf
-				\EndWhile
-				\If{$(*buscarUlt).hijoIzq = NULL$} \Comment {Vemos si tiene hijo izquierdo} // $\Theta(1)$
-					\State $(*buscarUlt).hijoIzq \gets \&\langle a,0,0,NULL,NULL,buscarUlt \rangle$ \Comment {Creamos el nuevo nodo} // $\Theta(1)$
-					\State $buscarUlt \gets (*buscarUlt).hijoIzq$ \Comment {Nos posicionamos en el nuevo elemento} // $\Theta(1)$
+				\State $puntero(nodo) \ futuroPadre \gets iFuturoPadre(c)$ \Comment {Puntero al futuro padre del nodo de $a$} // $\Theta(log(\#nodos(c))$
+				\If{$(*futuroPadre).hijoIzq = NULL$} \Comment {Vemos si tiene hijo izquierdo} // $\Theta(1)$
+					\State $(*futuroPadre).hijoIzq \gets \&\langle a,0,0,NULL,NULL,futuroPadre \rangle$ \Comment {Creamos el nuevo nodo} // $\Theta(1)$
+					\State $futuroPadre \gets (*futuroPadre).hijoIzq$ \Comment {Nos posicionamos en el nuevo elemento} // $\Theta(1)$
 				\Else
-					\State $(*buscarUlt).hijoDer \gets \&\langle a,0,0,NULL,NULL,buscarUlt \rangle$ \Comment {Creamos el nuevo nodo} // $\Theta(1)$
-					\State $buscarUlt \gets (*buscarUlt).hijoDer$ \Comment {Nos posicionamos en el nuevo elemento} // $\Theta(1)$
+					\State $(*futuroPadre).hijoDer \gets \&\langle a,0,0,NULL,NULL,futuroPadre \rangle$ \Comment {Creamos el nuevo nodo} // $\Theta(1)$
+					\State $futuroPadre \gets (*futuroPadre).hijoDer$ \Comment {Nos posicionamos en el nuevo elemento} // $\Theta(1)$
 				\EndIf
-				\State $iCorregirProfundidad((*buscarUlt).padre, c)$ \Comment {Corregimos la profundidad} // $\Theta(log(\#nodos(c))$
-				\State $iSiftUp(buscarUlt, c) $ \Comment {Se repara el heap} // $\Theta(log(\#nodos(c))$
+				\State $iCorregirProfundidad((*futuroPadre).padre, c)$ \Comment {Corregimos la profundidad} // $\Theta(log(\#nodos(c))$
+				\State $iSiftUp(futuroPadre, c) $ \Comment {Se repara el heap} // $\Theta(log(\#nodos(c))$
 			\EndIf
-    	\State $res \gets \&\langle buscarUlt \rangle$ \Comment {Se devuelve el iterador} // $\Theta(1)$
+    	\State $res \gets \langle futuroPadre, c \rangle$ \Comment {Se devuelve el iterador} // $\Theta(1)$
     	
 			\medskip
 			\Statex \underline{Complejidad:} $\Theta(log(\#nodos(c))$
-			\Statex \underline{Justificación:} El algoritmo cuenta con un ciclo que se repetirá $log(\#nodos(c)$ (recorre el árbol de arriba a abajo), llama a dos funciones con costo $\Theta(log(\#nodos(c))$ y el resto de las operaciones tienen costo $\Theta(1)$
+			\Statex \underline{Justificación:} El algoritmo llama a tres funciones con costo $\Theta(log(\#nodos(c))$ y el resto de las operaciones tienen costo $\Theta(1)$
     	\end{algorithmic}
 \end{algorithm}
-%\State {$$} \Comment {} // $\Theta(1)$
+
+
+\begin{algorithm}[H]{\textbf{iUltimoNodo}(\Inout{c}{heapmod}) $\to$ $res$ : $puntero(nodo)$}
+    	\begin{algorithmic}[1]
+    	
+			\State $puntero(nodo) \ ultimoNodo \gets c.tope$ \Comment {Se crea un puntero para buscar el último nodo} // $\Theta(1)$
+			\While{$\neg((*ultimoNodo).hijoIzq = NULL \land (*ultimoNodo).hijoDer = NULL)$} \Comment {} // $\Theta(1)$
+				\If{$(*(*ultimoNodo).hijoIzq).ramaMasLarga = *(*ultimoNodo).hijoDer).ramaMasLarga$} \Comment {} // $\Theta(1)$
+					\State $ultimoNodo \gets (*ultimoNodo).hijoDer$ \Comment {Si la profundidad es la misma, va a la derecha} // $\Theta(1)$
+				\Else
+					\State $ultimoNodo \gets (*ultimoNodo).hijoIzq$ \Comment {Si no, va a la izquierda} // $\Theta(1)$
+				\EndIf
+			\EndWhile
+			\State $res \gets ultimoNodo$ \Comment {} // $\Theta(1)$
+
+			\medskip
+			\Statex \underline{Complejidad:} $\Theta(log(\#nodos(c))$
+			\Statex \underline{Justificación: } El algoritmo cuenta con un ciclo que se repetirá $log(\#nodos(c))$ (recorre el árbol de arriba a abajo), y el resto de las operaciones tienen costo $\Theta(1)$
+
+    	\end{algorithmic}
+\end{algorithm}
+
+
+\begin{algorithm}[H]{\textbf{iFuturoPadre}(\Inout{c}{heapmod}) $\to$ $res$ : $puntero(nodo)$}
+    	\begin{algorithmic}[1]
+    	
+				\State $puntero(nodo) \ ultimoNodo \gets c.tope$ \Comment {Se crea un puntero para buscar la última posición} // $\Theta(1)$
+				\While{$(*ultimoNodo).hijoIzq \neq NULL \land (*ultimoNodo).hijoDer \neq NULL$} \Comment {} // $\Theta(1)$
+					\If{$(*(*ultimoNodo).hijoIzq).ramaMasCorta = *(*ultimoNodo).hijoDer).ramaMasCorta$} \Comment {} // $\Theta(1)$
+						\State $ultimoNodo \gets (*ultimoNodo).hijoIzq$ \Comment {Si la profundidad es la misma, va a la izquierda} // $\Theta(1)$
+					\Else
+						\State $ultimoNodo \gets (*ultimoNodo).hijoDer$ \Comment {Si no, va a la derecha} // $\Theta(1)$
+					\EndIf
+				\EndWhile
+			\State $res \gets ultimoNodo$ \Comment {} // $\Theta(1)$
+
+			\medskip
+			\Statex \underline{Complejidad:} $\Theta(log(\#nodos(c))$
+			\Statex \underline{Justificación: } El algoritmo cuenta con un ciclo que se repetirá $log(\#nodos(c))$ (recorre el árbol de arriba a abajo), y el resto de las operaciones tienen costo $\Theta(1)$
+			
+    	\end{algorithmic}
+\end{algorithm}
+
   
 \begin{algorithm}[H]{\textbf{iCorregirProfundidad}(\In{p}{puntero(nodo)}, \Inout{c}{heapmod})}
     	\begin{algorithmic}[1]
-    	\If{$(*p).hijoIzq \neq NULL \land (*p).hijoDer \neq NULL$} \Comment {Vemos si tiene dos hijos} // $\Theta(1)$
-    		\State {$(*p).ramaMasCorta \gets 1$} \Comment {} // $\Theta(1)$
-    		\State {$(*p).ramaMasLarga \gets 1$} \Comment {} // $\Theta(1)$
+    	\If{$(*p).hijoIzq = NULL \land (*p).hijoDer = NULL$} \Comment {Vemos si no tiene hijos} // $\Theta(1)$
+    		\State $(*p).ramaMasCorta \gets 0$ \Comment {} // $\Theta(1)$
+    		\State $(*p).ramaMasLarga \gets 0$ \Comment {} // $\Theta(1)$
     	\Else
-    		\State {$(*p).ramaMasCorta \gets 0$} \Comment {} // $\Theta(1)$
-    		\State {$(*p).ramaMasLarga \gets 1$} \Comment {} // $\Theta(1)$
+    		\If{$(*p).hijoIzq \neq NULL \land (*p).hijoDer \neq NULL$} \Comment {Vemos si tiene dos hijos} // $\Theta(1)$
+	    		\State $(*p).ramaMasCorta \gets 1$ \Comment {} // $\Theta(1)$
+	    		\State $(*p).ramaMasLarga \gets 1$ \Comment {} // $\Theta(1)$
+	    	\Else
+	    		\State $(*p).ramaMasCorta \gets 0$ \Comment {Tiene un solo hijo} // $\Theta(1)$
+	    		\State $(*p).ramaMasLarga \gets 1$ \Comment {} // $\Theta(1)$
+	    	\EndIf
     	\EndIf
-    	\State {$p \gets (*p).padre$} \Comment {Subo un nivel} // $\Theta(1)$
+    	\State $p \gets (*p).padre$ \Comment {Subo un nivel} // $\Theta(1)$
     	\While {$(*p).padre \neq NULL$} \Comment {Recorre hasta el tope del arbol} // $\Theta(1)$
-    		\State {$(*p).ramaMasCorta \gets (*(*p).hijoDer).ramaMasCorta + 1$} \Comment {} // $\Theta(1)$
-    		\State {$(*p).ramaMasLarga \gets (*(*p).hijoIzq).ramaMasLarga + 1$} \Comment {} // $\Theta(1)$
+    		\State $(*p).ramaMasCorta \gets (*(*p).hijoDer).ramaMasCorta + 1$ \Comment {} // $\Theta(1)$
+    		\State $(*p).ramaMasLarga \gets (*(*p).hijoIzq).ramaMasLarga + 1$ \Comment {} // $\Theta(1)$
     	\EndWhile
 
 			\medskip
@@ -467,42 +506,23 @@ Este módulo implementa una cola de prioridad. El TAD Cola de prioridad es paramé
 			\Statex \underline{Justificación:} El algoritmo cuenta con un ciclo que se repetirá $log(\#nodos(c)$ (recorre el árbol de abajo hacia arriba), y el resto de las operaciones tienen costo $\Theta(1)$
     	\end{algorithmic}
 \end{algorithm}
-
-
-\begin{algorithm}[H]{\textbf{iEsMayor?}(\In{a}{jugadorHeap}, \In{b}{jugadorHeap}) $\to$ $res$ : $bool$}
-    	\begin{algorithmic}[1]
-    	\State {$esMayor \gets false$} \Comment {} // $\Theta(1)$
-    	\If{$a.cantPokes = b.cantPokes$} \Comment {} // $\Theta(1)$
-    	    	\State {$esMayor \gets a.id < b.id$} \Comment {} // $\Theta(1)$
-    	\Else
-    		\State {$esMayor \gets a.cantPokes < b.cantPokes$} \Comment {} // $\Theta(1)$
-	\EndIf
-	\State {$res \gets esMayor$} \Comment {} // $\Theta(1)$
-
-			\medskip
-			\Statex \underline{Complejidad:} $\Theta(1)$
-			\Statex \underline{Justificación: $\Theta(1)$ + $\Theta(1)$ + $\Theta(1)$ + $\Theta(1)$ + $\Theta(1)$ = $\Theta(1)$} 
-    	\end{algorithmic}
-\end{algorithm}
   
 
 \begin{algorithm}[H]{\textbf{iSiftDown}(\Inout{c}{heapmod}, \In{p}{puntero(nodo)})}
     	\begin{algorithmic}[1]
     	\State {$puntero(nodo) \ swap \gets p$} \Comment {Creamos una variable para intercambio} $\Theta(1)$
-    	\If{$iEsMayor?((*(*p).hijoIzq).elemento, (*p).elemento$} \Comment {Vemos si el hijo izquierdo es mayor} $\Theta(1)$
+    	\If{$iEsMayor?((*(*p).hijoIzq).elemento, (*p).elemento$)} \Comment {Vemos si el hijo izquierdo es mayor} $\Theta(1)$
     		\State {$swap \gets (*p).hijoIzq$} \Comment {} $\Theta(1)$
     	\EndIf
-    	\If{$iEsMayor?((*(*p).hijoDer).elemento, (*swap).elemento$} \Comment {Vemos si el hijo derecho es el mayor} $\Theta(1)$
+    	\If{$iEsMayor?((*(*p).hijoDer).elemento, (*swap).elemento$)} \Comment {Vemos si el hijo derecho es el mayor} $\Theta(1)$
     		\State {$swap \gets (*p).hijoDer$} \Comment {} $\Theta(1)$
     	\EndIf
     	\If{$p \neq swap$} \Comment {Vemos si es necesario reacomodar los nodos} $\Theta(1)$
-	    	\State {$jugadorHeap \ mayorPrior \gets (*swap).elemento$} \Comment {Creamos una variable para intercambiar} $\Theta(1)$
-	    	\State {$(*swap).elemento \gets (*p).elemento$} \Comment {Intercambiamos el padre con el hijo} $\Theta(1)$
-	    	\State {$(*p).elemento \gets mayorPrior$} \Comment {} $\Theta(1)$
+    		\State {$iIntercambio(p, swap) $} \Comment {Intercambiamos el padre con el hijo} $\Theta(1)$
 	    	\State {$iSiftDown(c, swap)$} \Comment {Llamamos a la funcion recursivamente} $\Theta(1)$
+			\medskip
     	\EndIf
 
-			\medskip
 			\Statex \underline{Complejidad:} $\Theta(log(\#nodos(c))$
 			\Statex \underline{Justificación:} Todas las operaciones del algoritmo tienen costo $\Theta(1)$, por lo tanto una llamada a la función tiene costo $\Theta(1)$. El algoritmo recorre el árbol $c$ recursivamente. En cada nueva llamada a función baja un nivel en el árbol, por lo tanto pueden haber como máximo $log(\#nodos(c))$ llamadas a función, y cada una de las llamadas tiene costo $\Theta(1)$.
     	\end{algorithmic}
@@ -517,9 +537,7 @@ Este módulo implementa una cola de prioridad. El TAD Cola de prioridad es paramé
     		\State {$swap \gets (*p).padre$} \Comment {} $\Theta(1)$
     	\EndIf
     	\If{$p \neq swap$} \Comment {Vemos si es necesario reacomodar los nodos} $\Theta(1)$
-	    	\State {$jugadorHeap \ menorPrior \gets (*swap).elemento$} \Comment {Creamos una variable para intercambio} $\Theta(1)$
-	    	\State {$(*swap).elemento \gets (*p).elemento$} \Comment {Intercambiamos el padre con el hijo} $\Theta(1)$
-	    	\State {$(*p).elemento \gets menorPrior$} \Comment {} $\Theta(1)$
+    		\State {$iIntercambio(swap, p) $} \Comment {Intercambiamos el padre con el hijo} $\Theta(1)$
 	    	\State {$iSiftUp(c, swap)$} \Comment {Llamamos a la funcion recursivamente} $\Theta(1)$
     	\EndIf
 			
@@ -528,6 +546,60 @@ Este módulo implementa una cola de prioridad. El TAD Cola de prioridad es paramé
 			\Statex \underline{Justificación:} Todas las operaciones del algoritmo tienen costo $\Theta(1)$, por lo tanto una llamada a la función tiene costo $\Theta(1)$. El algoritmo recorre el árbol $c$ recursivamente. En cada nueva llamada a función sube un nivel en el árbol, por lo tanto pueden haber como máximo $log(\#nodos(c))$ llamadas a función, y cada una de las llamadas tiene costo $\Theta(1)$.
     	\end{algorithmic}
 \end{algorithm}
+
+
+\begin{algorithm}[H]{\textbf{iEsMayor?}(\In{a}{jugadorHeap}, \In{b}{jugadorHeap}) $\to$ $res$ : $bool$}
+    	\begin{algorithmic}[1]
+    	\State $esMayor \gets false$ \Comment {} // $\Theta(1)$
+    	\If{$a.cantPokes = b.cantPokes$ \Comment {} // $\Theta(1)$
+    	    	\State $esMayor \gets a.id < b.id$} \Comment {} // $\Theta(1)$
+    	\Else
+    		\State $esMayor \gets a.cantPokes < b.cantPokes$ \Comment {} // $\Theta(1)$
+			\EndIf
+			\State $res \gets esMayor$ \Comment {} // $\Theta(1)$
+
+			\medskip
+			\Statex \underline{Complejidad:} $\Theta(1)$
+			\Statex \underline{Justificación: $\Theta(1)$ + $\Theta(1)$ + $\Theta(1)$ + $\Theta(1)$ + $\Theta(1)$ = $\Theta(1)$} 
+    	\end{algorithmic}
+\end{algorithm}
+
+
+\begin{algorithm}[H]{\textbf{iIntercambio}(\Inout{padre}{puntero(nodo)}, \Inout{hijo}{puntero(nodo)})}
+    	\begin{algorithmic}[1]
+    		
+			\State {$rmc \gets (*hijo).ramaMasCorta$} \Comment {Intercambiamos las características} $\Theta(1)$
+			\State {$rml \gets (*hijo).ramaMasLarga$} \Comment {} $\Theta(1)$
+			\State {$(*hijo).padre \gets (*padre).padre$} \Comment {} $\Theta(1)$
+			\State {$(*hijo).ramaMasCorta \gets (*padre).ramaMasCorta$} \Comment {} $\Theta(1)$
+			\State {$(*hijo).ramaMasLarga \gets (*padre).ramaMasLarga$} \Comment {} $\Theta(1)$
+			\State {$(*padre).padre \gets hijo$} \Comment {} $\Theta(1)$
+			\State {$(*padre).ramaMasCorta \gets rmc$} \Comment {} $\Theta(1)$
+			\State {$(*padre).ramaMasLarga \gets rml$} \Comment {} $\Theta(1)$
+			\If{$(*padre).hijoIzq = hijo$} \Comment {Vemos si era el hijo izquierdo o el derecho} $\Theta(1)$
+				\State {$puntero(nodo) \ hDer \gets (*padre).hijoDer$} \Comment {} $\Theta(1)$
+				\State {$(*padre).hijoIzq \gets (*hijo).hijoIzq$} \Comment {} $\Theta(1)$
+				\State {$(*padre).hijoDer \gets (*hijo).hijoDer$} \Comment {} $\Theta(1)$
+				\State {$(*hijo).hijoIzq \gets padre$} \Comment {} $\Theta(1)$
+				\State {$(*hijo).hijoDer \gets hDer$} \Comment {} $\Theta(1)$			
+			\Else
+				\State {$puntero(nodo) \ hIzq \gets (*padre).hijoIzq$} \Comment {} $\Theta(1)$
+				\State {$(*padre).hijoIzq \gets (*hijo).hijoIzq$} \Comment {} $\Theta(1)$
+				\State {$(*padre).hijoDer \gets (*hijo).hijoDer$} \Comment {} $\Theta(1)$
+				\State {$(*hijo).hijoDer \gets padre$} \Comment {} $\Theta(1)$
+				\State {$(*hijo).hijoIzq \gets hIzq$} \Comment {} $\Theta(1)$		
+			\EndIf
+						
+			\medskip
+			\Statex \underline{Complejidad:} $\Theta(1)$
+			\Statex \underline{Justificación:} Todas las operaciones del algoritmo tienen costo $\Theta(1)$, por lo tanto una llamada a la función tiene costo $\Theta(1)$.
+    	\end{algorithmic}
+\end{algorithm}
+			
+			
+
+
+
 
 
  \Titulo{Algoritmos del iterador}
@@ -569,32 +641,39 @@ Este módulo implementa una cola de prioridad. El TAD Cola de prioridad es paramé
 
 \begin{algorithm}[H]{\textbf{iEliminarSiguiente}(\In{it}{itHeapmod}) $\to$ $res$ : jugadorHeap}
     	\begin{algorithmic}[1]
-		\State $puntero(nodo) \ buscarUlt \gets (*it.heap).tope$ \Comment {Se crea un puntero para buscar el último nodo} // $\Theta(1)$
-    		\If{$(*buscarUlt).hijoIzq = NULL \land (*buscarUlt).hijoDer = NULL$} \Comment $\Theta(1)$
-    	 		\State $(*it.heap).tope \gets NULL$ \Comment {Si hay un solo elemento, simplemente se elimina} // $\Theta(1)$
-    		\Else
-			\While{$\neg((*buscarUlt).hijoIzq = NULL \land (*buscarUlt).hijoDer = NULL)$} \Comment {} // $\Theta(1)$
-				\If{$(*(*buscarUlt).hijoIzq).ramaMasLarga = *(*buscarUlt).hijoDer).ramaMasLarga$} \Comment {} // $\Theta(1)$
-					\State $buscarUlt \gets (*buscarUlt).hijoDer$ \Comment {Si la profundidad es la misma, va a la derecha} // $\Theta(1)$
+			\State $puntero(nodo) \ ultimoNodo \gets (*it.heap).tope$ \Comment {Se crea un puntero para buscar el último nodo} // $\Theta(1)$
+    	\If{$(*ultimoNodo).hijoIzq = NULL \land (*ultimoNodo).hijoDer = NULL$} \Comment $\Theta(1)$
+    	 	\State $(*it.heap).tope \gets NULL$ \Comment {Si hay un solo elemento, simplemente se elimina} // $\Theta(1)$
+    	\Else
+				\State $ultimoNodo \gets iUltimoNodo(c)$ \Comment {Se obtiene un puntero al último nodo} // $\Theta(log(\#nodos(c))$
+				\State $puntero(nodo) \ padreUlt \gets (*ultimoNodo).padre$ \Comment {Se crea un puntero al padre del último nodo} // $\Theta(1)$
+				\If{$(*padreUlt).hijoDer = ultimoNodo$} \Comment {Vemos si el último nodo es el derecho del padre} // $\Theta(1)$
+					\State $(*padreUlt).hijoDer \gets NULL$ \Comment {Eliminamos la conexión al nodo} // $\Theta(1)$
 				\Else
-					\State $buscarUlt \gets (*buscarUlt).hijoIzq$ \Comment {Si no, va a la izquierda} // $\Theta(1)$
+					\State $(*padreUlt).hijoIzq \gets NULL$ \Comment {Eliminamos la conexión al nodo} // $\Theta(1)$
 				\EndIf
-			\EndWhile
-			\State $(*it.siguiente).elemeto \gets (*buscarUlt).elemento$ \Comment {Si elimina el tope colocando el último elemento} // $\Theta(1)$
-			\State $puntero(nodo) \ padreUlt \gets (*buscarUlt).padre$ \Comment {Se crea un puntero al padre del nodo a eliminar} // $\Theta(1)$
-			\If{$(*padreUlt).hijoDer = buscarUlt$} \Comment {Vemos si el nodo a eliminar es el derecho} // $\Theta(1)$
-				\State $(*padreUlt).hijoDer \gets NULL$ \Comment {Eliminamos el nodo} // $\Theta(1)$
-			\Else
-				\State $(*padreUlt).hijoIzq \gets NULL$ \Comment {Eliminamos el nodo} // $\Theta(1)$
-			\EndIf
-			\State $iCorregirProfundidad(padreUlt, c)$ \Comment {Corregimos la profundidad} // $\Theta(log(\#nodos(c))$
-			\State $iSiftDown(it.siguiente, c) $ \Comment {Se repara el heap} // $\Theta(log(\#nodos(c))$
-			\State $iSiftUp(it.siguiente, c) $ \Comment {Se repara el heap} // $\Theta(log(\#nodos(c))$
-			\EndIf
+				
+				\State $iCorregirProfundidad(padreUlt, c)$ \Comment {Corregimos la profundidad} // $\Theta(log(\#nodos(c))$
+			
+				\State $(*ultimoNodo).padre \gets (*it.siguiente).padre$ \Comment {Colocamos el último en lugar del nodo a eliminar} // $\Theta(1)$
+				\State $(*ultimoNodo).hijoIzq \gets (*it.siguiente).hijoIzq$ \Comment {} $\Theta(1)$
+				\State $(*ultimoNodo).hijoDer \gets (*it.siguiente).hijoDer$ \Comment {} $\Theta(1)$
+				\State $(*ultimoNodo).ramaMasCorta \gets (*it.siguiente).ramaMasCorta$ \Comment {} $\Theta(1)$
+				\State $(*ultimoNodo).ramaMasLarga \gets (*it.siguiente).ramaMasLarga$ \Comment {} $\Theta(1)$
+				
+				\If{$(*(*it.siguiente).padre).hijoIzq = *it.siguiente$} \Comment {} $\Theta(1)$
+					\State {$(*(*it.siguiente).padre).hijoIzq \gets ultimoNodo$} \Comment {} $\Theta(1)$
+				\Else
+					\State {$(*(*it.siguiente).padre).hijoDer \gets ultimoNodo$} \Comment {} $\Theta(1)$
+				\EndIf
+			
+				\State $iSiftDown(ultimoNodo, c) $ \Comment {Se repara el heap} // $\Theta(log(\#nodos(c))$
+				\State $iSiftUp(ultimoNodo, c) $ \Comment {Se repara el heap} // $\Theta(log(\#nodos(c))$
+				\EndIf
     	
 			\medskip
 			\Statex \underline{Complejidad:} $\Theta(log(\#nodos(c))$
-			\Statex \underline{Justificación:} El algoritmo cuenta con un ciclo que se repetirá $log(\#nodos(c)$ (recorre el árbol de arriba a abajo), llama a tres funciones con costo $\Theta(log(\#nodos(c))$ y el resto de las operaciones tienen costo $\Theta(1)$
+			\Statex \underline{Justificación:} El algoritmo llama a cuatro funciones con costo $\Theta(log(\#nodos(c))$ y el resto de las operaciones tienen costo $\Theta(1)$
     	\end{algorithmic}
 \end{algorithm}
 
