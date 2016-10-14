@@ -37,15 +37,15 @@ jugadores ES vector(infoJug)
 //coord de la matrizJ
 //si está expulsado, o no está agregado, apunta a NULL
 infoJug:
-estaConect bool
+conectado bool
 sanciones nat
 posMatriz it conj(id) //relacionar estaConect con esto
-coordenada c
-it pokemons
-it(colaPrioridad)
+posicion coord
+pokemons it(conjuntoLineal)
+prioridad it(colaPrioridad)
 
 //estas dos son para saber posiciones y adyacencias. Las como el mapa
-matrizJugadores => it matriz(conj(id))
+matrizJugadores => matriz(conj(id))
 //true si está, false si no
 (queda la op3)
 __________
@@ -53,7 +53,7 @@ __________
 matrizPokemons => matriz(<bool, itDicc(posPokemons)>)
 //donde true si hay un poke, false sino
 
-pokemons => it conjuntoLineal(tupla<tipoPokemon, cant>)
+pokemons => it conjuntoLineal(tupla<tipo, cant>)
 //de un jugador
 
 expulsados => conjuntoLineal(id)
