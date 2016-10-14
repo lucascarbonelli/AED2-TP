@@ -157,7 +157,14 @@
     \begin{algorithmic}[1]
         \While{$HaySiguiente(j.jugadores[e].pokemons)$}
             \State $Obtener(pokemonsTotales, Siguiente(j.jugadores[e].pokemons).tipo).cant \gets Obtener(pokemonsTotales, Siguiente(j.jugadores[e].pokemons).tipo).cant - Siguiente(j.jugadores[e].pokemons).cant$
-            \State $EliminarSiguiente(j.jugadores[e].pokemons)$
+            \If{$Obtener(pokemonsTotales, Siguiente(j.jugadores[e].pokemons).tipo).cant = 0$}
+                \State $itEliminar \gets j.jugadores[e].pokemons$
+                \State $Avanzar(j.jugadores[e].pokemons)$
+                \State $Borrar(j.pokemonsTotales, Siguiente(itEliminar).tipo)$
+                \State $EliminarSiguiente(itEliminar)$
+            \Else
+                \State $EliminarSiguiente(j.jugadores[e].pokemons)$
+            \EndIf      
         \EndWhile
         \medskip
         \Statex \underline{Complejidad:} $\Theta(1)$
