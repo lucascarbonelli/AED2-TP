@@ -141,6 +141,18 @@
     \end{algorithmic}
 \end{algorithm} 
 
+\begin{algorithm}[H]{\textbf{CantidadPokemons}(\In{e}{jugador}, \In{j}{juego})$\to$ $res$ : $nat$}   
+    \begin{algorithmic}[1]
+        \While{$HaySiguiente(j.jugadores[e].pokemons)$}
+            \State $res \gets res + Siguiente(j.jugadores[e].pokemons).cant$
+            \State $Avanzar(j.jugadores[e].pokemons)$
+        \EndWhile
+        \medskip
+        \Statex \underline{Complejidad:} $\Theta(1)$
+        \Statex \underline{Justificación:}  El algoritmo tiene llamadas a funciones con costo $\Theta(1)$, y un $while$ que será ejecutado 256 veces, y sabemos que $\Theta (256)$ = $\Theta (1)$. Luego, la complejidad de este algoritmo será $\Theta (1)$.
+    \end{algorithmic}
+\end{algorithm} 
+
 \begin{algorithm}[H]{\textbf{EliminarPokemons}(\In{e}{jugador}, \Inout{j}{juego})}  
     \begin{algorithmic}[1]
         \While{$HaySiguiente(j.jugadores[e].pokemons)$}
