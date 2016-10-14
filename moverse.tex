@@ -1,50 +1,145 @@
-\begin{algorithm}[H]{\textbf{iMoverse}(\In {e}{jugador}, \In {c}{coordenada}, \Inout{j}{juego})}
+\begin{algorithm}[H]{\textbf{Moverse}(\In {e}{jugador}, \In {c}{coordenada}, \Inout{j}{juego})}
     \begin{algorithmic}[1]
-        \State $I \gets iSiguiente(jugadores[e])$ \Comment I de coordenada inicial
+        \State $I \gets Siguiente(j.jugadores[e])$ \Comment I de coordenada inicial
         \State $F \gets c$  \Comment F de cordenada final
-        \While{$iHaySiguiente(pokemonsTotales.claves)$}
-            \If{$!iVacio?(iSiguiente(iObtener(iSiguiente(pokemonsTotales.claves))).pokemonsSalvajes)$}
-                \While{$iHaySiguiente(iObtener(iSiguiente(pokemonsTotales.claves)).pokemonsSalvajes)$}
-                    \State $k \gets LaCoordenadaDe->iSiguiente(iObtener(iSiguiente(pokemonsTotales.claves))).pokemonsSalvajes)$
-                \If{$k = I$}
-                    \If{$iHayPokemonCercano(k, j)$}
-                        \If{$iHayPokemonCercano(F,j)$}
-                            \If{$iPosPokemonCercano(k,j) = iPosPokemonCercano(F,j)$}
+        \While{$HaySiguiente(j.pokemonsTotales.claves)$}
+            \If{$!Vacio?(Siguiente(Obtener(Siguiente(j.pokemonsTotales.claves))).pokemonsSalvajes)$}
+                \While{$HaySiguiente(Obtener(Siguiente(j.pokemonsTotales.claves)).pokemonsSalvajes)$}
+                   \State $LaCordenadaEsInicio(k, I, F, j)$
+                   \State $LaCoordenadaEsFinal(k, I, F, j)$
+                   \State $LaCoordenadaEsOtra(k, I, F, j)$
+                \State$Avanzar(Obtener(Siguiente(j.pokemonsTotales.claves))).pokemonsSalvajes)$
+                \EndWhile
+        \State $Avanzar(j.pokemonsTotales.claves)$
+     \EndWhile
+        
+        \State $ElminiarSiguiente(j.jugadores[e].posMatriz)$
+        \State $j.jugadores[e].posMatriz \gets AgregarRapido(j.matrizJugadores[c], e)$
+        \State $j.jugadores[e].posicion \gets c$
+        \If{$!HayCamino(I,F,mapa(j)) \lor DistEuclidia(I,F) \geq 10$}
+            \State $j.jugadores[e].sanciones \gets j.jugadores[e].sanciones + 1$
+        \EndIf
+        \If{$j.jugadores[e].sanciones \geq 5$}
+            \State $ExpulsarJugador(e)$
+        \EndIf
+
+        \Statex \underline{Complejidad:} $\Theta(???)$
+    \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{LaCordenadaEsInicio}(\In{k}{coord}, \In{I}{coord}, \In{F}{coord}, \Inout{j}{juego})}   
+    \begin{algorithmic}[1]
+            \If{$k = I$}
+                    \If{$HayPokemonCercano(k, j)$}
+                        \If{$HayPokemonCercano(F,j)$}
+                            \If{$PosPokemonCercano(k,j) = PosPokemonCercano(F,j)$}
                                 \State \Comment No hago nada
                             \Else
-                                \State $reinicio(k,j)$ \Comment cantmvp=0 y quito a e del heap
+                                \State $Obtener(j.posPokemons, k).cantMovCapt \gets 0$
+                                \State $Elimino(j.jugadores[e].prioridad)$
                             \EndIf
                         \Else
-                            \State $reinicio(k,j)$
+\State \Comment No hago nada, el tipo se fue de un lugar donde no tenía pokemon cercano
                         \EndIf
                     \EndIf
                 \EndIf
-                \If{$k = F$}
-                    \If{$iHayPokemonCercano(k, j)$}
-                        \If{$iHayPokemonCercano(I, j)$}
-                            \If{$iPosPokemonCercano(k,j) = iPosPokemonCercano(I,j)$}
+                \medskip
+        \Statex \underline{Complejidad:} $\Theta(1)$
+        \Statex \underline{Justificación:}  El algoritmo tiene llamadas a funciones con costo $\Theta(1)$, y un $while$ que será ejecutado 256 veces, y sabemos que $\Theta (256)$ = $\Theta (1)$. Luego, la complejidad de este algoritmo será $\Theta (1)$.
+    \end{algorithmic}
+\end{algorithm} 
+
+\begin{algorithm}[H]{\textbf{LaCoordenadaEsFinal}(\In{k}{coord}, \In{I}{coord}, \In{F}{coord}, \Inout{j}{juego})}   
+    \begin{algorithmic}[1]
+                 \If{$k = F$}
+                    \If{$HayPokemonCercano(k, j)$}
+                        \If{$HayPokemonCercano(I, j)$}
+                            \If{$PosPokemonCercano(k,j) = PosPokemonCercano(I,j)$}
                                 \State \Comment No hago nada
                             \Else
-                                \State $reinicio(k,j)$
+                                \State $Obtener(j.posPokemons, k).cantMovCapt \gets 0$
+                                \State $jugadorHeap \gets \langle e, cantidadPokemons(e,j) \rangle$
+                                \State $j.jugadores[e].prioridad \gets Encolar(jugadorHeap, Obtener(j.posPokemons, k).colaPrioridad)$
                             \EndIf
                         \Else
                             \State \Comment No hago nada
                         \EndIf
                     \EndIf
                 \EndIf
-                \If{$k \neq I \land k \neq F$}
-                    \If{$iHayPokemonCercano(k,j)$}
-                        \State $resuelvo(iPosPokemonCercano(I,j))$
+                \medskip
+                \Statex \underline{Complejidad:} $\Theta(1)$
+        \Statex \underline{Justificación:}  
+    \end{algorithmic}
+\end{algorithm} 
+
+\begin{algorithm}[H]{\textbf{LaCoordenadaEsOtra}(\In{k}{coord}, \In{I}{coord}, \In{F}{coord}, \Inout{j}{juego})}    
+    \begin{algorithmic}[1]
+        \If{$k \neq I \land k \neq F$}
+                    \If{$HayPokemonCercano(k,j)$}
+                        \State $CapturarPokemon(PosPokemonCercano(k,j))$
                     \Else
                         \State \Comment No hago nada
                     \EndIf
                 \EndIf
-                \State$iAvanzar(iObtener(iSiguiente(pokemonsTotales.claves))).pokemonsSalvajes)$
-                \EndWhile
-        \State $iAvanzar(pokemonsTotales.claves)$
-        \EndWhile
-
-		\Statex \underline{Complejidad:} $\Theta(???)$
+        \medskip
+        \Statex \underline{Complejidad:} $\Theta(1)$
+        \Statex \underline{Justificación:}  El algoritmo tiene llamadas a funciones con costo $\Theta(1)$, y un $while$ que será ejecutado 256 veces, y sabemos que $\Theta (256)$ = $\Theta (1)$. Luego, la complejidad de este algoritmo será $\Theta (1)$.
     \end{algorithmic}
-\end{algorithm}
+\end{algorithm} 
 
+\begin{algorithm}[H]{\textbf{CapturarPokemon}(\In{k}{coord}, \Inout{j}{juego})} 
+    \begin{algorithmic}[1]
+        \If{$HaySiguiente(Obtener(j.posPokemons, k).colaPrioridad)$}
+            \State $jugGanador \gets Proximo(Obtener(j.posPokemons, k).colaPrioridad)$
+            \State $AgregarPokemon(jugGanador, pokemonEnPos(k,j), j)$
+            \State $infoMod \gets Obtener(j.pokemonsTotales, pokemonEnPos(k,j))$
+            \State $j.matrizPokemons[k.longitud][k.latitud] \gets \langle false, NULL \rangle$
+            \State $EliminarSiguiente(Siguiente(infoMod.pokesSalvajes))$ \Comment Este siguiente es el que quiero eliminar, por como itera el while
+        \EndIf
+        \medskip
+        \Statex \underline{Complejidad:} $\Theta(1)$
+        \Statex \underline{Justificación:}  El algoritmo tiene llamadas a funciones con costo $\Theta(1)$, y un $while$ que será ejecutado 256 veces, y sabemos que $\Theta (256)$ = $\Theta (1)$. Luego, la complejidad de este algoritmo será $\Theta (1)$.
+    \end{algorithmic}
+\end{algorithm} 
+
+\begin{algorithm}[H]{\textbf{AgregarPokemon}(\In{p}{pokemon}, \In{h}{jugadorHeap}, \Inout{j}{juego})}   
+    \begin{algorithmic}[1]
+        \While{$HaySiguiente(j.jugadores[h.id].pokemons)$}
+            \If {$Siguiente(j.jugadores[h.id].pokemons).tipo = p$}
+                \State $Siguiente(j.jugadores[h.id].pokemons).catn \gets Siguiente(j.jugadores[h.id].pokemons).catn + 1$
+            \EndIf
+            \State $Avanzar(j.jugadores[h.id].pokemons)$
+        \EndWhile
+        \medskip
+        \Statex \underline{Complejidad:} $\Theta(1)$
+        \Statex \underline{Justificación:}  El algoritmo tiene llamadas a funciones con costo $\Theta(1)$, y un $while$ que será ejecutado 256 veces, y sabemos que $\Theta (256)$ = $\Theta (1)$. Luego, la complejidad de este algoritmo será $\Theta (1)$.
+    \end{algorithmic}
+\end{algorithm} 
+
+
+\begin{algorithm}[H]{\textbf{ExpulsarJugador}(\In{e}{jugador}, \Inout{j}{juego})}   
+    \begin{algorithmic}[1]
+        \State $j.canttidadPokeTot \gets j.cantidadPokeTodo - CantidadPokemons(e,j)$
+        \State $EliminarPokemons(e,j)$
+        \State $EliminarSiguiente(j.jugadores[e].posMatriz)$
+        \State $EliminarSiguiente(j.jugadores[e].prioridad)$
+        \State $j.jugadores[e].conectado \gets false$
+        \State $AgregarRapido(j.Expulsados, e)$
+        \medskip
+        \Statex \underline{Complejidad:} $\Theta(1)$
+        \Statex \underline{Justificación:}  El algoritmo tiene llamadas a funciones con costo $\Theta(1)$, y un $while$ que será ejecutado 256 veces, y sabemos que $\Theta (256)$ = $\Theta (1)$. Luego, la complejidad de este algoritmo será $\Theta (1)$.
+    \end{algorithmic}
+\end{algorithm} 
+
+\begin{algorithm}[H]{\textbf{EliminarPokemons}(\In{e}{jugador}, \Inout{j}{juego})}  
+    \begin{algorithmic}[1]
+        \While{$HaySiguiente(j.jugadores[e].pokemons)$}
+            \State $pokeActual \gets Siguiente(j.jugadores[e].pokemons)$
+            \State $Obtener(pokemonsTotales, pokeActual.tipo).cant \gets Obtener(pokemonsTotales, pokeActual.tipo).cant - pokeActual.cant$
+            \State $EliminarSiguiente(j.jugadores[e].pokemons)$
+        \EndWhile
+        \medskip
+        \Statex \underline{Complejidad:} $\Theta(1)$
+        \Statex \underline{Justificación:}  El algoritmo tiene llamadas a funciones con costo $\Theta(1)$, y un $while$ que será ejecutado 256 veces, y sabemos que $\Theta (256)$ = $\Theta (1)$. Luego, la complejidad de este algoritmo será $\Theta (1)$.
+    \end{algorithmic}
+\end{algorithm} 
