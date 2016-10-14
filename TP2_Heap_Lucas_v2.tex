@@ -291,18 +291,18 @@ Este módulo implementa una cola de prioridad. El TAD Cola de prioridad es paramé
 
   \Titulo{Representación de la Cola de Prioridad}
   
-  En este módulo vamos a utilizar un árbol binario para representar la cola, donde cada nodo contiene un elemento. La prioridad de los hijos es siempre menor a la del padre, por lo tanto la raíz del árbol tiene el elemento de mayor prioridad. La altura del árbol es igual al logaritmo de la cantidad de elementos ($log(\#nodos)$). Cada nivel del árbol se va llenando de izquierda a derecha. Cada nodo guarda la longitud de la rama más corta y la longitud de la rama más larga, lo cual se utiliza para poder buscar el último nodo(es decir, el nodo del último nivel que está más a la derecha) o la ubicación donde ubicar un nuevo nodo que se agrega a la cola. Debido a como se van colocando los nodos, la rama derecha nunca puede ser más larga que la izquierda, por lo tando la rama más larga del hijo izquierdo de un nodo va a ser igual o mayor en una unidad a la rama más larga del hijo derecho, mientras que lo contrario ocurre con la longitud de la rama más corta.
+  En este módulo vamos a utilizar un árbol binario para representar la cola, donde cada nodo contiene un elemento. La prioridad de los hijos es siempre menor a la del padre, por lo tanto la raíz del árbol tiene el elemento de mayor prioridad. La altura del árbol es igual al logaritmo de la cantidad de elementos ($log(\#nodos)$). Cada nivel del árbol se va llenando de izquierda a derecha. Cada nodo guarda la longitud de la rama más corta y la longitud de la rama más larga, lo cual se utiliza para poder buscar el último nodo(es decir, el nodo del último nivel que está más a la derecha) o donde ubicar un nuevo nodo que se agrega a la cola. Debido a como se van colocando los nodos, la rama derecha nunca puede ser más larga que la izquierda, por lo tando la rama más larga del hijo izquierdo de un nodo va a ser igual o mayor en una unidad a la rama más larga del hijo derecho, mientras que lo contrario ocurre con la longitud de la rama más corta. Cada nodo, además de tener un puntero a cada hijo, también guarda un puntero al padre  para poder acceder rapidamente.
   
   \begin{Estructura}{heapMod}[heapmod]
     \begin{Tupla}[heapmod]
       \tupItem{tope}{puntero(nodo)}%
-    \end{Tupla}  
+    \end{Tupla}
   
     \begin{Tupla}[nodo]
       \tupItem{elemento}{jugadorHeap}%
       \tupItem{ramaMasCorta}{nat}%
       \tupItem{ramaMasLarga}{nat}%
-      \tupItem{hijoIzq}{puntero(nodo)}%
+      \tupItem{\\hijoIzq}{puntero(nodo)}%
       \tupItem{hijoDer}{puntero(nodo)}%
       \tupItem{padre}{puntero(nodo)}%
     \end{Tupla}
@@ -310,16 +310,25 @@ Este módulo implementa una cola de prioridad. El TAD Cola de prioridad es paramé
     \begin{Tupla}[jugadorHeap]
       \tupItem{cantPokes}{nat}%
       \tupItem{id}{nat}%
-    \end{Tupla}    
+    \end{Tupla}
     
   \end{Estructura}
-
-	%\RepFc[vector(puntero(nodo))][c]{true}
-%  \Rep[heapmod][c]{(c.tope.hijoIzq $\neq$ NULL $\impluego$ esMayor(c.elemento, (*c.hijoIzq).elemento)) $\land$ (c.hijoDer $\neq$ NULL $\impluego$ esMayor(c.elemento, (*c.hijoDer).elemento))}\mbox{}
-%  
-%  ~
-%  \AbsFc[heapmod]{}
   
+  
+  \noindent Invariante de representación: \\
+  1) $tope$ es un puntero al nodo raíz del árbol. \\
+  2) Todos los nodos tienen un puntero al padre. En el caso de la raíz, apunta a $NULL$. \\
+  3) Todos los nodos tienen un elemento. \\
+  4) El elemento es una tupla $<Nat, Nat>$ \\
+  5) Los elementos de los hijos tienen menor prioridad que el del padre. \\
+  6) La altura del árbol es igual al logaritmo de la cantidad de nodos ($log(\#nodos)$). \\
+  7) Cada nivel del árbol se va llenando de izquierda a derecha, por lo tanto todas las hojas están en los últimos dos niveles del árbol y la diferencia de altura entre los dos subárboles de un nodo puede ser 0 o 1. \\
+  8) Cada nodo guarda la longitud de la rama más corta y la más larga. \\
+  9) La longitud de la rama más corta de un nodo debe ser uno más que la longitud de la rama más corta del subárbol derecho. \\
+  10) La longitud de la rama más larga de un nodo debe ser uno más que la longitud de la rama más larga del subárbol izquierdo. \\
+  11) La diferencia entre la longitud de la rama más larga y las más corta puede ser a lo sumo 1.
+  
+
 
   \Titulo{Representación del iterador}
   
@@ -332,11 +341,9 @@ Este módulo implementa una cola de prioridad. El TAD Cola de prioridad es paramé
     \end{Tupla}
   \end{Estructura}
 
-%  \Rep[iter][it]{}
-%
-%  ~
-%
-%  \Abs[iter]{itBi($\alpha$)}[it]{b}{}
+  \noindent Invariante de representación: \\
+  1) $siguiente$ apunta a $NULL$ si el $heap$ apunta a una cola vacia.\\
+  2) Si la cola no está vacia, $siguiente$ apunta a un nodo que pertenece a la cola apuntada por $heap$.
   
   
 
