@@ -260,7 +260,6 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(k)$ al co
     \tadOperacion{Definido}{$string$, dNodo}{bool}{}
     \tadOperacion{Obtener}{$string$, dNodo}{$\sigma$}{Definido($string$, dNodo)}
     \tadAxiomas
-    \tadAxioma{descendencia(d)}{}
     \tadAxioma{Definido($c, d$)}{\IF $\Phi$?($c$) $\land$ $d$.Definicion $\neq$ NULL THEN true ELSE {\IF $c$.length() $>$ 0 $\land _{L}$ $d$.Siguientes[int($c$[0])] $\neq$ NULL THEN Definido(fin($c$), $d$.Siguientes[int($c$[0])]) ELSE false FI} FI}
     \tadAxioma{Obtener($c, d$)}{\IF $\phi$?($c$) THEN d.Definicion ELSE Obtener(fin($c$), $d$.Siguientes[int($c$[0])]) FI}
     
@@ -280,7 +279,7 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(k)$ al co
   \begin{Estructura}{dicc$(string,\sigma)$}[dicCadena]
     \begin{Tupla}[dicCadena]%
              \tupItem{dNodo}{puntero(Nodo)}
-             \tupItem{claves}{conjuntoLineal}
+             \tupItem{claves}{conjuntoLineal(string)}
     \end{Tupla}
     \begin{Tupla}[Nodo]%
              \tupItem{definicion}{$\sigma$}
@@ -307,10 +306,9 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(k)$ al co
  \Titulo{Algoritmos del módulo}
   	\medskip
   
-\begin{algorithm}[H]{\textbf{iVacía}() $\to$ $res$ : dicc}
+\begin{algorithm}[H]{\textbf{iVacío}() $\to$ $res$ : dicc}
     	\begin{algorithmic}[1]
-			 \State $res \gets \langle iVacío(), NULL \rangle$ \Comment $\Theta(1)$
-
+			 \State $res.dNodo \gets \langle Vacio(), NULL \rangle$ \Comment $\Theta(1)$
 			\medskip
 			\Statex \underline{Complejidad:} $\Theta(1)$
     	\end{algorithmic}
@@ -318,13 +316,16 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(k)$ al co
 
 \begin{algorithm}[H]{\textbf{iDefinir}(\Inout{d}{dicc}, \In{c}{$string$}, \In{s}{$\sigma$})}
 	\begin{algorithmic}[1]
+			\If{$!Definido?(d, c)$}			 \Comment $\mathcal{O} (Longitud(c))$
+				 \State $AgregarRapido(d.claves, c)$ \Comment $\Theta (1)$
+			\EndIf
 			 \State $actual \gets d.dNodo$
 			 \State $i \gets 0$
 			 \If{$d = NULL$}		\Comment $\Theta (1)$ Si el diccionario estaba vacío, le agrego un nodo
 			 \State $inicio \gets Nodo$ \Comment $\Theta (1)$
 			 \State $d.dNodo = inicio$ \Comment $\Theta (1)$
 			 \Else \Comment Busco el nodo donde aparesca la ultima letra de la clave c
-			 	\While{$i < iLongitud(c)$} \Comment $\mathcal{O} (iLongitud(c))$
+			 	\While{$i < Longitud(c)$} \Comment $\mathcal{O} (Longitud(c))$
 			 	\If{$actual.Siguientes[int([i])] =  NULL$} \Comment $\Theta (1)$
 				\State $break$ \Comment $\Theta (1)$
 				\EndIf
@@ -332,10 +333,10 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(k)$ al co
 				\State $i \gets i + 1$ \Comment $\Theta (1)$
 			 	\EndWhile
 			 \EndIf
-			 \If{$i = iLongitud(c)$} \Comment $\Theta (1)$ Si la clave está, quizá tiene otra definición: la reemplazo
+			 \If{$i = Longitud(c)$} \Comment $\Theta (1)$ Si la clave está, quizá tiene otra definición: la reemplazo
 			 \State $actual.Definicion \gets NULL$ \Comment $\Theta (1)$
 			 \Else
-			 \While{$i < iLongitud(c)$} \Comment $\mathcal{O} (iLongitud(c))$ Si no estaba la clave completa, agrego nodos para completarla
+			 \While{$i < Longitud(c)$} \Comment $\mathcal{O} (iLongitud(c))$ Si no estaba la clave completa, agrego nodos para completarla
 			 \State $nuevo \gets Nodo$ \Comment $\Theta (1)$
 			 \State $actual.Siguientes[int([i])] \gets nuevo$ \Comment $\Theta (1)$
 			 \State $actual \gets actual.Siguientes[int([i])]$ \Comment $\Theta (1)$
@@ -343,77 +344,76 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(k)$ al co
 			 \EndWhile
 			 \EndIf
 			 \State $actual.Definicion \gets s$ \Comment $\Theta (1)$. Ya estoy en el nodo correcto, agrego la definicón
-			 \State $iAgregar(d.claves, c)$ \Comment $\Theta (1)$
-
 			\medskip
-			\Statex \underline{Complejidad:} $\mathcal{O} (iLongitud(c))$
-			\Statex \underline{Justificación:} El algoritmo tiene llamadas a funciones con costo $\Theta(1)$, en su mayoría asignar o inicializar, y dos $while$, cada uno con costo, en el peor caso, $\mathcal{O} (iLongitud(c))$. En el peor caso, el diccionario estará vacío, entonces entrará en los dos $while$, sumando $\mathcal{O} (iLongitud(c))$ por cada uno (estarán sumando porque estos $while$ no están anidados). Luego, como sabemos que, aplicando álgebra de ordenes, $\mathcal{O} (iLongitud(c))$ + $\Theta (1)$ = $\mathcal{O} (iLongitud(c))$, podemos decir que sólo nos quedará: $\mathcal{O} (iLongitud(c))$ + $\mathcal{O} (iLongitud(c))$ = $\mathcal{O} (iLongitud(c))$.
+			\Statex \underline{Complejidad:} $\mathcal{O} (Longitud(c))$
+			\Statex \underline{Justificación:} El algoritmo tiene llamadas a funciones con costo $\Theta(1)$, en su mayoría asignar o inicializar, y dos $while$, cada uno con costo, en el peor caso, $\mathcal{O} (Longitud(c))$. En el peor caso, el diccionario estará vacío, entonces entrará en los dos $while$, sumando $\mathcal{O} (Longitud(c))$ por cada uno (estarán sumando porque estos $while$ no están anidados). Luego, como sabemos que, aplicando álgebra de ordenes, $\mathcal{O} (Longitud(c))$ + $\Theta (1)$ = $\mathcal{O} (Longitud(c))$, podemos decir que sólo nos quedará: $\mathcal{O} (Longitud(c))$ + $\mathcal{O} (Longitud(c))$ = $\mathcal{O} (Longitud(c))$.
     	\end{algorithmic}
 \end{algorithm}
 
 
-\begin{algorithm}[H]{\textbf{iDefifinido}(\Inout{d}{dicc}, \In{c}{$string$}) $\to$ $res$ : $bool$}
+\begin{algorithm}[H]{\textbf{iDefinido?}(\Inout{d}{dicc}, \In{c}{string}) $\to$ $res$ : $bool$}
 	\begin{algorithmic}[1]
 			\State $actual \gets d.dNodo$ \Comment $\Theta (1)$ 
 			\State $i \gets 0$ \Comment $\Theta (1)$
-			\While{$i < iLongitud(c)$} \Comment $\mathcal{O} (iLongitud(c))$
+			\While{$i < Longitud(c)$} \Comment $\mathcal{O} (Longitud(c))$
 			 	\If{$actual.Siguientes[int([i])] =  NULL$} \Comment $\Theta (1)$ Si falta tan sólo una letra, ya paro el ciclo.
-				\State $break$ \Comment $\Theta (1)$
+				\State $i \gets Longitud(c) + 1$ \Comment $\Theta (1)$
 				\EndIf
 				\State $actual \gets actual.Siguientes[int([i])]$ \Comment $\Theta (1)$
 				\State $i \gets i + 1$ \Comment $\Theta (1)$
 			 	\EndWhile
-			 	\State $res \gets (i = iLongitud(c) \land _{L} actual.Definicion \neq NULL)$ \Comment $\Theta (1)$ Si se cumple es porque el while se ejecuto tantas veces como la longitud de la palabra, así que "la recorrí" toda, y, además, su definicón está donde debe estar.
+			 	\State $res \gets (i = Longitud(c) \land _{L} actual.Definicion \neq NULL)$ \Comment $\Theta (1)$ Si se cumple es porque el while se ejecuto tantas veces como la longitud de la palabra, así que "la recorrí" toda, y, además, su definicón está donde debe estar.
 			\medskip
-			\Statex \underline{Complejidad:} $\mathcal{O} (iLongitud(c))$
-			\Statex \underline{Justificación:} El algoritmo tiene llamadas a funciones con costo $\Theta(1)$, y un $while$ de peor costo $\mathcal{O} (iLongitud(c))$. Por álgebra de ordenes sabemos que: $\mathcal{O} (iLongitud(c))$ + $\Theta (1)$ = $\mathcal{O} (iLongitud(c))$, luego, en el caso en que recorra todas las posiciones de la clave, la complejidad será $\mathcal{O} (iLongitud(c))$.
+			\Statex \underline{Complejidad:} $\mathcal{O} (Longitud(c))$
+			\Statex \underline{Justificación:} El algoritmo tiene llamadas a funciones con costo $\Theta(1)$, y un $while$ de peor costo $\mathcal{O} (iLongitud(c))$. Por álgebra de ordenes sabemos que: $\mathcal{O} (Longitud(c))$ + $\Theta (1)$ = $\mathcal{O} (Longitud(c))$, luego, en el caso en que recorra todas las posiciones de la clave, la complejidad será $\mathcal{O} (Longitud(c))$.
     	\end{algorithmic}
 \end{algorithm}
 	
 
-\begin{algorithm}[H]{\textbf{iObtener}(\In{d}{dicc}) $\to$ $res$ : $\sigma$}
+\begin{algorithm}[H]{\textbf{iObtener}(\In{d}{dicc}, \In{c}{string}) $\to$ $res$ : $\sigma$}
 	\begin{algorithmic}[1]
 			\State $actual \gets d.dNodo$ \Comment $\Theta (1)$
 			\State $i \gets 0$ \Comment $\Theta (1)$
-			\While{$i < iLongitud(c)$} \Comment $\mathcal{O} (iLongitud(c))$ Busco el final de la clave, para devolver su definición
-				\State $actual \gets actual.Siguientes[int([i])]$ \Comment $\Theta (1)$
+			\While{$i < Longitud(c)$} \Comment $\mathcal{O} (Longitud(c))$ Busco el final de la clave, para devolver su definición
+				\State $actual \gets actual.Siguientes[int(c[i])]$ \Comment $\Theta (1)$
 				\State $i \gets i + 1$ \Comment $\Theta (1)$
 			 	\EndWhile
 			\State $res \gets actual.Definicion$ \Comment $\Theta (1)$
 			\medskip
-			\Statex \underline{Complejidad:} $\mathcal{O} (iLongitud(c))$
-			\Statex \underline{Justificación:} Como por restricción sé que la clave pasada debe estar en el diccionario, sé que tendré que iterar, en el $while$, hasta la longitud de la clave. Además, por álgebra de ordenes sé que: $\mathcal{O} (iLongitud(c))$ + $\Theta (1)$ = $\mathcal{O} (iLongitud(c))$, y como todo, menos el $while$, es $\Theta (1)$, la complejidad es $\mathcal{O} (iLongitud(c))$.
+			\Statex \underline{Complejidad:} $\mathcal{O} (Longitud(c))$
+			\Statex \underline{Justificación:} Como por restricción sé que la clave pasada debe estar en el diccionario, sé que tendré que iterar, en el $while$, hasta la longitud de la clave. Además, por álgebra de ordenes sé que: $\mathcal{O} (Longitud(c))$ + $\Theta (1)$ = $\mathcal{O} (Longitud(c))$, y como todo, menos el $while$, es $\Theta (1)$, la complejidad es $\mathcal{O} (Longitud(c))$.
     	\end{algorithmic}
 \end{algorithm}	
 
 
-\begin{algorithm}[H]{\textbf{iBorrar}(\Inout{d}{dicc}, \In{c}{$string$})}
+\begin{algorithm}[H]{\textbf{iBorrar}(\Inout{d}{dicc}, \In{c}{string})}
 	\begin{algorithmic}[1]
-			 \State $ruptura \gets d.dNodo$ \Comment $\Theta (1)$ La ruptura será el último nodo el cual o tiene una def, y no es la def de mi clave, o hay otra clave con el mismo prefijo que llega hasta la ruptura
-			 \State $letraRuptura \gets buscarRuptura(d.dNodo, c, ruptura)$ \Comment $\mathcal{O} (iLongitud(c))$ Acá lo busco, y además devuelvo en qué letra de la clave aparece dicho nodo
-			 \State $nodoDef \gets buscarNodoDef(dNodo, c)$ \Comment $\mathcal{O} (iLongitud(c))$ Busco el nodo que corresponde a la def de mi clave
+			\State $ruptura \gets d.dNodo$ \Comment $\Theta (1)$ La ruptura será el último nodo el cual o tiene una def, y no es la def de mi clave, o hay otra clave con el mismo prefijo que llega hasta la ruptura
+			 \State $letraRuptura \gets buscarRuptura(d.dNodo, c, ruptura)$ \Comment $\mathcal{O} (Longitud(c))$ Acá lo busco, y además devuelvo en qué letra de la clave aparece dicho nodo
+			 \State $nodoDef \gets buscarNodoDef(dNodo, c)$ \Comment $\mathcal{O} (Longitud(c))$ Busco el nodo que corresponde a la def de mi clave
 			 \If{$d.dNodo = ruptura$} \Comment $\Theta (1)$ Si la raíz del dicc es la ruptura
 			 	\If{$cantidadNoNull(nodoDef) = 0$} \Comment $\Theta (1)$ Si la clave pasada no es prefijo de ninguna otra clave en mi dicc
 			 		\If{$cantidadNoNull(d.dNodo) = 1$} \Comment $\Theta (1)$ El caso en que tenga solo la clave pasada
-					 \State $borrarDesde(d.dNodo,c,0)$ \Comment $\mathcal{O} (iLongitud(c))$
+					 \State $borrarDesde(d.dNodo,c,0)$ \Comment $\mathcal{O} (Longitud(c))$
 			 		\State $d.dNodo = NULL$ \Comment $\Theta (1)$
 					 \Else  \Comment El caso en que tenga alguna clave mas
-			 		\State $borrarDesde(d.dNodo, c, 0)$ \Comment $\mathcal{O} (iLongitud(c))$
+			 		\State $borrarDesde(d.dNodo, c, 0)$ \Comment $\mathcal{O} (Longitud(c))$
 				 \EndIf
 				\Else \Comment El caso en que la clave pasada sea prefijo de alguna otra clave en mi dicc
 			 	\State $nodoDef.Definicion = NULL$ \Comment $\Theta (1)$
 			 	\EndIf
 			 \Else \Comment Si la ruptura se ocasiona en un nodo posterior a la raiz
 			 	\If{$cantidadNoNull(nodoDef) = 0$} \Comment $\Theta (1)$ Si la clave pasada no es prefijo de ninguna otra
-			 	\State $borrarDesde(d.dNodo, c, letraRuptura)$ \Comment $\mathcal{O} (iLongitud(c))$
+			 	\State $borrarDesde(d.dNodo, c, letraRuptura)$ \Comment $\mathcal{O} (Longitud(c))$
 			 	\Else
 			 	\State $nodoDef.Definicion = NULL$ \Comment $\Theta (1)$
 			 	\EndIf
 			 \EndIf
+			 \State $Eliminar(dicc.claves, c)$ \Comment $\Theta(1)$
 
 			\medskip
-			\Statex \underline{Complejidad:} $\mathcal{O} (iLongitud(c))$
-			\Statex \underline{Justificación:} El algoritmo tiene llamadas a funciones $\Theta (1)$, y a funciones $\mathcal{O} (iLongitud(c))$. Notar que no tengo funciones que cuesten $\mathcal{O} (iLongitud(c))$ anidadas. A la hora de buscar el nodo donde está la definición de la clave pasada, es decir $nodoDef$, ya sé que tengo complejidad $\mathcal{O} (iLongitud(c))$, por lo tanto, por propiedades de álgebra de ordenes, la complejidad del algoritmo será $\mathcal{O} (iLongitud(c))$, ya que: $\mathcal{O} (iLongitud(c))$ + $\Theta (1)$ = $\mathcal{O} (iLongitud(c))$, y como mucho estaré sumando varias veces $\mathcal{O} (iLongitud(c))$, por lo notado anteriormente, que dará $\mathcal{O} (iLongitud(c))$.
+			\Statex \underline{Complejidad:} $\mathcal{O} (Longitud(c))$
+			\Statex \underline{Justificación:} El algoritmo tiene llamadas a funciones $\Theta (1)$, y a funciones $\mathcal{O} (Longitud(c))$. Notar que no tengo funciones que cuesten $\mathcal{O} (Longitud(c))$ anidadas. A la hora de buscar el nodo donde está la definición de la clave pasada, es decir $nodoDef$, ya sé que tengo complejidad $\mathcal{O} (Longitud(c))$, por lo tanto, por propiedades de álgebra de ordenes, la complejidad del algoritmo será $\mathcal{O} (Longitud(c))$, ya que: $\mathcal{O} (Longitud(c))$ + $\Theta (1)$ = $\mathcal{O} (Longitud(c))$, y como mucho estaré sumando varias veces $\mathcal{O} (Longitud(c))$, por lo notado anteriormente, que dará $\mathcal{O} (Longitud(c))$.
     	\end{algorithmic}
 \end{algorithm}	
 
@@ -430,28 +430,27 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(k)$ al co
 
 \begin{algorithm}[H]{\textbf{iCopiar}(\In{d}{dic})$\to$ $res$ : dicc($string , \sigma$)}	
 	\begin{algorithmic}[1]
-			\State $res.dNodo \gets NULL$ \Comment $\Theta(1)$
-			\State $res.claves \gets iVacío()$ \Comment $\Theta(1)$
-			 \State $claves \gets iClaves(d)$ \Comment $\Theta(1)$
-			 \While{$\lnot iEsVacío?(claves)$} \Comment $\Theta (1)$
-				 \State $iDefinir(res, primeraClave, iObtener(d, primeraClave))$ \Comment $\mathcal{O} (iLongitud(c))$
-				 \State $iEliminar(claves, primeraClave)$ \Comment $\mathcal{O} (iLongitud(c))$
+			\State $res.dNodo \gets Vacio()$ \Comment $\Theta(1)$
+			 \State $claves \gets Claves(d)$ \Comment $\Theta(1)$
+			 \While{$\lnot EsVacío?(claves)$} \Comment $\Theta (1)$
+				 \State $Definir(res, primeraClave, iObtener(d, primeraClave))$ \Comment $\mathcal{O} (Longitud(c))$
+				 \State $Eliminar(claves, primeraClave)$ \Comment $\mathcal{O} (Longitud(c))$
 			\EndWhile
     	    
 			\medskip
-			\Statex \underline{Complejidad:} $iCardinal(claves)*\mathcal{O} (iLongitud(c))$
-			\Statex \underline{Justificación:} El algoritmo tiene llamadas a funciones $\Theta (1)$, un $while$ que ejecuta siempre $iCardinal(claves)$ veces, y dentro de este fucniones $\mathcal{O} (iLongitud(c))$. Luego, su complejidad debe ser $iCardinal(claves)$*$\mathcal{O} (iLongitud(c))$.
+			\Statex \underline{Complejidad:} $iCardinal(claves)*\mathcal{O} (Longitud(c))$
+			\Statex \underline{Justificación:} El algoritmo tiene llamadas a funciones $\Theta (1)$, un $while$ que ejecuta siempre $Cardinal(claves)$ veces, y dentro de este fucniones $\mathcal{O} (Longitud(c))$. Luego, su complejidad debe ser $Cardinal(claves)$*$\mathcal{O} (Longitud(c))$.
 			 
     	\end{algorithmic}
 \end{algorithm}	
 
-\begin{algorithm}[H]{\textbf{$\bullet =_i \bullet$}(\In{d1}{dicc}, \In{d2}{dicc})}	
+\begin{algorithm}[H]{\textbf{$\bullet =_i \bullet$}(\In{d1}{dicc}, \In{d2}{dicc})$\to$ $res$ : $bool$}	
 	\begin{algorithmic}[1]
-			 \State $res \gets (d1.claves = d2.claves \land _L mismasDefiniciones(d1,d2))$ \Comment $\mathcal{O} (iLongitud(c) + iCardinal(claves))$
+			 \State $res \gets (d1.claves = d2.claves \land _L mismasDefiniciones(d1,d2))$ \Comment $\mathcal{O} (Longitud(c) + Cardinal(claves))$
     	    
 			\medskip
-			\Statex \underline{Complejidad:} $iCardinal(claves)*\mathcal{O} (iLongitud(c))$
-			\Statex \underline{Justificación:} $\Theta (1)$ + $iCardinal(claves)*\mathcal{O} (iLongitud(c))$ = $iCardinal(claves)$*$\mathcal{O} (iLongitud(c))$
+			\Statex \underline{Complejidad:} $Cardinal(claves)*\mathcal{O} (Longitud(c))$
+			\Statex \underline{Justificación:} $\Theta (1)$ + $Cardinal(claves)*\mathcal{O} (Longitud(c))$ = $Cardinal(claves)$*$\mathcal{O} (Longitud(c))$
 			 
     	\end{algorithmic}
 \end{algorithm}	
@@ -461,7 +460,7 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(k)$ al co
 		\State $actual \gets p$ \Comment $\Theta (1)$
 		\State $i \gets 0$ \Comment $\Theta (1)$
 		\State $letraRuptura \gets 0$ \Comment $\Theta (1)$
-		\While{$i < iLongitud(c)$} \Comment $\mathcal{O} (iLongitud(c))$
+		\While{$i < Longitud(c)$} \Comment $\mathcal{O} (Longitud(c))$
 			\If{$cantidadNoNull(actual) > 1 \lor actual.Definicion \leq NULL$} \Comment $\Theta (1)$
 			\State $ruptura \gets actual$ \Comment $\Theta (1)$
 			\State $letraRuptura \gets i$ \Comment $\Theta (1)$
@@ -472,8 +471,8 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(k)$ al co
 		\State $res \gets letraRuptura$ \Comment $\Theta (1)$
 
 		\medskip
-		\Statex \underline{Complejidad:}  $\mathcal{O} (iLongitud(c))$
-		\Statex \underline{Justificación:}  El algoritmo tiene llamadas a funciones con costo $\Theta(1)$, y un $while$ de peor costo $\mathcal{O} (iLongitud(c))$. Por álgebra de ordenes sabemos que: $\mathcal{O} (iLongitud(c))$ + $\Theta (1)$ = $\mathcal{O} (iLongitud(c))$, luego, en el caso en que recorra todas las posiciones de la clave, la complejidad será $\mathcal{O} (iLongitud(c))$.
+		\Statex \underline{Complejidad:}  $\mathcal{O} (Longitud(c))$
+		\Statex \underline{Justificación:}  El algoritmo tiene llamadas a funciones con costo $\Theta(1)$, y un $while$ de peor costo $\mathcal{O} (Longitud(c))$. Por álgebra de ordenes sabemos que: $\mathcal{O} (Longitud(c))$ + $\Theta (1)$ = $\mathcal{O} (Longitud(c))$, luego, en el caso en que recorra todas las posiciones de la clave, la complejidad será $\mathcal{O} (Longitud(c))$.
     \end{algorithmic}
 \end{algorithm}	
 	
@@ -551,160 +550,6 @@ Para describir la complejidad de las operaciones, vamos a llamar $copy(k)$ al co
 			 
     	\end{algorithmic}
 \end{algorithm}	
-
-\begin{algorithm}[H]{\textbf{iMoverse}(\In {e}{jugador}, \In {c}{coordenada}, \Inout{j}{juego})}
-    \begin{algorithmic}[1]
-        \State $I \gets j.jugadores[e].posicion$ \Comment I de coordenada inicial
-        \State $F \gets c$  \Comment F de cordenada final
-        \While{$HaySiguiente(j.pokemonsTotales.claves)$}
-            \If{$!Vacio?(Obtener(j.pokemonsTotales, Siguiente(j.pokemonsTotales.claves)).pokemonsSalvajes)$}
-                \While{$HaySiguiente(Obtener(j.pokemonsTotales, Siguiente(j.pokemonsTotales.claves)).pokemonsSalvajes)$}          					
-                   \State $k \gets SiguienteClave(Obtener(j.pokemonsTotales, Siguiente(j.pokemonsTotales.claves)).pokemonsSalvajes)$
-                   \State $LaCordenadaEsInicio(k, I, F, j)$
-                   \State $LaCoordenadaEsFinal(k, I, F, j)$
-                   \State $LaCoordenadaEsOtra(k, I, F, j)$
-                \State$Avanzar(Obtener(Siguiente(j.pokemonsTotales.claves))).pokemonsSalvajes)$
-                \EndWhile
-        \State $Avanzar(j.pokemonsTotales.claves)$
-     \EndWhile
-        
-        \State $ElminiarSiguiente(j.jugadores[e].posMatriz)$
-        \State $j.jugadores[e].posMatriz \gets AgregarRapido(j.matrizJugadores[c.longitud][c.latitud], e)$
-        \State $j.jugadores[e].posicion \gets c$
-        \If{$DistEuclidia(I,F) \geq 10 \lor _L !HayCamino(I,F,mapa(j))$}
-            \State $j.jugadores[e].sanciones \gets j.jugadores[e].sanciones + 1$
-        \EndIf
-        \If{$j.jugadores[e].sanciones \geq 5$}
-            \State $ExpulsarJugador(e)$
-        \EndIf
-
-        \Statex \underline{Complejidad:} $\Theta(???)$
-    \end{algorithmic}
-\end{algorithm}
-
-\begin{algorithm}[H]{\textbf{LaCordenadaEsInicio}(\In{k}{coord}, \In{I}{coord}, \In{F}{coord}, \Inout{j}{juego})}   
-    \begin{algorithmic}[1]
-            \If{$k = I$}
-                    \If{$HayPokemonCercano(k, j)$}
-                        \If{$HayPokemonCercano(F,j)$}
-                            \If{$PosPokemonCercano(k,j) = PosPokemonCercano(F,j)$}
-                                \State \Comment No hago nada
-                            \Else
-                                \State $Obtener(j.posPokemons, k).cantMovCapt \gets 0$
-                                \State $Elimino(j.jugadores[e].prioridad)$
-                            \EndIf
-                        \Else
-\State \Comment No hago nada, el tipo se fue de un lugar donde no tenía pokemon cercano
-                        \EndIf
-                    \EndIf
-                \EndIf
-                \medskip
-        \Statex \underline{Complejidad:} $\Theta(1)$
-        \Statex \underline{Justificación:}  El algoritmo tiene llamadas a funciones con costo $\Theta(1)$, y un $while$ que será ejecutado 256 veces, y sabemos que $\Theta (256)$ = $\Theta (1)$. Luego, la complejidad de este algoritmo será $\Theta (1)$.
-    \end{algorithmic}
-\end{algorithm} 
-
-\begin{algorithm}[H]{\textbf{LaCoordenadaEsFinal}(\In{k}{coord}, \In{I}{coord}, \In{F}{coord}, \Inout{j}{juego})}   
-    \begin{algorithmic}[1]
-                 \If{$k = F$}
-                    \If{$HayPokemonCercano(k, j)$}
-                        \If{$HayPokemonCercano(I, j)$}
-                            \If{$PosPokemonCercano(k,j) = PosPokemonCercano(I,j)$}
-                                \State \Comment No hago nada
-                            \Else
-                                \State $Obtener(j.posPokemons, k).cantMovCapt \gets 0$
-                                \State $jugadorHeap \gets \langle cantidadPokemons(e,j), e \rangle$
-                                \State $j.jugadores[e].prioridad \gets Encolar(SiguienteSignificado(Obtener(j.pokemonsTotales, Siguiente$ $(j.pokemonsTotales.claves)).pokemonsSalvajes).colaPrioridad, jugadorHeap)$
-                            \EndIf
-                        \Else
-                            \State \Comment No hago nada
-                        \EndIf
-                    \EndIf
-                \EndIf
-                \medskip
-                \Statex \underline{Complejidad:} $\Theta(1)$
-        \Statex \underline{Justificación:}  
-    \end{algorithmic}
-\end{algorithm} 
-
-\begin{algorithm}[H]{\textbf{LaCoordenadaEsOtra}(\In{k}{coord}, \In{I}{coord}, \In{F}{coord}, \Inout{j}{juego})}    
-    \begin{algorithmic}[1]
-        \If{$k \neq I \land k \neq F$}
-                    \If{$HayPokemonCercano(k,j)$}
-						\If{$SiguienteSignificado(Obtener(j.pokemonsTotales, Siguiente$ $(j.pokemonsTotales.claves)).pokemonsSalvajes).cantMovPCapt \geq 10$}
-	                        \State $CapturarPokemon(PosPokemonCercano(k,j), j)$
-                        \EndIf
-                    \Else
-                        \State \Comment No hago nada
-                    \EndIf
-                \EndIf
-        \medskip
-        \Statex \underline{Complejidad:} $\Theta(1)$
-        \Statex \underline{Justificación:}  El algoritmo tiene llamadas a funciones con costo $\Theta(1)$, y un $while$ que será ejecutado 256 veces, y sabemos que $\Theta (256)$ = $\Theta (1)$. Luego, la complejidad de este algoritmo será $\Theta (1)$.
-    \end{algorithmic}
-\end{algorithm} 
-
-\begin{algorithm}[H]{\textbf{CapturarPokemon}(\In{k}{coord}, \Inout{j}{juego})} 
-    \begin{algorithmic}[1]
-        \If{$HaySiguiente(Obtener(j.posPokemons, k).colaPrioridad)$}
-            \State $jugGanador \gets Proximo(Obtener(j.posPokemons, k).colaPrioridad)$
-            \State $DarlePokemon(jugGanador, pokemonEnPos(k,j), j)$
-            \State $j.matrizPokemons[k.longitud][k.latitud] \gets \langle false, NULL \rangle$
-            \State $EliminarSiguiente(Siguiente(SiguienteSignificado(Obtener(j.pokemonsTotales, Siguiente$ $(j.pokemonsTotales.claves)).pokemonsSalvajes)).pokesSalvajes))$ \Comment Este siguiente es el que quiero eliminar, por como itera el while
-        \EndIf
-        \medskip
-        \Statex \underline{Complejidad:} $\Theta(1)$
-        \Statex \underline{Justificación:}  El algoritmo tiene llamadas a funciones con costo $\Theta(1)$, y un $while$ que será ejecutado 256 veces, y sabemos que $\Theta (256)$ = $\Theta (1)$. Luego, la complejidad de este algoritmo será $\Theta (1)$.
-    \end{algorithmic}
-\end{algorithm} 
-
-\begin{algorithm}[H]{\textbf{DarlePokemon}(\In{p}{pokemon}, \In{h}{jugadorHeap}, \Inout{j}{juego})}   
-    \begin{algorithmic}[1]
-        \While{$HaySiguiente(j.jugadores[h.id].pokemons)$}
-            \If {$Siguiente(j.jugadores[h.id].pokemons).tipo = p$}
-                \State $Siguiente(j.jugadores[h.id].pokemons).cant \gets Siguiente(j.jugadores[h.id].pokemons).cant + 1$
-            \EndIf
-            
-            \If{$!HaySiguiente(j.jugadores[h.id].pokemons) || Siguiente(j.jugadores[h.id].pokemons).tipo \neq p$}
-            	\State $nuevoPokemon \gets \langle p, 1 \rangle$
-            	\State $AgregarRapido(j.jugadores[h.id].pokemons, nuevoPokemon)$
-            \EndIf
-            \State $Avanzar(j.jugadores[h.id].pokemons)$
-        \EndWhile
-        \medskip
-        \Statex \underline{Complejidad:} $\Theta(1)$
-        \Statex \underline{Justificación:}  El algoritmo tiene llamadas a funciones con costo $\Theta(1)$, y un $while$ que será ejecutado 256 veces, y sabemos que $\Theta (256)$ = $\Theta (1)$. Luego, la complejidad de este algoritmo será $\Theta (1)$.
-    \end{algorithmic}
-\end{algorithm} 
-
-
-\begin{algorithm}[H]{\textbf{ExpulsarJugador}(\In{e}{jugador}, \Inout{j}{juego})}   
-    \begin{algorithmic}[1]
-        \State $j.canttidadPokeTot \gets j.cantidadPokeTodo - CantidadPokemons(e,j)$
-        \State $EliminarPokemons(e,j)$
-        \State $EliminarSiguiente(j.jugadores[e].posMatriz)$
-		\If{$j.jugadores[e].prioridad \leq NULL$}
-	        \State $EliminarSiguiente(j.jugadores[e].prioridad)$
-        \EndIf
-        \State $j.jugadores[e].conectado \gets false$
-        \State $AgregarRapido(j.Expulsados, e)$
-        \medskip
-        \Statex \underline{Complejidad:} $\Theta(1)$
-        \Statex \underline{Justificación:}  El algoritmo tiene llamadas a funciones con costo $\Theta(1)$, y un $while$ que será ejecutado 256 veces, y sabemos que $\Theta (256)$ = $\Theta (1)$. Luego, la complejidad de este algoritmo será $\Theta (1)$.
-    \end{algorithmic}
-\end{algorithm} 
-
-\begin{algorithm}[H]{\textbf{EliminarPokemons}(\In{e}{jugador}, \Inout{j}{juego})}  
-    \begin{algorithmic}[1]
-        \While{$HaySiguiente(j.jugadores[e].pokemons)$}
-        	\State $Obtener(pokemonsTotales, Siguiente(j.jugadores[e].pokemons).tipo).cant \gets Obtener(pokemonsTotales, Siguiente(j.jugadores[e].pokemons).tipo).cant - Siguiente(j.jugadores[e].pokemons).cant$
-            \State $EliminarSiguiente(j.jugadores[e].pokemons)$
-        \EndWhile
-        \medskip
-        \Statex \underline{Complejidad:} $\Theta(1)$
-        \Statex \underline{Justificación:}  El algoritmo tiene llamadas a funciones con costo $\Theta(1)$, y un $while$ que será ejecutado 256 veces, y sabemos que $\Theta (256)$ = $\Theta (1)$. Luego, la complejidad de este algoritmo será $\Theta (1)$.
-    \end{algorithmic}
-\end{algorithm} 
 
 
 

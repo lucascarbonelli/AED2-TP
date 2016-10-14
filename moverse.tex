@@ -155,15 +155,16 @@
 
 \begin{algorithm}[H]{\textbf{EliminarPokemons}(\In{e}{jugador}, \Inout{j}{juego})}  
     \begin{algorithmic}[1]
-        \While{$HaySiguiente(j.jugadores[e].pokemons)$}
-            \State $Obtener(pokemonsTotales, Siguiente(j.jugadores[e].pokemons).tipo).cant \gets Obtener(pokemonsTotales, Siguiente(j.jugadores[e].pokemons).tipo).cant - Siguiente(j.jugadores[e].pokemons).cant$
-            \If{$Obtener(pokemonsTotales, Siguiente(j.jugadores[e].pokemons).tipo).cant = 0$}
-                \State $itEliminar \gets j.jugadores[e].pokemons$
-                \State $Avanzar(j.jugadores[e].pokemons)$
+        \State $itPokemon \gets j.jugadores[e].pokemons$
+        \While{$HaySiguiente()$}
+            \State $Obtener(pokemonsTotales, Siguiente(itPokemon).tipo).cant \gets Obtener(pokemonsTotales, Siguiente(itPokemon).tipo).cant - Siguiente(itPokemon).cant$
+            \If{$Obtener(pokemonsTotales, Siguiente(itPokemon).tipo).cant = 0$}
+                \State $itEliminar \gets itPokemon$
+                \State $Avanzar(itPokemon)$
                 \State $Borrar(j.pokemonsTotales, Siguiente(itEliminar).tipo)$
                 \State $EliminarSiguiente(itEliminar)$
             \Else
-                \State $EliminarSiguiente(j.jugadores[e].pokemons)$
+                \State $EliminarSiguiente(itPokemon)$
             \EndIf      
         \EndWhile
         \medskip
