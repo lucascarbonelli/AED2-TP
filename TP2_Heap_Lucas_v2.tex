@@ -104,7 +104,7 @@
 }{}
 
 
-\newcommand{\Titulo}[1]{
+\newcommand{\tituloModulo}[1]{
   \vspace*{1ex}\par\noindent\textbf{\large #1}\par
 }
 
@@ -184,7 +184,7 @@ Este módulo implementa una cola de prioridad. El TAD Cola de prioridad es paramé
 
   \textbf{géneros}: \TipoVariable{heapMod}.
   
-  \Titulo{Operaciones básicas de Heap Modificable}
+  \tituloModulo{Operaciones básicas de Heap Modificable}
   
   \InterfazFuncion{Vacía?}{\In{c}{heapMod}}{bool}
   {res $\igobs$ vacía?(c)}
@@ -222,7 +222,7 @@ Este módulo implementa una cola de prioridad. El TAD Cola de prioridad es paramé
   
   
 
-  \Titulo{Operaciones del iterador}
+  \tituloModulo{Operaciones del iterador}
   
   
   El iterador que presentamos permite modificar la cola de prioridad, pudiendo eliminar elementos que se encuentren en cualquier posición de la cola. No se incluyeron las funciones para avanzar y retroceder en la cola ya que no son necesarias para el proposito de esta cola de prioridad.
@@ -261,7 +261,7 @@ Este módulo implementa una cola de prioridad. El TAD Cola de prioridad es paramé
 
   
 
-  \Titulo{Especificación de las operaciones auxiliares utilizadas en la interfaz}
+  \tituloModulo{Especificación de las operaciones auxiliares utilizadas en la interfaz}
   
   \begin{tad}{Cola de Prioridad extendida}
     \parskip=0pt
@@ -289,7 +289,7 @@ Este módulo implementa una cola de prioridad. El TAD Cola de prioridad es paramé
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{Representacion}
 
-  \Titulo{Representación de la Cola de Prioridad}
+  \tituloModulo{Representación de la Cola de Prioridad}
   
   En este módulo vamos a utilizar un árbol binario para representar la cola, donde cada nodo contiene un elemento. La prioridad de los hijos es siempre menor a la del padre, por lo tanto la raíz del árbol tiene el elemento de mayor prioridad. La altura del árbol es igual al logaritmo de la cantidad de elementos ($log(\#nodos)$). Cada nivel del árbol se va llenando de izquierda a derecha. Cada nodo guarda la longitud de la rama más corta y la longitud de la rama más larga, lo cual se utiliza para poder buscar el último nodo(es decir, el nodo del último nivel que está más a la derecha) o donde ubicar un nuevo nodo que se agrega a la cola. Debido a como se van colocando los nodos, la rama derecha nunca puede ser más larga que la izquierda, por lo tando la rama más larga del hijo izquierdo de un nodo va a ser igual o mayor en una unidad a la rama más larga del hijo derecho, mientras que lo contrario ocurre con la longitud de la rama más corta. Cada nodo, además de tener un puntero a cada hijo, también guarda un puntero al padre  para poder acceder rapidamente.
   
@@ -332,7 +332,7 @@ Este módulo implementa una cola de prioridad. El TAD Cola de prioridad es paramé
   
 
 
-  \Titulo{Representación del iterador}
+  \tituloModulo{Representación del iterador}
   
   El iterador está formado simplemente por un puntero al nodo siguiente y un puntero a la cola, para poder modificarla.  El puntero siguiente apunta a NULL en el caso en que la cola este vacia.
 
@@ -360,7 +360,7 @@ Este módulo implementa una cola de prioridad. El TAD Cola de prioridad es paramé
 
 \medskip
 	
- \Titulo{Algoritmos del módulo}
+ \tituloModulo{Algoritmos del módulo}
   	\medskip
   
 \begin{algorithm}[H]{\textbf{iVacía?}(\In{c}{heapmod}) $\to$ $res$ : $bool$}
@@ -607,13 +607,8 @@ Este módulo implementa una cola de prioridad. El TAD Cola de prioridad es paramé
     	\end{algorithmic}
 \end{algorithm}
 			
-			
 
-
-
-
-
- \Titulo{Algoritmos del iterador}
+ \tituloModulo{Algoritmos del iterador}
   	\medskip
   	
   	
