@@ -196,6 +196,7 @@
   
 \begin{algorithm}[H]{\textbf{iAgregarPokémon}(\In{p}{pokémon}, \In{c}{coor}, \Inout{j}{juego})}
     	\begin{algorithmic}[1]
+    	\State $j.cantidadPokeTotal \gets j.cantidadPokeTotal + 1$\Comment {Se aumenta la cantidad total de pokémons} // $\Theta(1)$
 	\State $itHeapmod \ itNuevoHeap \gets iCrearHeapPokemon(j, c)$ \Comment {Se crea el heap que contiene a todos los jugadores en radio 2 del pokémon} // $\Theta(EC * log(EC))$
 
  	\State $itDic \ dicLinealPoke \gets iDefinirRapido(j.posPokemon, c, \langle p, 0, itNuevoHeap \rangle)$ \Comment {Se define la coordenada del pokémon y se coloca su infoCoord} // $\Theta(1)$

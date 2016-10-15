@@ -314,6 +314,7 @@ Este módulo implementa una cola de prioridad. El TAD Cola de prioridad es paramé
     
   \end{Estructura}
   
+  \Rep[heapmod][c]{$1 \land 2 \land 3 \land 4 \land 5 \land 6 \land 7 \land 8 \land 9 \land 10 \land 11$}\mbox{}
   
   \noindent Invariante de representación: \\
   1) $tope$ es un puntero al nodo raíz del árbol. \\
@@ -324,9 +325,10 @@ Este módulo implementa una cola de prioridad. El TAD Cola de prioridad es paramé
   6) La altura del árbol es igual al logaritmo de la cantidad de nodos ($log(\#nodos)$). \\
   7) Cada nivel del árbol se va llenando de izquierda a derecha, por lo tanto todas las hojas están en los últimos dos niveles del árbol y la diferencia de altura entre los dos subárboles de un nodo puede ser 0 o 1. \\
   8) Cada nodo guarda la longitud de la rama más corta y la más larga. \\
-  9) La longitud de la rama más corta de un nodo debe ser uno más que la longitud de la rama más corta del subárbol derecho. \\
-  10) La longitud de la rama más larga de un nodo debe ser uno más que la longitud de la rama más larga del subárbol izquierdo. \\
-  11) La diferencia entre la longitud de la rama más larga y las más corta puede ser a lo sumo 1.
+  9) La longitud de la rama más corta y la longitud de la rama más larga de una hoja es 0. \\
+  10) La longitud de la rama más corta de un nodo debe ser uno más que la longitud de la rama más corta del subárbol derecho. \\
+  11) La longitud de la rama más larga de un nodo debe ser uno más que la longitud de la rama más larga del subárbol izquierdo. \\
+  %11) La diferencia entre la longitud de la rama más larga y las más corta puede ser a lo sumo 1.
   
 
 
@@ -341,8 +343,10 @@ Este módulo implementa una cola de prioridad. El TAD Cola de prioridad es paramé
     \end{Tupla}
   \end{Estructura}
 
+  \Rep[itHeapmod][it]{$1 \land 2$}\mbox{}
+
   \noindent Invariante de representación: \\
-  1) $siguiente$ apunta a $NULL$ si el $heap$ apunta a una cola vacia.\\
+  1) $siguiente$ apunta a $NULL$ si i solo si el $heap$ apunta a una cola vacia.\\
   2) Si la cola no está vacia, $siguiente$ apunta a un nodo que pertenece a la cola apuntada por $heap$.
   
   
